@@ -1,0 +1,101 @@
+<p-tabView>
+  <p-tabPanel header="Famílias de defeitos">
+
+     <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true"  [editable]="true" (onEdit)="editar($event)"> 
+    <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true" ></p-column>
+    <p-column field="op" header="Operações permitidas"  [editable]="true"></p-column>
+    <p-column styleClass="col-button" [style]="{'width':'70px'}">
+        <ng-template let-op="rowData" pTemplate="body">
+            <button type="button" class="ui-button-danger" pButton (click)="deleterow(op)" icon="fa-times"></button>
+        </ng-template>
+    </p-column>
+    <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="AddFamDef()" label="Add"></button></div></p-footer>
+</p-dataTable>
+
+  </p-tabPanel>
+
+  <p-tabPanel header="Acessos">
+    <div class="col-md-12 col-md-offset-12" style="height: 750px;">
+      <div class="col-md-5 col-md-offset-5" style="float:left;">
+        <p-dataTable [value]="list2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+          dataKey="no">
+          <p-column field="name" header="Utilizadores" [sortable]="true"></p-column>
+        </p-dataTable>
+      </div>
+      <div class="col-md-2 col-md-offset-2" style="float:left; text-align: center;">
+        <div style="height: 250px;     padding-top: 30%;">
+          <button (click)="insere('list3')" icon="fa-angle-double-right" pbutton="" type="button" ng-reflect-icon="fa-angle-double-right"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-right"></span><span class="ui-button-text ui-c">ui-button</span></button>
+          <button (click)="apagar('list3')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
+        </div>
+        <div style="height: 250px;     padding-top: 30%;">
+          <button (click)="insere('list4')" icon="fa-angle-double-right" pbutton="" type="button" ng-reflect-icon="fa-angle-double-right"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-right"></span><span class="ui-button-text ui-c">ui-button</span></button>
+          <button (click)="apagar('list4')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
+        </div>
+        <div style="height: 250px;     padding-top: 30%;">
+          <button (click)="insere('list5')" icon="fa-angle-double-right" pbutton="" type="button" ng-reflect-icon="fa-angle-double-right"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-right"></span><span class="ui-button-text ui-c">ui-button</span></button>
+          <button (click)="apagar('list5')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
+        </div>
+      </div>
+      <div class="col-md-5 col-md-offset-5" style="float:left;">
+        <div style="height: 250px;">
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list3" selectionMode="single" [(selection)]="selectedC3" (onRowSelect)="onRowSelect3($event)"
+            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
+            <p-column field="name" header="Perfil Operador" [sortable]="true"></p-column>
+          </p-dataTable>
+        </div>
+        <div style="height: 250px;">
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list4" selectionMode="single" [(selection)]="selected4" (onRowSelect)="onRowSelect4($event)"
+            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
+            <p-column field="name" header="Perfil Chefe de Seção" [sortable]="true"></p-column>
+          </p-dataTable>
+        </div>
+        <div style="height: 250px;">
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" [(selection)]="selected5" (onRowSelect)="onRowSelect5($event)"
+            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
+            <p-column field="name" header="Perfil Administrador" [sortable]="true"></p-column>
+          </p-dataTable>
+        </div>
+      </div>
+    </div>
+  </p-tabPanel>
+
+  <p-tabPanel header="Responsáveis de cada secção">
+
+    <p-dataTable [value]="list6" selectionMode="single" [(selection)]="selectedCar" (onRowSelect)="onRowSelect6($event)" [paginator]="true" rows="10" [responsive]="true">
+    <p-header>Responsáveis</p-header>
+    <p-column field="name" header="Chefe de Secção" [sortable]="true"></p-column>
+    <p-column field="seccao" header="Secção" [sortable]="true"></p-column>
+    <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button></div></p-footer>
+</p-dataTable>
+
+  </p-tabPanel>
+</p-tabView>
+
+
+<p-dialog header="Responsável" [(visible)]="displayDialog" modal="modal"  width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-12"><label for="vin">Chefe de Secção</label></div>
+            <p-dropdown [options]="brand1" [style]="{'width':'100%'}"  [(ngModel)]="selected1" #t (onFocus)="carregachefe($event,t.label,t.value)"></p-dropdown>
+        </div>
+    </div>
+     <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-12"><label for="vin">Secção</label></div>
+            <p-dropdown [options]="brand2" [style]="{'width':'100%'}"  [(ngModel)]="selected2" #d (onFocus)="carregaseccao($event,d.label,d.value)"></p-dropdown>
+        </div>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button type="button" pButton icon="fa-close" (click)="delete()" label="Delete"></button>
+            <button type="button" pButton icon="fa-check" (click)="save()" label="Save"></button>
+        </div>
+    </p-footer>
+</p-dialog>

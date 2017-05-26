@@ -1,0 +1,68 @@
+<div class="col-md-12 col-md-offset-12" style="height: 50px; text-align: center;">
+  <h2>
+    REGISTO DE QUANTIDADES - REFERÊNCIA: {{ref_name}}
+  </h2>
+</div>
+<div class="col-md-12 col-md-offset-12" style="height: 50px;">
+  <button type="button" class="form-control btn btn-primary" pButton (click)="prevItem()" style="width: 20%; float: left;"
+    label="Referência Anterior"></button>
+  <button type="button" class="form-control btn btn-primary" pButton (click)="nextItem()" style="width: 20%; float: right;"
+    label="Referência Seguinte"></button>
+</div>
+<div class="col-md-12 col-md-offset-12" style="height: 90px;">
+<div class="col-md-3 col-md-offset-3" style=" float: left;">
+</div>
+<div class="col-md-9 col-md-offset-9" style="float: left; ">
+  <div class="form-group">
+    <!-- Name field -->
+    <label class="control-label " for="name">Quant. Boas</label>
+    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="append1(box.value,$event)"
+      (change)="updatetotal(box.value)" style="text-align: center;" style="text-align: center;" />
+  </div>
+  <div class="form-group1">
+    <i style="font-size: 50px;">+</i>
+  </div>
+  <div class="form-group">
+    <!-- Name field -->
+    <label class="control-label " for="name">Total Defeitos</label>
+    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}"
+    />
+  </div>
+  <div class="form-group1">
+    <i style="font-size: 50px;">=</i>
+  </div>
+  <div class="form-group">
+    <!-- Name field -->
+    <label class="control-label " for="name">Total Control</label>
+    <input class="form-control" id="name" name="name" type="text" readonly style="text-align: center;" value="{{totalcontrol}}"
+    />
+  </div>
+  <div class="form-group" style="margin-left: 50px;">
+    <!-- Name field -->
+    <label class="control-label " for="name">Quant. OF</label>
+    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly />
+  </div>
+</div>
+</div>
+
+<form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
+  <p-tabView *ngIf="tabSets" orientation="left">
+    <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
+
+      <div *ngFor="let item of isplayData2(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
+        style="float:left;">
+        <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
+        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="append1(inputvalue.value,$event)"
+        />
+      </div>
+
+    </p-tabPanel>
+  </p-tabView>
+
+  <br>
+
+  <input class="form-control btn btn-primary" type="submit" style="width: 20%; float: right;" [disabled]="!valForm.form.valid"
+    value="Concluir">
+
+
+</form>

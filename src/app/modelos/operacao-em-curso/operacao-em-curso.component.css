@@ -1,0 +1,11 @@
+.nopadding {
+   padding-left: 0 !important;
+}
+.ui-dialog-buttonpane{
+         border-top: none !important;
+}
+
+input:read-only { 
+    background-color: #c0c0c0;
+}
+
