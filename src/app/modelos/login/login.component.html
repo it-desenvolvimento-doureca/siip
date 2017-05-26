@@ -1,98 +1,43 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4 phone">
+        <div class="col-md-3 col-lg-4 phone">
         </div>
-        <div class="col-md-4 col-md-offset-4 phone">
+        <div class="col-md-7 col-lg-4 phone">
             <div class="row1">
                 <div class="col-md-12">
                     <div class="num-pad">
                         <div class="span4">
-                            <div class="num" (click)="append(1)">
-                                <div class="txt">
-                                    1
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(1)" label="1" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(2)">
-                                <div class="txt">
-                                    2 <span class="small">
-                                
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(2)" label="2" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(3)">
-                                <div class="txt">
-                                    3 <span class="small">
-                                    
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(3)" label="3" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(4)">
-                                <div class="txt">
-                                    4 <span class="small">                                    
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(4)" label="4" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(5)">
-                                <div class="txt">
-                                    5 <span class="small">                                   
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(5)" label="5" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(6)">
-                                <div class="txt">
-                                    6 <span class="small">                                    
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(6)" label="6" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(7)">
-                                <div class="txt">
-                                    7 <span class="small">
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(7)" label="7" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(8)">
-                                <div class="txt">
-                                    8 <span class="small">
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(8)" label="8" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(9)">
-                                <div class="txt">
-                                    9 <span class="small">
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(9)" label="9" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num" (click)="append(0)">
-                                <div class="txt">
-                                    0 <span class="small">
-                                </span>
-                                </div>
-                            </div>
+                            <button type="button" class="num" (click)="append(0)" label="0" pButton></button>
                         </div>
                         <div class="span4">
-                            <div class="num num1" (click)="undo()">
-                                <div class="txt">
-                                    LIMPAR
-                                </div>
-                            </div>
+                            <button type="button" class="num num1" (click)="undo()" label="APAGAR" pButton></button>
                         </div>
                     </div>
                     <div class="clearfix">
@@ -114,7 +59,7 @@
     <br>
     <button (click)="redirect()" class="btn btn-success btn-recreate btn-lg" type="button">SIM</button>
     <button (click)="reset()" class="btn btn-danger btn-destroy btn-lg" type="button" style="margin-left: 30px;">NÃO</button>
-    
+
 
 </div>
 
@@ -123,17 +68,17 @@
     ***********EXEMPLO HREF
     <a routerLink="/teste">Heroes</a>-->
 
-<p-dialog [(visible)]="display" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
-  <div style="text-align:center;">
-    <p>
-      <h1> Qual o perfil de utilização pretendido? </h1>
-  </div>
-  <p-footer>
-    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" [hidden]="isHidden1"  pButton (click)="cancelar2()" label="OPERADOR" style="float: none;"></button>
-      <button type="button"  [hidden]="isHidden2"  pButton (click)="cancelar2()" label="ADMINISTRAÇÃO" style="float: none;"></button>
-      <button type="button"  [hidden]="isHidden3"  pButton (click)="cancelar2()" label="CONTROLO" style="float: none;"></button>
+<p-dialog [(visible)]="display" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div style="text-align:center;">
+        <p>
+            <h1> Qual o perfil de utilização pretendido? </h1>
     </div>
-  </p-footer>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+            <button type="button" [hidden]="isHidden1" pButton (click)="cancelar2()" label="OPERADOR" style="float: none;"></button>
+            <button type="button" [hidden]="isHidden2" pButton (click)="cancelar2()" label="ADMINISTRAÇÃO" style="float: none;"></button>
+            <button type="button" [hidden]="isHidden3" pButton (click)="cancelar2()" label="CONTROLO" style="float: none;"></button>
+        </div>
+    </p-footer>
 </p-dialog>

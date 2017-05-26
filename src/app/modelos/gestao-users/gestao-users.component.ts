@@ -43,7 +43,7 @@ export class GestaoUsersComponent implements OnInit {
     this.list3 = [];
     this.list4 = [];
     this.list5 = [];
-    this.list6 = [{ name: "José", seccao: "Pintura", no: "1", id: "6", seccao_no: "1" }];
+    this.list6 = [];
     this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
     this.brand2 = [{ label: 'Seleccione Secção', value: "0" }, { label: "Pintura", value: "1" }, { label: "Armazém", value: "2" }];
     this.service.getHero().then(val => {this.listw1 = val.json()});
@@ -238,8 +238,12 @@ export class GestaoUsersComponent implements OnInit {
   }
 
   //ver o ultimo id de um array
-  getmaxid() {
-    return Math.max.apply(Math, this.list6.map(function (o) { return o.id; }))
+ getmaxid() {
+    if (this.list6.length > 0) {
+      return Math.max.apply(Math, this.list6.map(function (o) { return o.id; }))
+    } else {
+      return 0;
+    }
   }
 
   editar(event) {
@@ -259,7 +263,10 @@ export class GestaoUsersComponent implements OnInit {
 
   //adicionar linha à tabela familias de defeitos
   AddFamDef() {
-    var x = Math.max.apply(Math, this.list1.map(function (o) { return o.id; }));
+    var x = "0";
+    if (this.list1.length > 0) {
+      x = Math.max.apply(Math, this.list1.map(function (o) { return o.id; }));
+    } 
     var num = parseInt(x) + 1;
     this.list1.push({ name: "", op: "", id: num });
     this.list1 = this.list1.slice();
