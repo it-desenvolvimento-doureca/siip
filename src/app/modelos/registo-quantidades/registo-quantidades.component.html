@@ -16,7 +16,7 @@
   <div class="form-group">
     <!-- Name field -->
     <label class="control-label " for="name">Quant. Boas</label>
-    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="append1(box.value,$event)"
+    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="onlynumbers(box.value,$event)"
       (change)="updatetotal(box.value)" style="text-align: center;" style="text-align: center;" />
   </div>
   <div class="form-group1">
@@ -49,10 +49,10 @@
   <p-tabView *ngIf="tabSets" orientation="left">
     <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
 
-      <div *ngFor="let item of isplayData2(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
+      <div *ngFor="let item of getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
         style="float:left;">
         <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
-        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="append1(inputvalue.value,$event)"
+        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="onlynumbers(inputvalue.value,$event)"
         />
       </div>
 

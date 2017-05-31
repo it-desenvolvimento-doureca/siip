@@ -9,11 +9,8 @@
     <div class="form-group">
       <!-- Email field -->
       <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-      <p-dropdown (onChange)="carregaoperacoes($event)" [options]="cities" [style]="{'width':'80%'}"></p-dropdown>
-      <button type="button" class="btn btn-success btn-number" style="margin-left:10px" (click)="showDialog()">
-          <i class="icon-plus"></i>
-      </button>
-      <button type="button" class="btn btn-danger btn-number" style="margin-left:10px" (click)="togglestates()">
+      <p-dropdown (onChange)="carregamaquinas($event)" [options]="cities" [style]="{'width':'80%'}"></p-dropdown>
+      <button type="button" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
           <i class="icon-plus"></i>
       </button>
     </div>
@@ -49,31 +46,11 @@
   <button class="ui-button-secondary bt-cancelar" pButton type="button"  (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"></button>
 </div>
 
-<p-dialog header="Operações" [(visible)]="display" modal="modal" minHeight="500" minwidth="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
-  <p>
-    <p-dataTable [value]="cols2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect2($event)" (onRowUnselect)="onRowUnselect2($event)"
-      dataKey="vin">
-      <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-      <p-column field="year" header="Year"></p-column>
-      <p-column field="brand" header="Brand"></p-column>
-      <p-column field="color" header="Color"></p-column>
-    </p-dataTable>
-  </p>
-  <p-footer>
-    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancelar()" label="Cancelar"></button>
-      <button type="button" pButton icon="fa-check" (click)="operacao()" label="Ok"></button>
-    </div>
-  </p-footer>
-</p-dialog>
-
-
 <!--Test -->
-<div id="test">
-  <div class="list-group test" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
+<div id="adicionaop">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
 
-    <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect3($event)" (onRowUnselect)="onRowUnselect($event)"
+    <p-dataTable [value]="cols2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect3($event)" (onRowUnselect)="onRowUnselect($event)"
       dataKey="vin">
       <p-header>Operações</p-header>
       <p-column field="vin" header="Vin" [sortable]="true"></p-column>
@@ -101,9 +78,9 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="cancelar2()" label="PREPARAÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="EXECUÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="CANCELAR" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="PREPARAÇÃO" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="EXECUÇÃO" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none;"></button>
     </div>
   </p-footer>
 </p-dialog>

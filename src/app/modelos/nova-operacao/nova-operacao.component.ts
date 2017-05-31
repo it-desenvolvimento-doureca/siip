@@ -29,10 +29,11 @@ export class NovaOperacaoComponent implements OnInit {
     city = "";
     display: boolean = false;
     display2: boolean = false;
-
+    state: string = 'secondpos';
+    adicionaop = true;
     cols: any[];
     cols2: any[];
-    var_teste = "";
+    novaoperacao = "";
     message = "";
     
 
@@ -47,7 +48,7 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.carService.getCarsMedium().then(cars => this.cars = cars);
+
         this.cols = [
             { "vin": "a1653d4r", "brand": "VW", "year": 1998, "color": "White" },
             { "vin": "a1er4d", "brand": "VW", "year": 1998, "color": "White" },
@@ -63,6 +64,8 @@ export class NovaOperacaoComponent implements OnInit {
         ];
     }
 
+
+    //Seleccionar uma referência da Tabela Referência
     onRowSelect(event) {
         this.msgs = [];
         this.msgs.push({ severity: 'info', summary: 'Car Selected', detail: event.data.vin + ' - ' + event.data.brand });
@@ -70,37 +73,14 @@ export class NovaOperacaoComponent implements OnInit {
 
     }
 
-    onRowUnselect(event) {
-        this.message = "";
-    }
-
-    onRowSelect2(event) {
-
-        this.var_teste = event.data.vin;
-
-    }
-
-    onRowUnselect2(event) {
-        this.var_teste = "";
-    }
-
-    operacao() {
-        this.display = false;
-        this.message = this.var_teste;
-    }
-
+    //fechar popup que abre depois de clicar em "SELECIONAR SÓ 1 REFERÊNCIA"
     cancelar() {
-        this.display = false;
+       this.display2 = false;
         this.message = "";
     }
-    cancelar2() {
-        this.display2 = false;
-        this.message = "";
-    }
-    showDialog() {
-        this.display = true;
-    }
-    carregaoperacoes(event) {
+   
+    //ao alterar a operação preenche SelectItem das maquinas
+    carregamaquinas(event) {
         this.city = event.value.code;
         this.cities2 = [];
         this.cities2.push({ label: this.city + '1', value: null });
@@ -108,22 +88,23 @@ export class NovaOperacaoComponent implements OnInit {
         this.cities2.push({ label: this.city + '3', value: { id: 2, name: 'Rome', code: 'RM' } });
     }
 
-    state: string = 'secondpos';
-    teste = true;
+    //ao clicar no botão +, mostra tabela com mais operações
     togglestates() {
         this.state = (this.state === 'firstpos' ? 'secondpos' : 'firstpos');
-        this.teste = true;
+        this.adicionaop = true;
     }
 
+    //esconde a tabela
     ontogglestates() {
-        if (this.teste == false) {
+        if (this.adicionaop == false) {
             this.state = 'secondpos';
-            this.teste = true;
+            this.adicionaop = true;
         } else {
-            this.teste = false;
+            this.adicionaop = false;
         }
     }
 
+    //ao seleccionar uma nova operação da tabela, ela é adicionada ao SelectItem
     onRowSelect3(event) {
 
         this.state = 'secondpos';
@@ -137,6 +118,7 @@ export class NovaOperacaoComponent implements OnInit {
 
     }
 
+    //Quando o botão "Selecionar só 1 referencia" é ciclado abre mensagem para confirmar trabalho apenas numa referencia. 
     seleciona1ref() {
         if(this.message != ""){
             this.display2 = true;

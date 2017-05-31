@@ -7,16 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OperacaoEmCursoComponent implements OnInit {
 
- display: boolean = false;
+  display: boolean = false;
   tabSets: any[];
   cols2: any[];
   cols: any[];
-  defeito_sel = "";
-  defeito_sel2 = "";
   result: string = "";
   hideLable: boolean = false;
   items = [];
-  totaldefeitos: number= 0;
+  totaldefeitos: number = 0;
   totalcontrol: number = 0;
   qttboas: number = 0;
 
@@ -42,31 +40,22 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   }
 
+  //mostra lista de defeitos
   showDialog() {
     this.display = true;
   }
 
-  onRowSelect(event) {
-    this.defeito_sel = event.data.vin;
-    this.defeito_sel2 = event.data.brand;
-
-  }
-
-
-  getvalu(vars) {
+  //ver lista de defeitos apartir da familia
+  getinputs(vars) {
     if (vars == 'label1') {
       this.items = ["teste", "teste2"];
     } else {
       this.items = ["teste3", "teste4"];
     }
-
-  }
-
-  isplayData2(vars) {
-    this.getvalu(vars);
     return this.items;
   }
 
+  //faz o calculo do total de defeitos e insere na tabela "lista dos defeitos rejeitados"
   submitFunc(value): void {
     this.hideLable = true;
     this.result = value;
@@ -78,29 +67,27 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.cols.push({ "vin": v, "brand": value[v], "year": "desnandsada" });
         this.totaldefeitos += value[v];
       }
-      this.totalcontrol = this.totaldefeitos *1 + this.qttboas * 1;
+      this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
     }
     this.display = false;
 
   }
 
-  append1(value: String,event: any){
-     
-     const pattern = /[0-9\ ]/;
-     let inputChar = String.fromCharCode(event.charCode);
- 
-     if (!pattern.test(inputChar)) {
-       // invalid character, prevent input
-       event.preventDefault();
-     }
-   }
-   updatetotal(num : number){
-     this.qttboas = num;
-     this.totalcontrol = this.totaldefeitos* 1+ this.qttboas* 1;
-   }
+  //só permite introduzir números no input
+  onlynumbers(value: String, event: any) {
 
-   createfile(){
-     
-   }
+    const pattern = /[0-9\ ]/;
+    let inputChar = String.fromCharCode(event.charCode);
+
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+    }
+  }
+
+  //atualiza totalcontrol
+  updatetotal(num: number) {
+    this.qttboas = num;
+    this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
+  }
 
 }
