@@ -1,25 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, trigger, state, style, transition, animate } from '@angular/core';
 
 @Component({
   selector: 'app-operacao-em-curso',
   templateUrl: './operacao-em-curso.component.html',
-  styleUrls: ['./operacao-em-curso.component.css']
+  styleUrls: ['./operacao-em-curso.component.css'],
+  animations: [
+        trigger('movementtrigger', [
+            state('firstpos', style({ transform: 'translateX(0)' })),
+            state('secondpos', style({ transform: 'translateX(100%)', display: 'none' })),
+            transition('firstpos => secondpos', [
+                animate('300ms ease-in')
+            ]),
+            transition('secondpos => firstpos', [
+                animate('300ms ease-out')
+            ])
+        ])
+    ]
 })
 export class OperacaoEmCursoComponent implements OnInit {
-
- display: boolean = false;
+  adicionadef: boolean = true;
   tabSets: any[];
-  cols2: any[];
   cols: any[];
-  defeito_sel = "";
-  defeito_sel2 = "";
   result: string = "";
   hideLable: boolean = false;
   items = [];
-  totaldefeitos: number= 0;
+  totaldefeitos: number = 0;
   totalcontrol: number = 0;
   qttboas: number = 0;
-
+  state: string = 'secondpos';
   displayData: any[];
 
   constructor() {
@@ -27,12 +35,6 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   ngOnInit() {
 
-    this.cols2 = [
-      { "vin": "ref001", "brand": "design1" },
-      { "vin": "ref002", "brand": "design2" },
-      { "vin": "ref003", "brand": "design3" },
-      { "vin": "ref004", "brand": "design4" }
-    ];
 
     this.tabSets = [];
     this.displayData = [];
@@ -42,65 +44,56 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   }
 
-  showDialog() {
-    this.display = true;
-  }
 
-  onRowSelect(event) {
-    this.defeito_sel = event.data.vin;
-    this.defeito_sel2 = event.data.brand;
-
-  }
-
-
-  getvalu(vars) {
+  //ver lista de defeitos apartir da familia
+  getinputs(vars) {
     if (vars == 'label1') {
       this.items = ["teste", "teste2"];
     } else {
       this.items = ["teste3", "teste4"];
     }
-
-  }
-
-  isplayData2(vars) {
-    this.getvalu(vars);
     return this.items;
   }
 
+  //faz o calculo do total de defeitos e insere na tabela "lista dos defeitos rejeitados"
   submitFunc(value): void {
     this.hideLable = true;
     this.result = value;
     this.cols = [];
     this.totaldefeitos = 0;
-    for (var v in value) // for acts as a foreach
+    for (var v in value) // for acts as a foreach 
     {
       if (value[v] != "") {
         this.cols.push({ "vin": v, "brand": value[v], "year": "desnandsada" });
         this.totaldefeitos += value[v];
       }
-      this.totalcontrol = this.totaldefeitos *1 + this.qttboas * 1;
+      this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
     }
-    this.display = false;
+     this.ontogglestates();
 
   }
 
-  append1(value: String,event: any){
-     
-     const pattern = /[0-9\ ]/;
-     let inputChar = String.fromCharCode(event.charCode);
- 
-     if (!pattern.test(inputChar)) {
-       // invalid character, prevent input
-       event.preventDefault();
-     }
-   }
-   updatetotal(num : number){
-     this.qttboas = num;
-     this.totalcontrol = this.totaldefeitos* 1+ this.qttboas* 1;
-   }
+  
+  //atualiza totalcontrol
+  updatetotal(num: number) {
+    this.qttboas = num;
+    this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
+  }
 
-   createfile(){
-     
-   }
+  //ao clicar no botão +, mostra tabela com mais operações
+    togglestates() {
+        this.state = (this.state === 'firstpos' ? 'secondpos' : 'firstpos');
+        this.adicionadef = true;
+    }
+
+    //esconde a lista de defeitos
+    ontogglestates() {
+        if (this.adicionadef == false) {
+            this.state = 'secondpos';
+            this.adicionadef = true;
+        } else {
+            this.adicionadef = false;
+        }
+    }
 
 }

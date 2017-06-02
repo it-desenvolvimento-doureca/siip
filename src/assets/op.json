@@ -1,0 +1,8 @@
+{
+    "data": [
+        {"id": 1, "codigo": "1", "descricao": "MAQUINA 1"}, 
+        {"id": 2, "codigo": "1", "descricao": "MAQUINA 2"},
+        {"id": 3, "codigo": "1", "descricao": "MAQUINA 3"},
+        {"id": 4, "codigo": "2", "descricao": "MAQUINA 4"}
+    ]
+}

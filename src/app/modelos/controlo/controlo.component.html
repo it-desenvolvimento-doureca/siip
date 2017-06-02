@@ -1,0 +1,284 @@
+<div class="col-md-12 col-md-offset-12" style="float:left; text-align: center">
+  <h1>
+    QUADRO DE CONTROLO DE OPERAÇÕES
+  </h1>
+
+</div>
+
+<div class="col-md-12 col-md-offset-12" style="float:left;">
+  <div class="ui-widget-header" style="padding:4px 10px;border: 0 none; background: none;">
+    <i class="fa fa-search" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
+    <input #gb type="text" [(ngModel)]="input_pesquisa" class="form-control" pInputText size="40" placeholder="Pesquisar" style="padding-left: 8px; width: 20%; display: initial;">
+    <a (click)="apaga()" style="cursor: pointer;">
+      <i class="fa fa-times" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
+    </a>
+
+    <a style="cursor: pointer; margin-left: 50px;" (click)="togglestates()">
+      <i class="fa fa-search" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
+     <span style="color: white;"> Pesquisa Avançada</span>
+    </a>
+    <a (click)="atualiza()" style="cursor: pointer; float: right;">
+      <i class="fa fa-refresh" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
+    </a>
+  </div>
+  <p-dataTable [value]="tabela" [rows]="1" class="tabelacontrolo" [globalFilter]="gb" selectionMode="single" [(selection)]="selectedCar2"
+    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect(t)" dataKey="codigo">
+    <p-column field="codigo0" header="" [style]="{'background':'black'}">
+      <ng-template let-col let-row="rowData" pTemplate="body">
+        <div class="divtable">
+          <span><i class="fa fa-circle  {{row['color']}}icon" aria-hidden="true"></i></span>
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo" header="OF" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{col.field}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo2" header="Oper" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo3" header="Máq." [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo4" header="Func." [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo5" header="Qtd. Func." [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo6" header="Ref." [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo7" header="Artigo" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo8" header="Dt. Início" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo9" header="Hora Início" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo11" header="Dt. Fim" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo12" header="Hora Fim" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo13" header="Tempo Prod." [sortable]="true" class="divtable3">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable {{row['color1']}}">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo14" header="Qtd. OF" [sortable]="true">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable {{row['color2']}}">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo15" header="Qtd. Boas" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo16" header="Total Defeitos" [sortable]="true">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable {{row['color3']}}">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo17" header="% Defeitos" [sortable]="true">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable {{row['color4']}}">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo18" header="% objetivo" [sortable]="true">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="codigo19" header="Estado" [sortable]="true">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable {{row['color5']}}">
+          {{row[col.field]}}
+        </div>
+      </ng-template>
+    </p-column>
+  </p-dataTable>
+</div>
+<div class="col-md-12 col-md-offset-12" style="float:left; margin-top: 10px;">
+  <div class="col-md-3 col-md-offset-3" style="float:left;">
+    <i class="fa fa-file-o" aria-hidden="true" style="font-size:30px;"></i>
+    <i class="fa fa-trash-o" aria-hidden="true" style="font-size:30px;"></i>
+    <i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:30px;"></i>
+  </div>
+  <div class="col-md-6 col-md-offset-6" style="float:left; text-align: center;">
+    <h3>
+      <u> VER MAIS </u>
+    </h3>
+  </div>
+  <div class="col-md-3 col-md-offset-3" style="float:left;">
+    <i class="fa fa-search-plus" aria-hidden="true" style="font-size:30px; float: right;"></i>
+  </div>
+</div>
+
+
+
+
+<div id="adicionaop">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
+    <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color: black; flex: 0 0 9%;">
+      <h3>
+        PESQUISA AVANÇADA
+      </h3>
+    </div>
+    <div class="col-md-12 col-md-offset-12" style="float:left; color: black; flex: 0 0 9%;">
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Data Início >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Data Fim >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Tempo Prod. >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Ordem Fabrico</label>
+          <input class="form-control" type="text" />
+        </div>
+
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><= Data Início</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><= Data Fim</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><=Tempo Prod.</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Hora Início >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Hora Fim >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Quant. >=</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Máquina</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><= Hora Início</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><= Hora Fim</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email"><= Quant.</label>
+          <input class="form-control" type="text" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Funcionário</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Referência</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-9 col-md-offset-9 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Designação da Referência</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " for="email">Estado</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
+        <button pButton type="button" (click)="aplicar()" label="APLICAR" style="float:right;"></button>
+      </div>
+    </div>
+  </div>
+</div>

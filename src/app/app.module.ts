@@ -15,8 +15,11 @@ import { OperacaoEmCursoComponent } from "./modelos/operacao-em-curso/operacao-e
 import { ClickOutsideModule } from 'ng-click-outside';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Angular2FontAwesomeModule } from 'angular2-font-awesome/angular2-font-awesome';
-import { CarService } from "app/carservice";
+import { utilizadorService } from "app/utilizadorService";
 import 'rxjs/add/operator/toPromise';
+import { OperacaoEmCursoMultirefComponent } from './modelos/operacao-em-curso-multiref/operacao-em-curso-multiref.component';
+import { ofService } from "app/ofService";
+import { ControloComponent } from './modelos/controlo/controlo.component';
 
 const routes: Routes = [
   {
@@ -28,12 +31,16 @@ const routes: Routes = [
     path: 'home',
     component: LoginComponent
   },
-   {
+  {
     path: 'operacao-em-curso',
     component: OperacaoEmCursoComponent,
     canActivate: [LoginService]
+  }, {
+    path: 'operacao-em-curso-multiref',
+    component: OperacaoEmCursoMultirefComponent,
+    canActivate: [LoginService]
   },
-    {
+  {
     path: 'gestao-users',
     component: GestaoUsersComponent,
     canActivate: [LoginService]
@@ -48,7 +55,12 @@ const routes: Routes = [
     component: RegistoQuantidadesComponent,
     canActivate: [LoginService]
   },
-   {
+  {
+    path: 'controlo',
+    component: ControloComponent,
+    canActivate: [LoginService]
+  },
+  {
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'
@@ -70,7 +82,9 @@ const routes: Routes = [
     NovaOperacaoComponent,
     RegistoQuantidadesComponent,
     OperacaoEmCursoComponent,
-    LoginComponent
+    LoginComponent,
+    OperacaoEmCursoMultirefComponent,
+    ControloComponent
   ],
   imports: [
     BrowserModule,
@@ -85,9 +99,9 @@ const routes: Routes = [
     ButtonModule,
     TabViewModule,
     PickListModule,
-    [ RouterModule.forRoot(routes) ]
+    [RouterModule.forRoot(routes)]
   ],
-  providers: [LoginService,CarService],
+  providers: [LoginService, utilizadorService, ofService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

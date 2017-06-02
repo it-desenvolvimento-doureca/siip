@@ -3,31 +3,34 @@
     <div class="form-group">
       <!-- Name field -->
       <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
-      <input class="form-control" id="name" name="name" type="text" />
+      <div class="input-group">
+        <div class="icon-addon " style="width: 100%;">
+          <input type="text" (keyup.enter)="pesquisaof()" class="form-control" [(ngModel)]="num_of" #of (ngModelChange)="num_of=of.value"
+            [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
+        </div>
+        <span class="input-group-btn">
+          <button (click)="pesquisaof()" class="btn {{bt_class}}" type="button" style="line-height: 0;"><i class="fa fa-refresh"></i></button>
+      </span>
+      </div>
     </div>
 
     <div class="form-group">
-      <!-- Email field -->
       <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-      <p-dropdown (onChange)="carregaoperacoes($event)" [options]="cities" [style]="{'width':'80%'}"></p-dropdown>
-      <button type="button" class="btn btn-success btn-number" style="margin-left:10px" (click)="showDialog()">
-          <i class="icon-plus"></i>
-      </button>
-      <button type="button" class="btn btn-danger btn-number" style="margin-left:10px" (click)="togglestates()">
+      <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)"
+        [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
+      <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
           <i class="icon-plus"></i>
       </button>
     </div>
 
     <div class="form-group">
-      <!-- Subject field -->
       <label class="control-label " for="subject">Máquina</label>
-      <p-dropdown [options]="cities2" [style]="{'width':'100%'}"></p-dropdown>
+      <p-dropdown [options]="maquina" [disabled]="readonly_maq" [style]="{'width':'100%'}"></p-dropdown>
     </div>
 
     <div class="form-group">
-      <!-- Message field -->
       <label class="control-label " for="message">Observações</label>
-      <textarea class="form-control" cols="40" id="message" name="message" rows="10"></textarea>
+      <textarea class="form-control" cols="40" id="message" name="message" rows="5"></textarea>
     </div>
   </form>
 </div>
@@ -36,56 +39,32 @@
 <div class="col-md-6 col-md-offset-8" style="float:left;">
 
 
-  <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-    dataKey="vin">
+  <p-dataTable [value]="referencias" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)"
+    (onRowUnselect)="onRowUnselect(t)" dataKey="codigo">
     <p-header>REFERÊNCIA</p-header>
-    <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-    <p-column field="year" header="Year"></p-column>
-    <p-column field="brand" header="Brand"></p-column>
-    <p-column field="color" header="Color"></p-column>
+    <p-column field="codigo" header="Código" [sortable]="true"></p-column>
+    <p-column field="design" header="Designação"></p-column>
   </p-dataTable>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button" routerLink="/home" label="CANCELAR/SAIR"></button>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button" routerLink="/home" label="INICIAR TRABALHO"></button>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button"  (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"></button>
+</div>
+<div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
+  <button class="bt-cancelar" pButton type="button" routerLink="/home" label="CANCELAR/SAIR" style="float:none;"></button>
+  <button class=" bt-cancelar" pButton type="button" routerLink="/home" label="INICIAR TRABALHO" style="float:none;"></button>
+  <button class=" bt-cancelar" pButton type="button" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA" style="float:none;"></button>
 </div>
 
-<p-dialog header="Operações" [(visible)]="display" modal="modal" minHeight="500" minwidth="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
-  <p>
-    <p-dataTable [value]="cols2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect2($event)" (onRowUnselect)="onRowUnselect2($event)"
-      dataKey="vin">
-      <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-      <p-column field="year" header="Year"></p-column>
-      <p-column field="brand" header="Brand"></p-column>
-      <p-column field="color" header="Color"></p-column>
-    </p-dataTable>
-  </p>
-  <p-footer>
-    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancelar()" label="Cancelar"></button>
-      <button type="button" pButton icon="fa-check" (click)="operacao()" label="Ok"></button>
-    </div>
-  </p-footer>
-</p-dialog>
+<div id="adicionaop">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
 
-
-<!--Test -->
-<div id="test">
-  <div class="list-group test" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
-
-    <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect3($event)" (onRowUnselect)="onRowUnselect($event)"
-      dataKey="vin">
+    <p-dataTable [value]="novaopera" selectionMode="single" [(selection)]="selectedCar3" (onRowSelect)="onRowSelect3($event)" dataKey="codigoop">
       <p-header>Operações</p-header>
-      <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-      <p-column field="year" header="Year"></p-column>
-      <p-column field="brand" header="Brand"></p-column>
-      <p-column field="color" header="Color"></p-column>
+      <p-column field="codigoop" header="Código" [sortable]="true"></p-column>
+      <p-column field="design" header="Designação"></p-column>
     </p-dataTable>
 
   </div>
 
 </div>
-<!--/Test -->
+
 
 
 
@@ -101,9 +80,9 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="cancelar2()" label="PREPARAÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="EXECUÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="CANCELAR" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="PREPARAÇÃO" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="EXECUÇÃO" style="float: none;"></button>
+      <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none;"></button>
     </div>
   </p-footer>
 </p-dialog>

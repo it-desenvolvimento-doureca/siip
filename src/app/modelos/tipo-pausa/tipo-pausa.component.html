@@ -1,12 +1,16 @@
 <div class="col-md-12 col-md-offset-12" style="height: 50px; text-align: center;">
   <h1>
-    TiPO DE PAUSA
+    TIPO DE PAUSA
   </h1>
+
 </div>
 <br>
 <div class="col-md-12 col-md-offset-12" style="height: 50px; text-align: center;">
+  <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+    <button pButton type="button" label="Voltar" (click)="backClicked()" icon="fa-chevron-left" class="btstyle ui-button-primary"></button>
+  </div>
 
-  <div *ngFor="let item of pausas let i = index" [attr.data-index]="i" class="col-md-2 col-md-offset-2 nopadding" style="float:left;">
+  <div *ngFor="let item of pausas let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
     <button pButton type="button" label="{{ item.design }}" (click)="pausa(item.id)" class="btstyle ui-button-secondary"></button>
   </div>
 </div>

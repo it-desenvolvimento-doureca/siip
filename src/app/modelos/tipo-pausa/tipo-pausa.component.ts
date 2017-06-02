@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-tipo-pausa',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TipoPausaComponent implements OnInit {
   pausas: any[];
-  constructor() { }
+  constructor(private _location: Location) { }
 
   ngOnInit() {
     //this.pausas = ["Almoço", "Ida Casa de Banho", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche"];
@@ -16,6 +17,10 @@ export class TipoPausaComponent implements OnInit {
 
   pausa(item) {
     alert(item);
+  }
+
+  backClicked() {
+    this._location.back();
   }
 
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from "primeng/primeng";
-import { CarService } from "app/carservice";
 
 
 @Component({
@@ -10,7 +9,7 @@ import { CarService } from "app/carservice";
 })
 export class GestaoUsersComponent implements OnInit {
 
-   listw1: Response;
+  listw1: Response;
   listid = "";
   seccao_no = "";
   chefe_seccao_no = "";
@@ -35,7 +34,7 @@ export class GestaoUsersComponent implements OnInit {
   selected1: string = "";
   selected2: string = "";
 
-  constructor(private service: CarService) { }
+  constructor() { }
 
   ngOnInit() {
     this.list1 = [{ name: "F57", op: "1", id: 1 }, { name: "F44", op: "2", id: 2 }, { name: "F33", op: "3", id: 3 }];
@@ -46,7 +45,6 @@ export class GestaoUsersComponent implements OnInit {
     this.list6 = [];
     this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
     this.brand2 = [{ label: 'Seleccione Secção', value: "0" }, { label: "Pintura", value: "1" }, { label: "Armazém", value: "2" }];
-    this.service.getHero().then(val => {this.listw1 = val.json()});
   }
 
   //inserir o utilizador num perfil
@@ -238,7 +236,7 @@ export class GestaoUsersComponent implements OnInit {
   }
 
   //ver o ultimo id de um array
- getmaxid() {
+  getmaxid() {
     if (this.list6.length > 0) {
       return Math.max.apply(Math, this.list6.map(function (o) { return o.id; }))
     } else {
@@ -266,9 +264,21 @@ export class GestaoUsersComponent implements OnInit {
     var x = "0";
     if (this.list1.length > 0) {
       x = Math.max.apply(Math, this.list1.map(function (o) { return o.id; }));
-    } 
+    }
     var num = parseInt(x) + 1;
     this.list1.push({ name: "", op: "", id: num });
     this.list1 = this.list1.slice();
+  }
+
+
+  //eliminar linhas das Responsáveis de cada secção
+  deleterespsecc(row) {
+
+    for (var x in this.list6) {
+      if (this.list6[x].id == row.id) {
+        this.list6.splice(parseInt(x), 1);
+      }
+    }
+    this.list6 = this.list6.slice();
   }
 }

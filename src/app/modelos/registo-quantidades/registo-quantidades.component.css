@@ -4,10 +4,14 @@
 }
 
 .form-group1{
-    padding-top: 8px;
-    float: left;
+    padding-top: 4px;
+    float: none;
 }
 
 input:read-only { 
     background-color: #c0c0c0;
+}
+
+.nopadding {
+   padding-left: 0 !important;
 }

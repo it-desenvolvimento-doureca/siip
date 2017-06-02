@@ -1,68 +1,78 @@
-<div class="col-md-12 col-md-offset-12" style="height: 50px; text-align: center;">
-  <h2>
-    REGISTO DE QUANTIDADES - REFERÊNCIA: {{ref_name}}
-  </h2>
+<div class="col-md-12 col-md-offset-12 nopadding" style="height: 50px; text-align: center;">
+  <div class="col-md-3 col-md-offset-3 nopadding" style="height: 50px;  float: left;" >
+    <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()" style="width: auto; height: 60px; float: left;"
+      label="Referência Anterior"></button>
+  </div>
+  <div class="col-md-6 col-md-offset-6 nopadding" style="height: 50px;  float: left;">
+    <h6>
+    REGISTO DE QUANTIDADES REFERÊNCIA:
+  </h6>
+  <h5><b>
+    {{ref_name}}
+    </b>
+  </h5>
+  </div>
+  <div class="col-md-3 col-md-offset-3 nopadding" style="height: 50px;  float: left;">
+    <button type="button" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton (click)="nextItem()"
+      style="width: auto; height: 60px; float: right;" label="Referência Seguinte"></button>
+  </div>
 </div>
-<div class="col-md-12 col-md-offset-12" style="height: 50px;">
-  <button type="button" class="form-control btn btn-primary" pButton (click)="prevItem()" style="width: 20%; float: left;"
-    label="Referência Anterior"></button>
-  <button type="button" class="form-control btn btn-primary" pButton (click)="nextItem()" style="width: 20%; float: right;"
-    label="Referência Seguinte"></button>
-</div>
-<div class="col-md-12 col-md-offset-12" style="height: 90px;">
-<div class="col-md-3 col-md-offset-3" style=" float: left;">
-</div>
-<div class="col-md-9 col-md-offset-9" style="float: left; ">
-  <div class="form-group">
-    <!-- Name field -->
+
+<div class="col-md-12 col-md-offset-12 nopadding" style="height: 90px; margin: 23px 0 0 0; text-align: center;">
+  <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
+  </div>
+  <div class="col-md-2 col-md-offset-2 nopadding" style=" float: left;">
     <label class="control-label " for="name">Quant. Boas</label>
-    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="append1(box.value,$event)"
-      (change)="updatetotal(box.value)" style="text-align: center;" style="text-align: center;" />
+    <input value="{{qttboas}}" class="form-control" type="number" #box (change)="updatetotal(box.value)" style="text-align: center;" min="0" 
+      style="text-align: center;" />
   </div>
-  <div class="form-group1">
-    <i style="font-size: 50px;">+</i>
+  <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
+    <div class="form-group1">
+      <i style="font-size: 50px;">+</i>
+    </div>
   </div>
-  <div class="form-group">
-    <!-- Name field -->
+  <div class="col-md-2 col-md-offset-2 nopadding" style=" float: left;">
     <label class="control-label " for="name">Total Defeitos</label>
-    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}"
-    />
+    <input class="form-control" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}" />
   </div>
-  <div class="form-group1">
-    <i style="font-size: 50px;">=</i>
+  <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
+    <div class="form-group1">
+      <i style="font-size: 50px;">=</i>
+    </div>
   </div>
-  <div class="form-group">
-    <!-- Name field -->
+  <div class="col-md-2 col-md-offset-2 nopadding" style=" float: left;">
     <label class="control-label " for="name">Total Control</label>
-    <input class="form-control" id="name" name="name" type="text" readonly style="text-align: center;" value="{{totalcontrol}}"
-    />
+    <input class="form-control" type="text" readonly style="text-align: center;" value="{{totalcontrol}}" />
   </div>
-  <div class="form-group" style="margin-left: 50px;">
-    <!-- Name field -->
+  <div class="col-md-2 col-md-offset-2 " style=" float: left;">
     <label class="control-label " for="name">Quant. OF</label>
-    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly />
+    <input class="form-control" type="text" style="text-align: center;" readonly />
+  </div>
+  <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
   </div>
 </div>
+<div class="col-md-12 col-md-offset-12 nopadding" style=" float: left;">
+  <form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
+    <p-tabView *ngIf="tabSets" orientation="left">
+      <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
+        <div class="col-md-12 col-md-offset-12" style="height: auto;">
+          <div *ngFor="let item of getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-2 col-md-offset-2 nopadding"
+            style="float:left;">
+            <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; " for="name">{{ item }}</label>
+            <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" style="height: 45px; font-size: 25px;"
+            />
+          </div>
+        </div>
+      </p-tabPanel>
+      <button type="input" class="form-control btn ui-button-secondary" icon="fa-refresh" [disabled]="!valForm.form.valid" pButton
+        style="width: auto; height: 60px; float: right; margin-right: 40px; margin-top: 12px; margin-bottom: 20px;" label="Atualizar Valores"></button>
+    </p-tabView>
+
+    <br>
+
+
+
+  </form>
+  <button type="button" class="form-control btn btn-primary" routerLink="/operacao-em-curso-multiref" pButton style="width: 20%; height: 60px; float: right;"
+    label="Concluir"></button>
 </div>
-
-<form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
-  <p-tabView *ngIf="tabSets" orientation="left">
-    <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
-
-      <div *ngFor="let item of isplayData2(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
-        style="float:left;">
-        <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
-        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="append1(inputvalue.value,$event)"
-        />
-      </div>
-
-    </p-tabPanel>
-  </p-tabView>
-
-  <br>
-
-  <input class="form-control btn btn-primary" type="submit" style="width: 20%; float: right;" [disabled]="!valForm.form.valid"
-    value="Concluir">
-
-
-</form>

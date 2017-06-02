@@ -71,6 +71,11 @@
     <p-header>Responsáveis</p-header>
     <p-column field="name" header="Chefe de Secção" [sortable]="true"></p-column>
     <p-column field="seccao" header="Secção" [sortable]="true"></p-column>
+       <p-column styleClass="col-button" [style]="{'width':'70px'}">
+        <ng-template let-op="rowData" pTemplate="body">
+            <button type="button" class="ui-button-danger" pButton (click)="deleterespsecc(op)" icon="fa-times"></button>
+        </ng-template>
+    </p-column>
     <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button></div></p-footer>
 </p-dataTable>
 
