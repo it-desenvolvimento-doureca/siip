@@ -1,25 +1,31 @@
 <p-tabView>
   <p-tabPanel header="Famílias de defeitos">
 
-     <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true"  [editable]="true" (onEdit)="editar($event)"> 
-    <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true" ></p-column>
-    <p-column field="op" header="Operações permitidas"  [editable]="true"></p-column>
-    <p-column styleClass="col-button" [style]="{'width':'70px'}">
+    <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true" [editable]="true" (onEdit)="editar($event)">
+      <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true"></p-column>
+      <p-column field="op" header="Operações permitidas" [editable]="true"></p-column>
+      <p-column styleClass="col-button" [style]="{'width':'70px'}">
         <ng-template let-op="rowData" pTemplate="body">
-            <button type="button" class="ui-button-danger" pButton (click)="deleterow(op)" icon="fa-times"></button>
+          <button type="button" class="ui-button-danger" pButton (click)="deleterow(op)" icon="fa-times"></button>
         </ng-template>
-    </p-column>
-    <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="AddFamDef()" label="Add"></button></div></p-footer>
-</p-dataTable>
+      </p-column>
+      <p-footer>
+        <div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="AddFamDef()" label="Add"></button></div>
+      </p-footer>
+    </p-dataTable>
 
   </p-tabPanel>
 
   <p-tabPanel header="Acessos">
     <div class="col-md-12 col-md-offset-12" style="height: 750px;">
       <div class="col-md-5 col-md-offset-5" style="float:left;">
-        <p-dataTable [value]="list2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-          dataKey="no">
-          <p-column field="name" header="Utilizadores" [sortable]="true"></p-column>
+        <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+          <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
+          <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
+        </div>
+        <p-dataTable [globalFilter]="gb" #dt [value]="list2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)"
+          (onRowUnselect)="onRowUnselect($event)" dataKey="no" scrollable="true" scrollHeight="600px" [responsive]="true" [rows]="10">
+          <p-column field="field" header="Utilizadores" [sortable]="true"></p-column>
         </p-dataTable>
       </div>
       <div class="col-md-2 col-md-offset-2" style="float:left; text-align: center;">
@@ -45,20 +51,20 @@
       <div class="col-md-5 col-md-offset-5" style="float:left;">
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list3" selectionMode="single" [(selection)]="selectedC3" (onRowSelect)="onRowSelect3($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
-            <p-column field="name" header="Perfil Operador" [sortable]="true"></p-column>
+            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+            <p-column field="field" header="Perfil Operador" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list4" selectionMode="single" [(selection)]="selected4" (onRowSelect)="onRowSelect4($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
-            <p-column field="name" header="Perfil Chefe de Seção" [sortable]="true"></p-column>
+            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+            <p-column field="field" header="Perfil Chefe de Seção" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" [(selection)]="selected5" (onRowSelect)="onRowSelect5($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="name">
-            <p-column field="name" header="Perfil Administrador" [sortable]="true"></p-column>
+            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+            <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
       </div>
@@ -67,40 +73,45 @@
 
   <p-tabPanel header="Responsáveis de cada secção">
 
-    <p-dataTable [value]="list6" selectionMode="single" [(selection)]="selectedCar" (onRowSelect)="onRowSelect6($event)" [paginator]="true" rows="10" [responsive]="true">
-    <p-header>Responsáveis</p-header>
-    <p-column field="name" header="Chefe de Secção" [sortable]="true"></p-column>
-    <p-column field="seccao" header="Secção" [sortable]="true"></p-column>
-       <p-column styleClass="col-button" [style]="{'width':'70px'}">
+    <p-dataTable [value]="list6" selectionMode="single" [(selection)]="selectedCar" (onRowSelect)="onRowSelect6($event)" [paginator]="true"
+      rows="10" [responsive]="true">
+      <p-header>Responsáveis</p-header>
+      <p-column field="name" header="Chefe de Secção" [sortable]="true"></p-column>
+      <p-column field="seccao" header="Secção" [sortable]="true"></p-column>
+      <p-column styleClass="col-button" [style]="{'width':'70px'}">
         <ng-template let-op="rowData" pTemplate="body">
-            <button type="button" class="ui-button-danger" pButton (click)="deleterespsecc(op)" icon="fa-times"></button>
+          <button type="button" class="ui-button-danger" pButton (click)="deleterespsecc(op)" icon="fa-times"></button>
         </ng-template>
-    </p-column>
-    <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button></div></p-footer>
-</p-dataTable>
+      </p-column>
+      <p-footer>
+        <div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button></div>
+      </p-footer>
+    </p-dataTable>
 
   </p-tabPanel>
 </p-tabView>
 
 
-<p-dialog header="Responsável" [(visible)]="displayDialog" modal="modal"  width="600" [responsive]="true" [dismissableMask]="true"
+<p-dialog header="Responsável" [(visible)]="displayDialog" modal="modal" width="700" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
-    <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
-        <div class="ui-grid-row">
-            <div class="ui-grid-col-12"><label for="vin">Chefe de Secção</label></div>
-            <p-dropdown [options]="brand1" [style]="{'width':'100%'}"  [(ngModel)]="selected1" #t (onFocus)="carregachefe($event,t.label,t.value)"></p-dropdown>
-        </div>
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12"><label for="vin">Chefe de Secção</label></div>
+      <p-dropdown [options]="brand1" [style]="{'width':'100%'}" [(ngModel)]="selected1" #t (onFocus)="carregachefe($event,t.label,t.value)"></p-dropdown>
     </div>
-     <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
-        <div class="ui-grid-row">
-            <div class="ui-grid-col-12"><label for="vin">Secção</label></div>
-            <p-dropdown [options]="brand2" [style]="{'width':'100%'}"  [(ngModel)]="selected2" #d (onFocus)="carregaseccao($event,d.label,d.value)"></p-dropdown>
-        </div>
+  </div>
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12"><label for="vin">Secção</label></div>
+      <p-dropdown [options]="brand2" scrollHeight="146px" [style]="{'width':'100%'}" [(ngModel)]="selected2" #d (onFocus)="carregaseccao($event,d.label,d.value)"></p-dropdown>
     </div>
-    <p-footer>
-        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button type="button" pButton icon="fa-close" (click)="delete()" label="Delete"></button>
-            <button type="button" pButton icon="fa-check" (click)="save()" label="Save"></button>
-        </div>
-    </p-footer>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
+      <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
+    </div>
+  </p-footer>
 </p-dialog>
+
+<p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>

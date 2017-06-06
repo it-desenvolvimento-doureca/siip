@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from "primeng/primeng";
-
+import { utilizadorService } from "app/utilizadorService";
+import { ConfirmDialogModule, ConfirmationService } from 'primeng/primeng';
 
 @Component({
   selector: 'app-gestao-users',
@@ -34,17 +35,34 @@ export class GestaoUsersComponent implements OnInit {
   selected1: string = "";
   selected2: string = "";
 
-  constructor() { }
+  constructor(private service: utilizadorService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.list1 = [{ name: "F57", op: "1", id: 1 }, { name: "F44", op: "2", id: 2 }, { name: "F33", op: "3", id: 3 }];
-    this.list2 = [{ name: "José", no: "1" }, { name: "Maria", no: "2" }, { name: "Manuel", no: "3" }];
+    this.list2 = [];
+    this.brand2 = [{ label: 'Seleccione Secção', value: "0" }];
+    this.service.getUtilizadoresSilver().subscribe(
+      response => {
+        for (var x in response) {
+          this.list2.push({ name: response[x].RESDES, no: response[x].RESCOD, field: response[x].RESCOD + " - " + response[x].RESDES });
+        }
+        this.list2 = this.list2.slice();
+      },
+      error => console.log(error));
+
+    this.service.getSesoes().subscribe(
+      response => {
+        for (var x in response) {
+          this.brand2.push({ label: response[x].SECLIB, value: response[x].SECCOD });
+        }
+        this.brand2 = this.brand2.slice();
+      },
+      error => console.log(error));
     this.list3 = [];
     this.list4 = [];
     this.list5 = [];
     this.list6 = [];
     this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
-    this.brand2 = [{ label: 'Seleccione Secção', value: "0" }, { label: "Pintura", value: "1" }, { label: "Armazém", value: "2" }];
   }
 
   //inserir o utilizador num perfil
@@ -53,7 +71,7 @@ export class GestaoUsersComponent implements OnInit {
       case "list3":
         if (this.no != "" && this.nome != "") {
           if (!this.list3.find(item => item.no === this.no)) {
-            this.list3.push({ name: this.nome, no: this.no });
+            this.list3.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
             this.list3 = this.list3.slice();
           }
         }
@@ -61,7 +79,7 @@ export class GestaoUsersComponent implements OnInit {
       case "list4":
         if (this.no != "" && this.nome != "") {
           if (!this.list4.find(item => item.no === this.no)) {
-            this.list4.push({ name: this.nome, no: this.no });
+            this.list4.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
             this.brand1.push({ label: this.nome, value: { id: this.no, name: this.nome, code: this.no } });
             this.list4 = this.list4.slice();
             this.brand1 = this.brand1.slice();
@@ -72,7 +90,7 @@ export class GestaoUsersComponent implements OnInit {
       case "list5":
         if (this.no != "" && this.nome != "") {
           if (!this.list5.find(item => item.no === this.no)) {
-            this.list5.push({ name: this.nome, no: this.no });
+            this.list5.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
             this.list5 = this.list5.slice();
           }
         }
@@ -191,9 +209,8 @@ export class GestaoUsersComponent implements OnInit {
     this.displayDialog = false;
   }
 
-  //apaga um campo dos Responsáveis de seccção
-  delete() {
-    this.apagar("list6");
+  //fecha popup
+  cancel() {
     this.displayDialog = false;
   }
 
@@ -250,13 +267,18 @@ export class GestaoUsersComponent implements OnInit {
 
   //eliminar linhas das familias de defeitos
   deleterow(row) {
-
-    for (var x in this.list1) {
-      if (this.list1[x].id == row.id) {
-        this.list1.splice(parseInt(x), 1);
+    this.confirmationService.confirm({
+      message: 'Tem a certeza que pretende apagar esta familia de defeitos?',
+      accept: () => {
+        for (var x in this.list1) {
+          if (this.list1[x].id == row.id) {
+            this.list1.splice(parseInt(x), 1);
+          }
+        }
+        this.list1 = this.list1.slice()
       }
-    }
-    this.list1 = this.list1.slice();
+    });
+    ;
   }
 
   //adicionar linha à tabela familias de defeitos
@@ -273,12 +295,17 @@ export class GestaoUsersComponent implements OnInit {
 
   //eliminar linhas das Responsáveis de cada secção
   deleterespsecc(row) {
-
-    for (var x in this.list6) {
-      if (this.list6[x].id == row.id) {
-        this.list6.splice(parseInt(x), 1);
+    this.confirmationService.confirm({
+      message: 'Tem a certeza que pretende apagar o responsável?',
+      accept: () => {
+        for (var x in this.list6) {
+          if (this.list6[x].id == row.id) {
+            this.list6.splice(parseInt(x), 1);
+          }
+        }
+        this.list6 = this.list6.slice();
       }
-    }
-    this.list6 = this.list6.slice();
+    });
+
   }
 }

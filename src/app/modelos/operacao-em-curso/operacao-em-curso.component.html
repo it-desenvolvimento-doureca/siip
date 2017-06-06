@@ -2,17 +2,17 @@
   <form>
     <div class="form-group">
       <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
-      <input class="form-control"  type="text" readonly />
+      <input class="form-control" type="text" readonly />
     </div>
 
     <div class="form-group">
       <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-      <input class="form-control"  type="text" readonly />
+      <input class="form-control" type="text" readonly />
     </div>
 
     <div class="form-group">
       <label class="control-label " for="subject">Máquina</label>
-      <input class="form-control"  type="text" readonly/>
+      <input class="form-control" type="text" readonly/>
     </div>
 
     <div class="form-group">
@@ -21,12 +21,12 @@
     </div>
     <div class="form-group">
       <label class="control-label " for="name">Funcionário</label>
-      <input class="form-control"  type="text" readonly />
+      <input class="form-control" type="text" readonly />
     </div>
     <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
       <div class="form-group">
         <label class="control-label " for="name">Data Início</label>
-        <input class="form-control"  type="text" readonly />
+        <input class="form-control" type="text" readonly />
       </div>
     </div>
     <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
@@ -45,7 +45,7 @@
     <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
       <div class="form-group">
         <label class="control-label " for="name">Hora Fim</label>
-        <input class="form-control"  type="text" readonly />
+        <input class="form-control" type="text" readonly />
       </div>
     </div>
   </form>
@@ -55,20 +55,18 @@
   <form>
     <div class="form-group">
       <label class="control-label " for="name">Quant. Boas</label>
-      <input value="{{qttboas}}" class="form-control"  type="number" #box min="0" 
-        (change)="updatetotal(box.value)" style="text-align: center;" style="height: 70px; text-align: center; font-size: 20px;" />
+      <input value="{{qttboas}}" class="form-control" type="number" #box min="0" (change)="updatetotal(box.value)" style="text-align: center;"
+        style="height: 70px; text-align: center; font-size: 20px;" />
     </div>
     <i class="icon-plus" style="font-size: 34px;"></i>
     <div class="form-group">
       <label class="control-label " for="name">Total Defeitos</label>
-      <input class="form-control"  type="text" style="text-align: center;" readonly value="{{totaldefeitos}}"
-      />
+      <input class="form-control" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}" />
     </div>
     <i style="font-size: 50px;">=</i>
     <div class="form-group">
       <label class="control-label " for="name">Total Control</label>
-      <input class="form-control" type="text" readonly style="text-align: center;" value="{{totalcontrol}}"
-      />
+      <input class="form-control" type="text" readonly style="text-align: center;" value="{{totalcontrol}}" />
     </div>
     <div class="form-group">
       <label class="control-label " for="name">Quant. OF</label>
@@ -77,7 +75,13 @@
   </form>
 </div>
 <div class="col-md-6 col-md-offset-6" style="float:left;">
-  <div class="col-md-11 col-md-offset-11" style="float:left;">
+  <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
+    <button type="button" class="btn btn-success btn-number" style="cursor: pointer; float:left; width: 100%; margin-bottom: 10px; font-size: 20px;"
+      (click)="togglestates()">
+          <i class="icon-plus"> Registar Defeitos</i>
+  </button>
+  </div>
+  <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
     <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" dataKey="vin">
       <p-header>Lista dos defeitos Registados</p-header>
       <p-column field="vin" header="Código" [sortable]="true"></p-column>
@@ -85,16 +89,11 @@
       <p-column field="brand" header="Quant."></p-column>
     </p-dataTable>
   </div>
-  <div class="col-md-1 col-md-offset-1 nopadding" style="float:left;">
-    <button type="button" class="btn btn-success btn-number" style="margin-left:10px; float:left;" (click)="togglestates()">
-          <i class="icon-plus"></i>
-  </button>
-  </div>
 </div>
 <div class="col-md-12 col-md-offset-12" style="text-align: center; float:left; margin-top:  30px;">
   <button type="button" pButton routerLink="/home" label="CANCELAR" style="float: none;"></button>
   <button type="button" pButton routerLink="/pausa" label="PAUSA" style="float: none;"></button>
-  <button type="button" pButton (click)="cancelar2()" label="ADICIONAR OPERADOR" style="float: none;"></button>
+  <button type="button" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR" style="float: none;"></button>
   <button type="button" pButton (click)="createfile()" label="CONCLUIR" style="float: none;"></button>
 </div>
 
@@ -104,26 +103,48 @@
 <div id="adicionaop">
   <div class="list-group adicionadef" [@movementtrigger]="state" style="display:none; " (clickOutside)="ontogglestates()">
 
-     <form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
-    <p-tabView *ngIf="tabSets">
-      <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
+    <form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
+      <p-tabView *ngIf="tabSets">
+        <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
 
-        <div *ngFor="let item of   getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
-          style="float:left;">
-          <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
-          <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" 
-          />
+          <div *ngFor="let item of   getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
+            style="float:left;">
+            <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
+            <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" />
+          </div>
+
+        </p-tabPanel>
+      </p-tabView>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+          <input class="form-control btn btn-primary" type="submit" [disabled]="!valForm.form.valid" value="Confirmar" style="margin-top: 20px;">
         </div>
-
-      </p-tabPanel>
-    </p-tabView>
-    <p-footer>
-      <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" >
-        <input class="form-control btn btn-primary" type="submit" [disabled]="!valForm.form.valid" value="Confirmar" style="margin-top: 20px;">
-      </div>
-    </p-footer>
-  </form>
+      </p-footer>
+    </form>
 
   </div>
 
 </div>
+
+
+
+<p-dialog header="ADICIONAR OPERADOR" [(visible)]="displayDialog" modal="modal" width="400" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="height: 100px; float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group">
+        <label class="control-label " for="name">PIN DO UTILIZADOR</label>
+        <input class="form-control" type="number" />
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
+      <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+<p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>

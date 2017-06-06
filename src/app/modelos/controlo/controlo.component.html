@@ -22,7 +22,7 @@
     </a>
   </div>
   <p-dataTable [value]="tabela" [rows]="1" class="tabelacontrolo" [globalFilter]="gb" selectionMode="single" [(selection)]="selectedCar2"
-    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect(t)" dataKey="codigo">
+    (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect(t)" dataKey="codigo" scrollable="true" [responsive]="true" [rows]="1">
     <p-column field="codigo0" header="" [style]="{'background':'black'}">
       <ng-template let-col let-row="rowData" pTemplate="body">
         <div class="divtable">
@@ -187,92 +187,92 @@
     <div class="col-md-12 col-md-offset-12" style="float:left; color: black; flex: 0 0 9%;">
       <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Data Início >=</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Data Início >=</label>
+          <p-calendar [(ngModel)]="date1"></p-calendar>
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Data Fim >=</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Data Fim >=</label>
+          <p-calendar [(ngModel)]="date2" ></p-calendar>
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Tempo Prod. >=</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Tempo Prod. >=</label>
+          <input class="form-control" type="time" />
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Ordem Fabrico</label>
+          <label class="control-label requiredField" style="width: 100%; " >Ordem Fabrico</label>
           <input class="form-control" type="text" />
         </div>
 
       </div>
       <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><= Data Início</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " ><= Data Início</label>
+          <p-calendar [(ngModel)]="date3" ></p-calendar>
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><= Data Fim</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " ><= Data Fim</label>
+          <p-calendar [(ngModel)]="date4" ></p-calendar>
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><=Tempo Prod.</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " ><=Tempo Prod.</label>
+          <input class="form-control" type="time" />
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-          <input class="form-control" type="text" />
-        </div>
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Hora Início >=</label>
-          <input class="form-control" type="text" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Hora Fim >=</label>
-          <input class="form-control" type="text" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Quant. >=</label>
-          <input class="form-control" type="text" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Máquina</label>
+          <label class="control-label requiredField" style="width: 100%; " >Operação</label>
           <input class="form-control" type="text" />
         </div>
       </div>
       <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><= Hora Início</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Hora Início >=</label>
+          <input class="form-control" type="time" />
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><= Hora Fim</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Hora Fim >=</label>
+          <input class="form-control" type="time" />
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email"><= Quant.</label>
-          <input class="form-control" type="text" />
+          <label class="control-label requiredField" style="width: 100%; " >Quant. >=</label>
+          <input class="form-control" type="number" />
         </div>
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Funcionário</label>
+          <label class="control-label requiredField" style="width: 100%; " >Máquina</label>
           <input class="form-control" type="text" />
         </div>
       </div>
       <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Referência</label>
+          <label class="control-label requiredField" style="width: 100%; " ><= Hora Início</label>
+          <input class="form-control" type="time" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " ><= Hora Fim</label>
+          <input class="form-control" type="time" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " ><= Quant.</label>
+          <input class="form-control" type="number" />
+        </div>
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " >Funcionário</label>
+          <input class="form-control" type="text" />
+        </div>
+      </div>
+      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="form-group">
+          <label class="control-label requiredField" style="width: 100%; " >Referência</label>
           <input class="form-control" type="text" />
         </div>
       </div>
       <div class="col-md-9 col-md-offset-9 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Designação da Referência</label>
+          <label class="control-label requiredField" style="width: 100%; " >Designação da Referência</label>
           <input class="form-control" type="text" />
         </div>
       </div>
       <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
         <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; " for="email">Estado</label>
+          <label class="control-label requiredField" style="width: 100%; " >Estado</label>
           <input class="form-control" type="text" />
         </div>
       </div>

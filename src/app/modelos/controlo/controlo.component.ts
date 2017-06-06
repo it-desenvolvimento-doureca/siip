@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, trigger, state, style, transition, animate } from '@angular/core';
 import { DataTable } from "primeng/primeng";
+import {CalendarModule} from 'primeng/primeng';
 
 @Component({
   selector: 'app-controlo',

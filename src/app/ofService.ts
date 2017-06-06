@@ -11,17 +11,59 @@ export class ofService {
     constructor(private http: Http) { }
 
 
-    getOF() {
+    getOF(ofnum) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/silver/' + ofnum + '';
         return this.http
-            .get('assets/of.json')
-            .map((res: Response) => res.json().data)
+            .get(url)
+            .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    getOP() {
+    getOP(ofanumenr) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/operacao/' + ofanumenr + '';
         return this.http
-            .get('assets/op.json')
-            .map((res: Response) => res.json().data)
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getAllOP() {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allop';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getMaq(SECNUMENR) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/maquina/' + SECNUMENR + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getAllMaq() {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allmaquina/';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getTipoFalta() {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/tipofaltas';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getRef(OFANUMENR) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/referencias/' + OFANUMENR + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
 }

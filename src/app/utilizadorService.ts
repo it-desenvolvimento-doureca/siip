@@ -10,7 +10,7 @@ import 'rxjs/add/operator/catch';
 export class utilizadorService {
 
     handleError: any;
-    teste: any[] = [];
+    
     private headers = new Headers({ 'Content-Type': 'application/json' });
 
     constructor(private http: Http) { }
@@ -39,8 +39,26 @@ export class utilizadorService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    getUtilizadoresSilver() {
+        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/users`;
+        return this.http
+            .get(url)
+            .map(this.extractData)
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getSesoes() {
+        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/sessoes`;
+        return this.http
+            .get(url)
+            .map(this.extractData)
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+
+
     private extractData(res: Response) {
-    let body = res.json();
-    return body;
-  }
+        let body = res.json();
+        return body;
+    }
 }

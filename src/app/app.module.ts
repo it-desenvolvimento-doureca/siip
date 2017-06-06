@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule } from 'primeng/primeng';
+import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule, CalendarModule } from 'primeng/primeng';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './modelos/login/login.component';
 import { GestaoUsersComponent } from './modelos/gestao-users/gestao-users.component';
@@ -20,6 +20,7 @@ import 'rxjs/add/operator/toPromise';
 import { OperacaoEmCursoMultirefComponent } from './modelos/operacao-em-curso-multiref/operacao-em-curso-multiref.component';
 import { ofService } from "app/ofService";
 import { ControloComponent } from './modelos/controlo/controlo.component';
+import {ConfirmDialogModule,ConfirmationService} from 'primeng/primeng';
 
 const routes: Routes = [
   {
@@ -99,9 +100,11 @@ const routes: Routes = [
     ButtonModule,
     TabViewModule,
     PickListModule,
+    CalendarModule,
+    ConfirmDialogModule,
     [RouterModule.forRoot(routes)]
   ],
-  providers: [LoginService, utilizadorService, ofService],
+  providers: [ConfirmationService,LoginService, utilizadorService, ofService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

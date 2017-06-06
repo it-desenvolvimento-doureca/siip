@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, trigger, state, style, transition, animate } from '@angular/core';
+import { Component, OnInit, Input, trigger, state, style, transition, animate, ViewChild } from '@angular/core';
 import { Message, SelectItem } from 'primeng/primeng'
 import { ofService } from "app/ofService";
 
@@ -20,6 +20,8 @@ import { ofService } from "app/ofService";
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    input_class: string;
+    display3: boolean = false;
     operacao: SelectItem[];
     maquina: SelectItem[];
     cod_ope = "";
@@ -36,53 +38,94 @@ export class NovaOperacaoComponent implements OnInit {
     num_of = "";
     bt_class = "btn-primary";
     selected = "";
+    spinner = false;
+    refresh = true;
+    observacoes = "";
+    selectedmaq = "";
+    displaybtref = true;
+    @ViewChild('inputFocous') inputFocous: any;
+
     constructor(private service: ofService) {
         this.operacao = [];
 
     }
 
     ngOnInit() {
+        this.inputFocous.nativeElement.focus();
+        this.referencias = [];
 
-        this.referencias = [
-            { "codigo": "COD01", "design": "DESIGN01" },
-            { "codigo": "COD02", "design": "DESIGN02" },
-            { "codigo": "COD03", "design": "DESIGN03" },
-            { "codigo": "COD04", "design": "DESIGN04" },
-        ];
+        this.novaopera = [];
+        this.service.getAllOP().subscribe(
+            response => {
+                for (var x in response) {
 
-        this.novaopera = [
-            { "codigoop": "0004", "design": "OPERA01", "zona": "1"},
-            { "codigoop": "0005", "design": "OPERA02", "zona": "1" },
-            { "codigoop": "0006", "design": "OPERA03" , "zona": "1"},
-            { "codigoop": "0007", "design": "OPERA04" , "zona": "1"},
-        ];
+                    this.novaopera.push({ codigoop: response[x].OPECOD, design: response[x].OPEDES, SECNUMENR1: response[x].SECNUMENR1 });
+                }
+                this.novaopera = this.novaopera.slice();
+            },
+            error => console.log(error));
 
     }
 
     //verificar se existe a OF
     pesquisaof() {
-        this.service.getOF().subscribe(
-            response => {
-                this.operacao = [];
-                this.readonly_op = true;
-                this.readonly_maq = true;
-                this.bt_class = "btn-primary";
-                var first = true;
-                for (var x in response) {
-                    if (response[x].codigo == this.num_of) {
+        this.bt_class = "btn-primary";
+        this.refresh = false;
+        this.spinner = true;
+        this.referencias = [];
+        this.displaybtref = true;
+        this.input_class = "";
+        if (this.num_of != "") {
+            this.service.getOF(this.num_of).subscribe(
+                response => {
+                    this.operacao = [];
+                    this.readonly_op = true;
+                    this.readonly_maq = true;
+                    var first = true;
+                    var count = Object.keys(response).length;
+                    //se existir uma of vai preencher combobox operações
+                    if (count > 0) {
+                        this.observacoes = response[0].ofref;
+                        //preenche tabela referencias
+                        this.service.getRef(response[0].ofanumenr).subscribe(
+                            response2 => {
+                                for (var x in response2) {
+                                    this.referencias.push({ codigo: response2[x].PROREF, design: response2[x].PRODES1 });
+                                }
+                                this.referencias = this.referencias.slice();
+                                if (this.referencias.length > 1) {
+                                    this.displaybtref = false;
+                                }
+                            },
+                            error => console.log(error));
 
-                        if (first) this.operacao.push({ label: "Seleccione a Operação", value: null });
-                        first = false;
-                        this.operacao.push({ label: response[x].descricao, value: response[x].zona });
-                    }
-                    if (this.operacao.length > 0) {
-                        this.readonly_op = false;
+                        //preenche comobobox operações
+                        this.service.getOP(response[0].ofanumenr).subscribe(
+                            response1 => {
+                                for (var x in response1) {
+                                    if (first) this.operacao.push({ label: "Seleccione a Operação", value: "0" });
+                                    first = false;
+                                    this.operacao.push({ label: response1[x].OPEDES, value: { OPECOD: response1[x].OPECOD, SECNUMENR1: response1[x].SECNUMENR1 } });
+                                }
+                                this.readonly_op = false;
+                                this.selected = "0";
+                            },
+                            error => console.log(error));
                     } else {
                         this.bt_class = "btn-danger";
                     }
-                }
-            },
-            error => console.log(error));
+                    this.refresh = true;
+                    this.spinner = false;
+
+                },
+                error => console.log(error));
+        } else {
+            this.input_class = "input_class";
+            this.bt_class = "btn-danger";
+            this.refresh = true;
+            this.spinner = false;
+        }
+
     }
     //Seleccionar uma referência da Tabela Referência
     onRowSelect(event) {
@@ -95,23 +138,44 @@ export class NovaOperacaoComponent implements OnInit {
         this.display2 = false;
     }
 
+    //fechar popup que abre depois de clicar em "Iniciar Trabalho"
+    cancelarinic() {
+        this.display3 = false;
+    }
+
     //ao alterar a operação preenche SelectItem das maquinas
     carregamaquinas(event) {
-        this.cod_ope = event;
-        this.service.getOP().subscribe(
+        this.service.getMaq(event.SECNUMENR1).subscribe(
             response => {
                 this.maquina = [];
                 this.readonly_maq = true;
-                var first = true;
+                var find = false;
                 for (var x in response) {
-                    if (response[x].codigo == this.cod_ope) {
-                        if (first) this.maquina.push({ label: "Seleccione a Máquina", value: null });
-                        first = false;
-                        this.maquina.push({ label: response[x].descricao, value: response[x].codigo });
+                    if (response[x].ssecod == "000") {
+                        this.maquina.push({ label: response[x].SSEDES, value: response[x].ssecod });
+                        find = true;
+                    } else {
+                        this.selectedmaq = response[x].ssecod;
                     }
-                    if (this.maquina.length > 0) {
-                        this.readonly_maq = false;
-                    }
+                }
+                //lista todas as maquinas se op. não utilizar mão de obra
+                if (!find) {
+                    this.service.getAllMaq().subscribe(
+                        response3 => {
+                            this.readonly_maq = true;
+
+                            for (var x in response3) {
+                                this.maquina.push({ label: response3[x].SSEDES, value: response3[x].ssecod });
+                            }
+                            this.maquina = this.maquina.slice();
+                            if (this.maquina.length > 0) {
+                                this.readonly_maq = false;
+                            }
+                        },
+                        error => console.log(error));
+                }
+                if (this.maquina.length > 0) {
+                    this.readonly_maq = false;
                 }
             },
             error => console.log(error));
@@ -136,9 +200,14 @@ export class NovaOperacaoComponent implements OnInit {
     //ao seleccionar uma nova operação da tabela, ela é adicionada ao SelectItem
     onRowSelect3(event) {
         this.state = 'secondpos';
-        this.selected = event.data.codigoop;
-        this.operacao.push({ label: event.data.codigoop, value: event.data.codigoop });
-        this.carregamaquinas(event.data.zona);
+        if (!this.operacao.find(item => item.value.OPECOD === event.data.codigoop)) {
+            this.operacao.push({ label: event.data.design, value: { OPECOD: event.data.codigoop, SECNUMENR1: event.data.SECNUMENR1 } });
+            this.selected = this.operacao[this.operacao.length - 1].value;
+        } else {
+            this.selected = this.operacao.find(item => item.value.OPECOD === event.data.codigoop).value;
+        }
+
+        this.carregamaquinas(event.data);
         // this.operacao.push({ label: event.data.vin, value: { id: 5, name: 'Paris', code: event.data.vin } });
     }
 
@@ -148,6 +217,14 @@ export class NovaOperacaoComponent implements OnInit {
             this.display2 = true;
         }
 
+    }
+
+    //Quando clica no botão inciar trabalho
+
+    iniciartrab() {
+        if(this.num_of != "" && this.selected != "" && this.selectedmaq != ""){
+            this.display3 = true;
+        }
     }
 
 }

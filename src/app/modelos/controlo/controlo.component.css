@@ -41,4 +41,5 @@
 
 .nopadding {
    padding-left: 0 !important;
+   max-height: 264px;
 }

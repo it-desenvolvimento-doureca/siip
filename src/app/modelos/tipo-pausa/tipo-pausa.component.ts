@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
+import { ofService } from "app/ofService";
 
 @Component({
   selector: 'app-tipo-pausa',
@@ -8,11 +9,18 @@ import {Location} from '@angular/common';
 })
 export class TipoPausaComponent implements OnInit {
   pausas: any[];
-  constructor(private _location: Location) { }
+  constructor(private _location: Location, private service: ofService) { }
 
   ngOnInit() {
-    //this.pausas = ["Almoço", "Ida Casa de Banho", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche", "Lanche"];
-    this.pausas = [{ design: "Almoço", id: "1" }, { design: "Ida Casa de Banho", id: "2" }, { design: "Lanche", id: "3" }];
+    this.pausas = [];
+    this.service.getTipoFalta().subscribe(
+      response => {
+        for (var x in response) {
+          this.pausas.push({ design: response[x].arrlib, id: response[x].numenr });
+        }
+        this.pausas = this.pausas.slice();
+      },
+      error => console.log(error));
   }
 
   pausa(item) {

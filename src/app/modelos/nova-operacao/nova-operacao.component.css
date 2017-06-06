@@ -5,7 +5,6 @@
     top:0;
     height: 100%;
     background: #f7f7f7;
-    padding-top:  5%;
     z-index: 2;
 }
 
@@ -21,3 +20,12 @@
     background: #c0c0c0 !important;
 }
 
+
+.ui-datatable .ui-datatable-scrollable-body {
+    min-height: 0;
+    max-height: 100% !important;
+}
+
+.input_class{
+        border: solid 2px #d9534f;
+}
