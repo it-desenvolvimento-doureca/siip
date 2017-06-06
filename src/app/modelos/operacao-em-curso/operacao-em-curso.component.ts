@@ -19,7 +19,12 @@ import { ConfirmationService } from "primeng/primeng";
   ]
 })
 export class OperacaoEmCursoComponent implements OnInit {
+<<<<<<< HEAD
   adicionadef: boolean = true;
+=======
+
+  display: boolean = false;
+>>>>>>> origin/master
   tabSets: any[];
   cols: any[];
   result: string = "";
@@ -46,6 +51,13 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   }
 
+<<<<<<< HEAD
+=======
+  //mostra lista de defeitos
+  showDialog() {
+    this.display = true;
+  }
+>>>>>>> origin/master
 
   //ver lista de defeitos apartir da familia
   getinputs(vars) {
@@ -82,6 +94,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
   }
 
+<<<<<<< HEAD
   //ao clicar no botão +, mostra tabela com mais operações
   togglestates() {
     this.state = (this.state === 'firstpos' ? 'secondpos' : 'firstpos');
@@ -117,6 +130,23 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.displayDialog = true;
       }
     });
+=======
+  //só permite introduzir números no input
+  onlynumbers(value: String, event: any) {
+
+    const pattern = /[0-9\ ]/;
+    let inputChar = String.fromCharCode(event.charCode);
+
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+    }
+  }
+
+  //atualiza totalcontrol
+  updatetotal(num: number) {
+    this.qttboas = num;
+    this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
+>>>>>>> origin/master
   }
 
 }

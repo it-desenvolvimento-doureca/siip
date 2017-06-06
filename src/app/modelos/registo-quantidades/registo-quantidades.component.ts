@@ -16,6 +16,17 @@ export class RegistoQuantidadesComponent implements OnInit {
   qttboas: number = 0;
   ref: any[];
   ref_name = "";
+<<<<<<< HEAD
+=======
+
+  ngOnInit() {
+    this.cols2 = [
+      { "vin": "ref001", "brand": "design1" },
+      { "vin": "ref002", "brand": "design2" },
+      { "vin": "ref003", "brand": "design3" },
+      { "vin": "ref004", "brand": "design4" }
+    ];
+>>>>>>> origin/master
 
   constructor() { };
   ngOnInit() {
@@ -57,18 +68,32 @@ export class RegistoQuantidadesComponent implements OnInit {
 
   //passa para a referência seguinte
   nextItem() {
+<<<<<<< HEAD
     this.i = this.i + 1;
     this.i = this.i % this.ref.length;
     this.ref_name = this.ref[this.i];
+=======
+    this.i = this.i + 1; 
+    this.i = this.i % this.ref.length; 
+    this.ref_name = this.ref[this.i]; 
+>>>>>>> origin/master
   }
 
   //passa para a referência anterior
   prevItem() {
+<<<<<<< HEAD
     if (this.i === 0) {
       this.i = this.ref.length;
     }
     this.i = this.i - 1;
     this.ref_name = this.ref[this.i];
+=======
+    if (this.i === 0) { 
+      this.i = this.ref.length; 
+    }
+    this.i = this.i - 1; 
+    this.ref_name = this.ref[this.i]; 
+>>>>>>> origin/master
   }
 
   //faz o calculo do total de defeitos e insere na tabela "lista dos defeitos rejeitados"

@@ -55,8 +55,13 @@
   <form>
     <div class="form-group">
       <label class="control-label " for="name">Quant. Boas</label>
+<<<<<<< HEAD
       <input value="{{qttboas}}" class="form-control" type="number" #box min="0" (change)="updatetotal(box.value)" style="text-align: center;"
         style="height: 70px; text-align: center; font-size: 20px;" />
+=======
+      <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="onlynumbers(box.value,$event)"
+        (change)="updatetotal(box.value)" style="text-align: center;" style="height: 70px; text-align: center;" />
+>>>>>>> origin/master
     </div>
     <i class="icon-plus" style="font-size: 34px;"></i>
     <div class="form-group">
@@ -75,6 +80,7 @@
   </form>
 </div>
 <div class="col-md-6 col-md-offset-6" style="float:left;">
+<<<<<<< HEAD
   <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
     <button type="button" class="btn btn-success btn-number" style="cursor: pointer; float:left; width: 100%; margin-bottom: 10px; font-size: 20px;"
       (click)="togglestates()">
@@ -82,6 +88,9 @@
   </button>
   </div>
   <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
+=======
+  <div class="col-md-11 col-md-offset-11" style="float:left;">
+>>>>>>> origin/master
     <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" dataKey="vin">
       <p-header>Lista dos defeitos Registados</p-header>
       <p-column field="vin" header="Código" [sortable]="true"></p-column>
@@ -99,6 +108,7 @@
 
 
 
+<<<<<<< HEAD
 
 <div id="adicionaop">
   <div class="list-group adicionadef" [@movementtrigger]="state" style="display:none; " (clickOutside)="ontogglestates()">
@@ -118,6 +128,13 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
           <input class="form-control btn btn-primary" type="submit" [disabled]="!valForm.form.valid" value="Confirmar" style="margin-top: 20px;">
+=======
+        <div *ngFor="let item of   getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
+          style="float:left;">
+          <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
+          <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="onlynumbers(inputvalue.value,$event)"
+          />
+>>>>>>> origin/master
         </div>
       </p-footer>
     </form>
