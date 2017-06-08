@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { SelectItem } from "primeng/primeng";
 import { utilizadorService } from "app/utilizadorService";
 import { ConfirmDialogModule, ConfirmationService } from 'primeng/primeng';
+import { RP_CONF_UTZ_PERF } from "app/modelos/entidades/RP_CONF_UTZ_PERF";
+import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
+import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
+import { RP_CONF_CHEF_SEC } from "app/modelos/entidades/RP_CONF_CHEF_SEC";
+import { ofService } from "app/ofService";
 
 @Component({
   selector: 'app-gestao-users',
@@ -11,7 +16,7 @@ import { ConfirmDialogModule, ConfirmationService } from 'primeng/primeng';
 export class GestaoUsersComponent implements OnInit {
 
   listw1: Response;
-  listid = "";
+  listid: number;
   seccao_no = "";
   chefe_seccao_no = "";
   seccao = "";
@@ -20,6 +25,7 @@ export class GestaoUsersComponent implements OnInit {
   no3: any;
   no4: any;
   no5: any;
+  fam: SelectItem[];
   list1: any[];
   list2: any[];
   list3: any[];
@@ -35,10 +41,18 @@ export class GestaoUsersComponent implements OnInit {
   selected1: string = "";
   selected2: string = "";
 
-  constructor(private service: utilizadorService, private confirmationService: ConfirmationService) { }
+  constructor(private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
-    this.list1 = [{ name: "F57", op: "1", id: 1 }, { name: "F44", op: "2", id: 2 }, { name: "F33", op: "3", id: 3 }];
+    this.list1 = [];
+    this.fam = [];
+    this.ofservice.getFamilias().subscribe(
+      response =>{
+         for (var x in response) {
+          this.fam.push({ label: response[x].fam, value: response[x].fam });
+        }
+      },
+      error => console.log(error));
     this.list2 = [];
     this.brand2 = [{ label: 'Seleccione Secção', value: "0" }];
     this.service.getUtilizadoresSilver().subscribe(
@@ -58,40 +72,50 @@ export class GestaoUsersComponent implements OnInit {
         this.brand2 = this.brand2.slice();
       },
       error => console.log(error));
-    this.list3 = [];
-    this.list4 = [];
-    this.list5 = [];
-    this.list6 = [];
-    this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
+    this.preenchetabelas();
+    this.preenche_chefe();
   }
 
   //inserir o utilizador num perfil
   insere(list) {
+    var conf_utiliz = new RP_CONF_UTZ_PERF;
     switch (list) {
+      //Operador
       case "list3":
         if (this.no != "" && this.nome != "") {
           if (!this.list3.find(item => item.no === this.no)) {
-            this.list3.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
-            this.list3 = this.list3.slice();
+            conf_utiliz.id_UTZ = this.no;
+            conf_utiliz.perfil = "O";
+            conf_utiliz.nome_UTZ = this.nome;
+            this.conf_service.create(conf_utiliz).then(() => {
+              this.preenchetabelas();
+            });
           }
         }
         break;
+      //Gestão
       case "list4":
         if (this.no != "" && this.nome != "") {
           if (!this.list4.find(item => item.no === this.no)) {
-            this.list4.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
-            this.brand1.push({ label: this.nome, value: { id: this.no, name: this.nome, code: this.no } });
-            this.list4 = this.list4.slice();
-            this.brand1 = this.brand1.slice();
-
+            conf_utiliz.id_UTZ = this.no;
+            conf_utiliz.perfil = "G";
+            conf_utiliz.nome_UTZ = this.nome;
+            this.conf_service.create(conf_utiliz).then(() => {
+              this.preenchetabelas();
+            });
           }
         }
         break;
+      //Administrador
       case "list5":
         if (this.no != "" && this.nome != "") {
           if (!this.list5.find(item => item.no === this.no)) {
-            this.list5.push({ name: this.nome, no: this.no, field: this.no + " - " + this.nome });
-            this.list5 = this.list5.slice();
+            conf_utiliz.id_UTZ = this.no;
+            conf_utiliz.perfil = "A";
+            conf_utiliz.nome_UTZ = this.nome;
+            this.conf_service.create(conf_utiliz).then(() => {
+              this.preenchetabelas();
+            });
           }
         }
         break;
@@ -103,50 +127,37 @@ export class GestaoUsersComponent implements OnInit {
     switch (list) {
       case "list3":
         if (this.no3 != "") {
-          for (var x in this.list3) {
-            if (this.list3[x].no == this.no3) {
-              this.list3.splice(parseInt(x), 1);
-            }
-          }
-          this.list3 = this.list3.slice();
+          this.conf_service.delete(this.no3).then(() => {
+            this.preenchetabelas();
+          });
+          this.no3 = "";
         }
         break;
       case "list4":
-        this.brand1 = [];
-        this.brand1.push({ label: 'Seleccione Chefe', value: "0" });
         if (this.no4 != "") {
-          for (var x in this.list4) {
-            if (this.list4[x].no == this.no4) {
-              this.list4.splice(parseInt(x), 1);
-            } else {
-              this.brand1.push({ label: this.list4[x].name, value: this.no });
-            }
-          }
-          this.list4 = this.list4.slice();
-          this.brand1 = this.brand1.slice();
-
+          this.conf_service.delete(this.no4).then(() => {
+            this.preenchetabelas();
+          });
+          this.no4 = "";
         }
         break;
       case "list5":
         if (this.no5 != "") {
-          for (var x in this.list5) {
-            if (this.list5[x].no == this.no5) {
-              this.list5.splice(parseInt(x), 1);
-            }
-          }
-          this.list5 = this.list5.slice();
-
+          this.conf_service.delete(this.no5).then(() => {
+            this.preenchetabelas();
+          });
+          this.no5 = "";
         }
         break;
       case "list6":
-        if (this.listid != "") {
+        if (this.listid != 0) {
           for (var x in this.list6) {
             if (this.list6[x].id == this.listid) {
               this.list6.splice(parseInt(x), 1);
             }
           }
           this.list6 = this.list6.slice();
-          this.listid = "";
+          this.listid = 0;
         }
         break;
     }
@@ -158,18 +169,18 @@ export class GestaoUsersComponent implements OnInit {
     this.nome = event.data.name;
   }
   onRowSelect3(event) {
-    this.no3 = event.data.no;
+    this.no3 = event.data.id;
   }
   onRowSelect4(event) {
-    this.no4 = event.data.no;
+    this.no4 = event.data.id;
   }
   onRowSelect5(event) {
-    this.no5 = event.data.no;
+    this.no5 = event.data.id;
   }
 
   //popup para adicionar responsáveis a uma seccão.
   showDialogToAdd() {
-    this.listid = "";
+    this.listid = 0;
     this.selected1 = "0";
     this.selected2 = "0";
     this.chefe_seccao = "";
@@ -180,23 +191,27 @@ export class GestaoUsersComponent implements OnInit {
 
   //guarda os dados do chefe de seccão
   save() {
-
+    var chef_utiliz = new RP_CONF_CHEF_SEC;
     if (this.novochefe) {
       if (this.chefe_seccao != "" && this.seccao != "") {
-        let num = parseInt(this.getmaxid()) + 1;
-        this.list6.push({ name: this.chefe_seccao, seccao: this.seccao, seccao_no: this.seccao_no, id: num, no: this.chefe_seccao_no });
+        chef_utiliz.id_UTZ = this.chefe_seccao_no;
+        chef_utiliz.sec_NUM = this.seccao_no;
+        chef_utiliz.nome_SEC = this.seccao;
+        chef_utiliz.nome_UTZ = this.chefe_seccao;
+        this.chef_service.create(chef_utiliz).then(() => {
+          this.preenche_chefe();
+        });
       }
     } else {
       if (this.chefe_seccao != "" && this.seccao != "") {
-        for (var x in this.list6) {
-
-          if (this.list6[x].id == this.listid) {
-            this.list6[x].name = this.chefe_seccao;
-            this.list6[x].no = this.chefe_seccao_no;
-            this.list6[x].seccao = this.seccao;
-            this.list6[x].seccao_no = this.seccao_no;
-          }
-        }
+        chef_utiliz.id_UTZ = this.chefe_seccao_no;
+        chef_utiliz.sec_NUM = this.seccao_no;
+        chef_utiliz.nome_SEC = this.seccao;
+        chef_utiliz.nome_UTZ = this.chefe_seccao;
+        chef_utiliz.id_CONF_CHEF_SEC = this.listid;
+        this.chef_service.update(chef_utiliz).then(() => {
+          this.preenche_chefe();
+        });
       }
     }
 
@@ -204,8 +219,7 @@ export class GestaoUsersComponent implements OnInit {
     this.seccao = "";
     this.seccao_no = "";
     this.chefe_seccao_no = "";
-    this.listid == "";
-    this.list6 = this.list6.slice();
+    this.listid = 0;
     this.displayDialog = false;
   }
 
@@ -225,7 +239,6 @@ export class GestaoUsersComponent implements OnInit {
     this.seccao_no = event.data.seccao_no;
     this.listid = event.data.id;
     this.displayDialog = true;
-
   }
 
   //carregar dados do chefe 
@@ -283,6 +296,7 @@ export class GestaoUsersComponent implements OnInit {
 
   //adicionar linha à tabela familias de defeitos
   AddFamDef() {
+    console.log(this.list1);
     var x = "0";
     if (this.list1.length > 0) {
       x = Math.max.apply(Math, this.list1.map(function (o) { return o.id; }));
@@ -298,14 +312,58 @@ export class GestaoUsersComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Tem a certeza que pretende apagar o responsável?',
       accept: () => {
-        for (var x in this.list6) {
-          if (this.list6[x].id == row.id) {
-            this.list6.splice(parseInt(x), 1);
-          }
-        }
-        this.list6 = this.list6.slice();
+        this.chef_service.delete(row.id).then(() => {
+          this.preenche_chefe();
+        });
       }
     });
+
+  }
+
+  //atualiza as tabelas dos acessos
+  preenchetabelas() {
+    this.list3 = [];
+    this.list4 = [];
+    this.list5 = [];
+    this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
+
+    this.conf_service.getAll().subscribe(
+      response => {
+        for (var x in response) {
+          switch (response[x].perfil) {
+            case "O":
+              this.list3.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
+              break;
+            case "G":
+              this.list4.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
+              this.brand1.push({ label: response[x].nome_UTZ, value: response[x].id_UTZ.trim() });
+              break;
+            case "A":
+              this.list5.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
+              break;
+          }
+
+        }
+
+        this.list3 = this.list3.slice();
+        this.list4 = this.list4.slice();
+        this.list5 = this.list5.slice();
+        this.brand1 = this.brand1.slice();
+      },
+      error => console.log(error));
+  }
+
+  preenche_chefe() {
+    this.list6 = [];
+    this.chef_service.getAll().subscribe(
+      response => {
+        for (var x in response) {
+          this.list6.push({ name: response[x].nome_UTZ, seccao: response[x].nome_SEC, seccao_no: response[x].sec_NUM.trim(), id: response[x].id_CONF_CHEF_SEC, no: response[x].id_UTZ.trim() });
+        }
+        this.list6 = this.list6.slice();
+      },
+      error => console.log(error));
+
 
   }
 }

@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="row">
+       
+        <div class="col-md-9 col-lg-10 phone">
+            <div class="row1">
+                <div class="col-md-12">
+                    <div class="num-pad">
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(1)" label="1" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(2)" label="2" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(3)" label="3" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(4)" label="4" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(5)" label="5" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(6)" label="6" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(7)" label="7" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(8)" label="8" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(9)" label="9" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append(0)" label="0" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num num1" (click)="undo()" label="APAGAR" pButton></button>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix">
+            </div>
+            <input readonly type="text" name="name" id="telNumber" #box (keypress)="append1(box.value,$event)" class="form-control tel"
+                value="{{ operation }}" maxlength="4" />
+        </div>
+    </div>
+</div>
+
+<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center;">
+    <strong>É O(A) OPERADOR(A): {{ name }}?</strong>
+    <br>
+    <br>
+    <button (click)="redirect()" class="btn btn-success btn-recreate btn-lg" type="button">SIM</button>
+    <button (click)="reset()" class="btn btn-danger btn-destroy btn-lg" type="button" style="margin-left: 30px;">NÃO</button>
+
+
+</div>

@@ -2,7 +2,11 @@
   <p-tabPanel header="Famílias de defeitos">
 
     <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true" [editable]="true" (onEdit)="editar($event)">
-      <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true"></p-column>
+      <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true" [style]="{'overflow':'visible'}">
+        <ng-template let-col let-data="rowData" pTemplate="editor">
+          <p-dropdown [(ngModel)]="data[col.field]" [options]="fam" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></p-dropdown>
+        </ng-template>
+      </p-column>
       <p-column field="op" header="Operações permitidas" [editable]="true"></p-column>
       <p-column styleClass="col-button" [style]="{'width':'70px'}">
         <ng-template let-op="rowData" pTemplate="body">

@@ -17,10 +17,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Angular2FontAwesomeModule } from 'angular2-font-awesome/angular2-font-awesome';
 import { utilizadorService } from "app/utilizadorService";
 import 'rxjs/add/operator/toPromise';
-import { OperacaoEmCursoMultirefComponent } from './modelos/operacao-em-curso-multiref/operacao-em-curso-multiref.component';
 import { ofService } from "app/ofService";
 import { ControloComponent } from './modelos/controlo/controlo.component';
 import {ConfirmDialogModule,ConfirmationService} from 'primeng/primeng';
+import { PageloginComponent } from './modelos/pagelogin/pagelogin.component';
+import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
+import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
 
 const routes: Routes = [
   {
@@ -35,10 +37,6 @@ const routes: Routes = [
   {
     path: 'operacao-em-curso',
     component: OperacaoEmCursoComponent,
-    canActivate: [LoginService]
-  }, {
-    path: 'operacao-em-curso-multiref',
-    component: OperacaoEmCursoMultirefComponent,
     canActivate: [LoginService]
   },
   {
@@ -84,8 +82,8 @@ const routes: Routes = [
     RegistoQuantidadesComponent,
     OperacaoEmCursoComponent,
     LoginComponent,
-    OperacaoEmCursoMultirefComponent,
-    ControloComponent
+    ControloComponent,
+    PageloginComponent
   ],
   imports: [
     BrowserModule,
@@ -104,7 +102,13 @@ const routes: Routes = [
     ConfirmDialogModule,
     [RouterModule.forRoot(routes)]
   ],
-  providers: [ConfirmationService,LoginService, utilizadorService, ofService],
+  providers: [ConfirmationService,
+  LoginService, 
+  utilizadorService, 
+  ofService,
+  RPCONFUTZPERFService,
+  RPCONFCHEFSECService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

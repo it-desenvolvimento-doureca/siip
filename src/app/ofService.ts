@@ -43,6 +43,14 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+     getFamilias() {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/familias/';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     getAllMaq() {
         const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allmaquina/';
         return this.http

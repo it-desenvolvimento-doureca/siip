@@ -19,14 +19,9 @@
 
     <div class="form-group">
       <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-<<<<<<< HEAD
       <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)"
         [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
       <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
-=======
-      <p-dropdown (onChange)="carregamaquinas($event)" [options]="cities" [style]="{'width':'80%'}"></p-dropdown>
-      <button type="button" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
->>>>>>> origin/master
           <i class="icon-plus"></i>
       </button>
     </div>
@@ -38,7 +33,7 @@
 
     <div class="form-group">
       <label class="control-label " for="message">Observações</label>
-      <textarea class="form-control" cols="40" id="message" name="message" rows="5" readonly>{{observacoes}}</textarea>
+      <textarea class="form-control" cols="20" id="message" name="message" rows="4" readonly>{{observacoes}}</textarea>
     </div>
   </form>
 </div>
@@ -60,7 +55,6 @@
   <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA" style="float:none;"></button>
 </div>
 
-<<<<<<< HEAD
 <div id="adicionaop">
   <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
     <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
@@ -69,14 +63,6 @@
     </div>
     <p-dataTable [value]="novaopera" selectionMode="single"  (onRowSelect)="onRowSelect3($event)"
       [globalFilter]="gb" #dt dataKey="codigoop" scrollable="true" scrollHeight="400px" [responsive]="true" [rows]="10" >
-=======
-<!--Test -->
-<div id="adicionaop">
-  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
-
-    <p-dataTable [value]="cols2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect3($event)" (onRowUnselect)="onRowUnselect($event)"
-      dataKey="vin">
->>>>>>> origin/master
       <p-header>Operações</p-header>
       <p-column field="codigoop" header="Código" [sortable]="true"></p-column>
       <p-column field="design" header="Designação"></p-column>
@@ -104,7 +90,6 @@
       <button type="button" pButton (click)="cancelar()" label="PREPARAÇÃO" style="float: none;"></button>
       <button type="button" pButton (click)="cancelar()" label="EXECUÇÃO" style="float: none;"></button>
       <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none;"></button>
-<<<<<<< HEAD
     </div>
   </p-footer>
 </p-dialog>
@@ -123,8 +108,6 @@
       <button type="button" pButton (click)="cancelarinic()" label="PREPARAÇÃO" style="float: none;"></button>
       <button type="button" pButton (click)="cancelarinic()" label="EXECUÇÃO" style="float: none;"></button>
       <button type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none;"></button>
-=======
->>>>>>> origin/master
     </div>
   </p-footer>
 </p-dialog>

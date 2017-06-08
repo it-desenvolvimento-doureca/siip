@@ -29,13 +29,8 @@ export class NovaOperacaoComponent implements OnInit {
     display2: boolean = false;
     state: string = 'secondpos';
     adicionaop = true;
-<<<<<<< HEAD
     referencias: any[];
     novaopera: any[];
-=======
-    cols: any[];
-    cols2: any[];
->>>>>>> origin/master
     novaoperacao = "";
     message = "";
     readonly_op: boolean = true;
@@ -56,7 +51,6 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     ngOnInit() {
-<<<<<<< HEAD
         this.inputFocous.nativeElement.focus();
         this.referencias = [];
 
@@ -64,30 +58,6 @@ export class NovaOperacaoComponent implements OnInit {
         this.service.getAllOP().subscribe(
             response => {
                 for (var x in response) {
-=======
-
-        this.cols = [
-            { "vin": "a1653d4r", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "a1er4d", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "a1653ered4d", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "a16533434d4d", "brand": "VW", "year": 1998, "color": "White" }
-        ];
-
-        this.cols2 = [
-            { "vin": "1", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "2", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "3", "brand": "VW", "year": 1998, "color": "White" },
-            { "vin": "4", "brand": "VW", "year": 1998, "color": "White" }
-        ];
-    }
-
-
-    //Seleccionar uma referência da Tabela Referência
-    onRowSelect(event) {
-        this.msgs = [];
-        this.msgs.push({ severity: 'info', summary: 'Car Selected', detail: event.data.vin + ' - ' + event.data.brand });
-        this.message = event.data.vin;
->>>>>>> origin/master
 
                     this.novaopera.push({ codigoop: response[x].OPECOD, design: response[x].OPEDES, SECNUMENR1: response[x].SECNUMENR1 });
                 }
@@ -95,7 +65,6 @@ export class NovaOperacaoComponent implements OnInit {
             },
             error => console.log(error));
 
-<<<<<<< HEAD
     }
 
     //verificar se existe a OF
@@ -104,6 +73,7 @@ export class NovaOperacaoComponent implements OnInit {
         this.refresh = false;
         this.spinner = true;
         this.referencias = [];
+        this.maquina = [];
         this.displaybtref = true;
         this.input_class = "";
         if (this.num_of != "") {
@@ -210,21 +180,6 @@ export class NovaOperacaoComponent implements OnInit {
                 }
             },
             error => console.log(error));
-=======
-    //fechar popup que abre depois de clicar em "SELECIONAR SÓ 1 REFERÊNCIA"
-    cancelar() {
-       this.display2 = false;
-        this.message = "";
-    }
-   
-    //ao alterar a operação preenche SelectItem das maquinas
-    carregamaquinas(event) {
-        this.city = event.value.code;
-        this.cities2 = [];
-        this.cities2.push({ label: this.city + '1', value: null });
-        this.cities2.push({ label: this.city + '2', value: { id: 1, name: 'New York', code: 'NY' } });
-        this.cities2.push({ label: this.city + '3', value: { id: 2, name: 'Rome', code: 'RM' } });
->>>>>>> origin/master
     }
 
     //ao clicar no botão +, mostra tabela com mais operações

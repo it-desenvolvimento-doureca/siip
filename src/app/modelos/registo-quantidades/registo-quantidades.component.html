@@ -23,13 +23,8 @@
   </div>
   <div class="col-md-2 col-md-offset-2 nopadding" style=" float: left;">
     <label class="control-label " for="name">Quant. Boas</label>
-<<<<<<< HEAD
     <input value="{{qttboas}}" class="form-control" type="number" #box (change)="updatetotal(box.value)" style="text-align: center;" min="0" 
       style="text-align: center;" />
-=======
-    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="onlynumbers(box.value,$event)"
-      (change)="updatetotal(box.value)" style="text-align: center;" style="text-align: center;" />
->>>>>>> origin/master
   </div>
   <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
     <div class="form-group1">
@@ -56,10 +51,9 @@
   <div class="col-md-1 col-md-offset-1 nopadding" style=" float: left;">
   </div>
 </div>
-<<<<<<< HEAD
 <div class="col-md-12 col-md-offset-12 nopadding" style=" float: left;">
   <form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
-    <p-tabView *ngIf="tabSets" orientation="left">
+    <p-tabView *ngIf="tabSets" orientation="left" class="tabcss">
       <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
         <div class="col-md-12 col-md-offset-12" style="height: auto;">
           <div *ngFor="let item of getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-2 col-md-offset-2 nopadding"
@@ -73,29 +67,12 @@
       <button type="input" class="form-control btn ui-button-secondary" icon="fa-refresh" [disabled]="!valForm.form.valid" pButton
         style="width: auto; height: 60px; float: right; margin-right: 40px; margin-top: 12px; margin-bottom: 20px;" label="Atualizar Valores"></button>
     </p-tabView>
-=======
-</div>
-
-<form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
-  <p-tabView *ngIf="tabSets" orientation="left">
-    <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
-
-      <div *ngFor="let item of getinputs(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
-        style="float:left;">
-        <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
-        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="onlynumbers(inputvalue.value,$event)"
-        />
-      </div>
-
-    </p-tabPanel>
-  </p-tabView>
->>>>>>> origin/master
 
     <br>
 
 
 
   </form>
-  <button type="button" class="form-control btn btn-primary" routerLink="/operacao-em-curso-multiref" pButton style="width: 20%; height: 60px; float: right;"
+  <button type="button" class="form-control btn btn-primary" routerLink="/operacao-em-curso" pButton style="width: 20%; height: 60px; float: right;"
     label="Concluir"></button>
 </div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
+import { utilizadorService } from "app/utilizadorService";
+import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 
 @Component({
   selector: 'app-login',
@@ -10,7 +12,6 @@ export class LoginComponent implements OnInit {
 
   operation: string = '';
   count = 1;
-  testUser = [{ username: '1233', name: 'Pedro', type: ["1", "2"] }, { username: '1234', name: 'Administrador', type: ["1", "2", "3"] }, { username: '1224', name: 'Ana', type: '2' }];
   edited = false;
   name = "";
   display: boolean = false;
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService) {
     //limpar a sessão
     //localStorage.clear();
   }
@@ -38,23 +39,31 @@ export class LoginComponent implements OnInit {
 
   //verificar se utilizador existe
   userexists() {
-    for (var x in this.testUser) {
-      if (this.operation === this.testUser[x].username) {
-        this.edited = true;
-        this.name = this.testUser[x].name;
-        
-        //guarda os dados do login
-        localStorage.setItem('user', JSON.stringify({ username: this.testUser[x].username, name: this.testUser[x].name, type: this.testUser[x].type }));
-        return true;
-      } else {
-        this.edited = false;
-        this.name = "";
-      }
-    }
-  }
-  
 
-//Tecla de limpar número
+    this.service.searchuser(this.operation).subscribe(
+      response => {
+
+        var count = Object.keys(response).length;
+        //se existir uma of vai preencher combobox operações
+        if (count > 0) {
+          localStorage.setItem('user', JSON.stringify({ username: response[0].RESCOD, name: response[0].RESDES, type: ["1"] }));
+          this.edited = true;
+          this.name = response[0].RESDES;
+
+          //guarda os dados do login
+          return true;
+        } else {
+          this.edited = false;
+          this.name = "";
+        }
+      },
+      error => console.log(error));
+
+
+  }
+
+
+  //Tecla de limpar número
   undo() {
     if (this.operation != '') {
       this.operation = this.operation.slice(0, -1);
@@ -65,7 +74,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-//Limpar input de login
+  //Limpar input de login
   reset() {
     this.count = 1;
     this.edited = false;
@@ -73,26 +82,50 @@ export class LoginComponent implements OnInit {
     this.operation = "";
   }
 
-//Se o utilizador clicar em sim, vai verificar o tipo de utilizador
+  //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
   redirect() {
     this.isHidden1 = true;
     this.isHidden2 = true;
     this.isHidden3 = true;
     var type = JSON.parse(localStorage.getItem('user'))["type"];
-    if (type.length == 1) {
-      this.router.navigate(['./nova-operacao']);
-    } else {
-      for (var i in type) {
-        if (type[i] == '1') {
-          this.isHidden1 = false;
-        } else if (type[i] == '2') {
-          this.isHidden2 = false;
-        } else if (type[i] == '3') {
-          this.isHidden3 = false;
+
+    this.service__utz.getbyid(JSON.parse(localStorage.getItem('user'))["username"]).subscribe(
+      response => {
+        var count = Object.keys(response).length;
+        if (count == 1) {
+          for (var x in response) {
+            switch (response[x].perfil) {
+              case "O":
+                // this.router.navigate(['./nova-operacao']);
+                break;
+              case "G":
+                // this.router.navigate(['./nova-operacao']);
+                break;
+              case "A":
+                // this.router.navigate(['./nova-operacao']);
+                break;
+            }
+          }
+        }else if(count == 0){
+          alert("SEM ACESSO");
+        } else {
+          for (var x in response) {
+            switch (response[x].perfil) {
+              case "O":
+                this.isHidden1 = false;
+                break;
+              case "G":
+                this.isHidden2 = false;
+                break;
+              case "A":
+                this.isHidden3 = false;
+                break;
+            }
+            this.display = true;
+          }
         }
-      }
-      this.display = true;
-    }
+      },
+      error => console.log(error));
   }
 
 
