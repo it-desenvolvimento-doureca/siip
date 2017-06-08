@@ -1,13 +1,10 @@
-<p-tabView>
+<p-tabView class="gestao">
   <p-tabPanel header="Famílias de defeitos">
 
-    <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true" [editable]="true" (onEdit)="editar($event)">
-      <p-column field="name" header="Operação Pricipal" [sortable]="true" [editable]="true" [style]="{'overflow':'visible'}">
-        <ng-template let-col let-data="rowData" pTemplate="editor">
-          <p-dropdown [(ngModel)]="data[col.field]" [options]="fam" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></p-dropdown>
-        </ng-template>
+    <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true"  selectionMode="single" [(selection)]="selectedfamrow"  (onRowSelect)="onRowSelectfam($event)" datakey="id" >
+      <p-column field="fam" header="Operação Principal" [sortable]="true" [style]="{'overflow':'visible'}">
       </p-column>
-      <p-column field="op" header="Operações permitidas" [editable]="true"></p-column>
+      <p-column field="op" header="Operações permitidas" ></p-column>
       <p-column styleClass="col-button" [style]="{'width':'70px'}">
         <ng-template let-op="rowData" pTemplate="body">
           <button type="button" class="ui-button-danger" pButton (click)="deleterow(op)" icon="fa-times"></button>
@@ -95,19 +92,19 @@
   </p-tabPanel>
 </p-tabView>
 
-
+<!-- POPUP RESPONS. SECÇÃO-->
 <p-dialog header="Responsável" [(visible)]="displayDialog" modal="modal" width="700" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
-  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12"><label for="vin">Chefe de Secção</label></div>
-      <p-dropdown [options]="brand1" [style]="{'width':'100%'}" [(ngModel)]="selected1" #t (onFocus)="carregachefe($event,t.label,t.value)"></p-dropdown>
+      <p-dropdown  [options]="brand1" scrollHeight="130px" [style]="{'width':'100%'}" [(ngModel)]="selected1" #t (onFocus)="carregachefe($event,t.label,t.value)"></p-dropdown>
     </div>
   </div>
-  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left;">
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12"><label for="vin">Secção</label></div>
-      <p-dropdown [options]="brand2" scrollHeight="146px" [style]="{'width':'100%'}" [(ngModel)]="selected2" #d (onFocus)="carregaseccao($event,d.label,d.value)"></p-dropdown>
+      <p-dropdown [options]="brand2" scrollHeight="130px" [style]="{'width':'100%'}" [(ngModel)]="selected2" #d (onFocus)="carregaseccao($event,d.label,d.value)"></p-dropdown>
     </div>
   </div>
   <p-footer>
@@ -117,5 +114,32 @@
     </div>
   </p-footer>
 </p-dialog>
+
+<!-- POPUP FAMILIAS DE DEFEITOS-->
+<p-dialog header="Responsável" [(visible)]="displayfamdialog" modal="modal" width="700" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12"><label for="vin">Operação Principal</label></div>
+      <p-dropdown [options]="fam" scrollHeight="130px" [style]="{'width':'100%'}" [(ngModel)]="selectedfam" ></p-dropdown>
+    </div>
+  </div>
+  <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12"><label for="vin">Operação Permitida</label></div>
+      <p-dropdown [options]="fam" scrollHeight="130px" [style]="{'width':'100%'}" [(ngModel)]="selectedoppermitida"></p-dropdown>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="cancelfam()" label="Cancelar"></button>
+      <button type="button" pButton icon="fa-check" (click)="savefam()" label="Gravar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+
+
 
 <p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>

@@ -23,6 +23,7 @@ import {ConfirmDialogModule,ConfirmationService} from 'primeng/primeng';
 import { PageloginComponent } from './modelos/pagelogin/pagelogin.component';
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
+import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 
 const routes: Routes = [
   {
@@ -107,7 +108,8 @@ const routes: Routes = [
   utilizadorService, 
   ofService,
   RPCONFUTZPERFService,
-  RPCONFCHEFSECService
+  RPCONFCHEFSECService,
+  RPCONFOPService
   ],
   bootstrap: [AppComponent]
 })

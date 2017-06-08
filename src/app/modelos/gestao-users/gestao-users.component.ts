@@ -7,6 +7,8 @@ import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.serv
 import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
 import { RP_CONF_CHEF_SEC } from "app/modelos/entidades/RP_CONF_CHEF_SEC";
 import { ofService } from "app/ofService";
+import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
+import { RP_CONF_OP } from "app/modelos/entidades/RP_CONF_OP";
 
 @Component({
   selector: 'app-gestao-users',
@@ -14,6 +16,8 @@ import { ofService } from "app/ofService";
   styleUrls: ['./gestao-users.component.css']
 })
 export class GestaoUsersComponent implements OnInit {
+  listidfam: any;
+  novafam: boolean;
 
   listw1: Response;
   listid: number;
@@ -35,25 +39,31 @@ export class GestaoUsersComponent implements OnInit {
   nome = "";
   chefe_seccao = "";
   displayDialog: boolean;
+  displayfamdialog: boolean;
   novochefe: boolean;
   brand1: SelectItem[];
   brand2: SelectItem[];
   selected1: string = "";
   selected2: string = "";
+  selectedfam: string = "";
+  selectedoppermitida: string = "";
 
-  constructor(private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
+  constructor(private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.list1 = [];
     this.fam = [];
+    this.list2 = [];
+    this.fam = [{ label: 'Seleccione Operação Principal', value: "0" }];
     this.ofservice.getFamilias().subscribe(
-      response =>{
-         for (var x in response) {
+      response => {
+        for (var x in response) {
           this.fam.push({ label: response[x].fam, value: response[x].fam });
         }
       },
       error => console.log(error));
-    this.list2 = [];
+
+
     this.brand2 = [{ label: 'Seleccione Secção', value: "0" }];
     this.service.getUtilizadoresSilver().subscribe(
       response => {
@@ -72,8 +82,10 @@ export class GestaoUsersComponent implements OnInit {
         this.brand2 = this.brand2.slice();
       },
       error => console.log(error));
+
     this.preenchetabelas();
     this.preenche_chefe();
+    this.preenche_fam();
   }
 
   //inserir o utilizador num perfil
@@ -149,17 +161,6 @@ export class GestaoUsersComponent implements OnInit {
           this.no5 = "";
         }
         break;
-      case "list6":
-        if (this.listid != 0) {
-          for (var x in this.list6) {
-            if (this.list6[x].id == this.listid) {
-              this.list6.splice(parseInt(x), 1);
-            }
-          }
-          this.list6 = this.list6.slice();
-          this.listid = 0;
-        }
-        break;
     }
   }
 
@@ -223,9 +224,43 @@ export class GestaoUsersComponent implements OnInit {
     this.displayDialog = false;
   }
 
-  //fecha popup
+
+  //guarda os dados das familias de defeito
+  savefam() {
+    var fam = new RP_CONF_OP;
+    if (this.novafam) {
+      if (this.selectedfam != "" && this.selectedoppermitida != "") {
+        fam.id_OP_PRINC = this.selectedfam;
+        fam.id_OP_SEC = this.selectedoppermitida;
+        console.log(fam);
+        this.fam_service.create(fam).then(() => {
+          this.preenche_fam();
+        });
+      }
+    } else {
+      if (this.selectedfam != "" && this.selectedoppermitida != "") {
+        fam.id_CONF_OP = this.listidfam;
+        fam.id_OP_PRINC = this.selectedfam;
+        fam.id_OP_SEC = this.selectedoppermitida;
+        this.fam_service.update(fam).then(() => {
+          this.preenche_fam();
+        });
+      }
+
+    }
+
+    this.selectedfam = "";
+    this.selectedfam = "";
+    this.listidfam = 0;
+    this.displayfamdialog = false;
+  }
+
+  //fechar popups
   cancel() {
     this.displayDialog = false;
+  }
+  cancelfam() {
+    this.displayfamdialog = false;
   }
 
   //ao clicar na tabela Responsáveis abre popup para editar
@@ -239,6 +274,15 @@ export class GestaoUsersComponent implements OnInit {
     this.seccao_no = event.data.seccao_no;
     this.listid = event.data.id;
     this.displayDialog = true;
+  }
+
+  //ao clicar na tabela Familia de Defeitos abre popup para editar
+  onRowSelectfam(event) {
+    this.novafam = false;
+    this.selectedfam = event.data.fam;
+    this.selectedoppermitida = event.data.op;
+    this.listidfam = event.data.id;
+    this.displayfamdialog = true;
   }
 
   //carregar dados do chefe 
@@ -265,45 +309,27 @@ export class GestaoUsersComponent implements OnInit {
     }
   }
 
-  //ver o ultimo id de um array
-  getmaxid() {
-    if (this.list6.length > 0) {
-      return Math.max.apply(Math, this.list6.map(function (o) { return o.id; }))
-    } else {
-      return 0;
-    }
-  }
-
-  editar(event) {
-    //guardar valores na base de dados
-  }
-
   //eliminar linhas das familias de defeitos
   deleterow(row) {
     this.confirmationService.confirm({
       message: 'Tem a certeza que pretende apagar esta familia de defeitos?',
       accept: () => {
-        for (var x in this.list1) {
-          if (this.list1[x].id == row.id) {
-            this.list1.splice(parseInt(x), 1);
-          }
-        }
-        this.list1 = this.list1.slice()
+        this.fam_service.delete(row.id).then(() => {
+          this.preenche_fam();
+        });
       }
     });
     ;
   }
 
-  //adicionar linha à tabela familias de defeitos
+  //opup para adicionarà tabela familias de defeitos
   AddFamDef() {
-    console.log(this.list1);
-    var x = "0";
-    if (this.list1.length > 0) {
-      x = Math.max.apply(Math, this.list1.map(function (o) { return o.id; }));
-    }
-    var num = parseInt(x) + 1;
-    this.list1.push({ name: "", op: "", id: num });
-    this.list1 = this.list1.slice();
+    this.listid = 0;
+    this.selectedoppermitida = "0";
+    this.selectedfam = "0";
+    this.novafam = true;
+    this.displayfamdialog = true;
+
   }
 
 
@@ -353,6 +379,7 @@ export class GestaoUsersComponent implements OnInit {
       error => console.log(error));
   }
 
+  //atualiza a tabela responsáveis de secção
   preenche_chefe() {
     this.list6 = [];
     this.chef_service.getAll().subscribe(
@@ -363,7 +390,18 @@ export class GestaoUsersComponent implements OnInit {
         this.list6 = this.list6.slice();
       },
       error => console.log(error));
+  }
 
-
+  //atualiza a tabela das familias de defeitos
+  preenche_fam() {
+    this.list1 = [];
+    this.fam_service.getAll().subscribe(
+      response => {
+        for (var x in response) {
+          this.list1.push({ fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP });
+        }
+        this.list1 = this.list1.slice();
+      },
+      error => console.log(error));
   }
 }
