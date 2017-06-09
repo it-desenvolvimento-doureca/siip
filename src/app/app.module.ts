@@ -24,6 +24,8 @@ import { PageloginComponent } from './modelos/pagelogin/pagelogin.component';
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
 import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
+import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
+import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 
 const routes: Routes = [
   {
@@ -109,7 +111,9 @@ const routes: Routes = [
   ofService,
   RPCONFUTZPERFService,
   RPCONFCHEFSECService,
-  RPCONFOPService
+  RPCONFOPService,
+  RPCONFOPNPREVService,
+  RPOFCABService
   ],
   bootstrap: [AppComponent]
 })

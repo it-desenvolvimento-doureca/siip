@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, trigger, state, style, transition, animate, ViewChild } from '@angular/core';
 import { Message, SelectItem } from 'primeng/primeng'
 import { ofService } from "app/ofService";
+import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
+import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
+import { RP_OF_CAB } from "app/modelos/entidades/RP_OF_CAB";
 
 @Component({
     selector: 'app-nova-operacao',
@@ -20,6 +23,10 @@ import { ofService } from "app/ofService";
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    op_desc: any;
+    op_num: any;
+    maq_DES: any;
+    maq_NUM: any;
     input_class: string;
     display3: boolean = false;
     operacao: SelectItem[];
@@ -32,7 +39,8 @@ export class NovaOperacaoComponent implements OnInit {
     referencias: any[];
     novaopera: any[];
     novaoperacao = "";
-    message = "";
+    ref_code = "";
+    ref_name = "";
     readonly_op: boolean = true;
     readonly_maq: boolean = true;
     num_of = "";
@@ -43,9 +51,11 @@ export class NovaOperacaoComponent implements OnInit {
     observacoes = "";
     selectedmaq = "";
     displaybtref = true;
+    single = "";
+    color = "disabletable";
     @ViewChild('inputFocous') inputFocous: any;
 
-    constructor(private service: ofService) {
+    constructor(private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
         this.operacao = [];
 
     }
@@ -55,11 +65,11 @@ export class NovaOperacaoComponent implements OnInit {
         this.referencias = [];
 
         this.novaopera = [];
-        this.service.getAllOP().subscribe(
+        this.op_service.getAll().subscribe(
             response => {
                 for (var x in response) {
 
-                    this.novaopera.push({ codigoop: response[x].OPECOD, design: response[x].OPEDES, SECNUMENR1: response[x].SECNUMENR1 });
+                    this.novaopera.push({ codigoop: response[x].id_OP, design: response[x].name_OP, SECNUMENR1: response[x].secnumenr1_OP });
                 }
                 this.novaopera = this.novaopera.slice();
             },
@@ -106,7 +116,7 @@ export class NovaOperacaoComponent implements OnInit {
                                 for (var x in response1) {
                                     if (first) this.operacao.push({ label: "Seleccione a Operação", value: "0" });
                                     first = false;
-                                    this.operacao.push({ label: response1[x].OPEDES, value: { OPECOD: response1[x].OPECOD, SECNUMENR1: response1[x].SECNUMENR1 } });
+                                    this.operacao.push({ label: response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPEDES: response1[x].OPEDES, OPECOD: response1[x].OPECOD, SECNUMENR1: response1[x].SECNUMENR1 } });
                                 }
                                 this.readonly_op = false;
                                 this.selected = "0";
@@ -130,7 +140,11 @@ export class NovaOperacaoComponent implements OnInit {
     }
     //Seleccionar uma referência da Tabela Referência
     onRowSelect(event) {
-        this.message = event.data.codigo;
+        this.ref_code = event.data.codigo;
+        this.ref_name = event.data.design;
+        if (this.num_of != "" && this.selected != "" && this.selectedmaq != "") {
+            this.display2 = true;
+        }
 
     }
 
@@ -146,6 +160,8 @@ export class NovaOperacaoComponent implements OnInit {
 
     //ao alterar a operação preenche SelectItem das maquinas
     carregamaquinas(event) {
+        this.op_num = event.OPECOD;
+        this.op_desc = event.OPEDES;
         this.service.getMaq(event.SECNUMENR1).subscribe(
             response => {
                 this.maquina = [];
@@ -153,10 +169,14 @@ export class NovaOperacaoComponent implements OnInit {
                 var find = false;
                 for (var x in response) {
                     if (response[x].ssecod == "000") {
-                        this.maquina.push({ label: response[x].SSEDES, value: response[x].ssecod });
+                        this.maquina.push({ label: response[x].ssecod + "/" + response[x].SSEDES, value: { code: response[x].ssecod, desc: response[x].SSEDES } });
                         find = true;
+                        this.maq_DES = response[x].SSEDES;
+                        this.maq_NUM = response[x].ssecod;
                     } else {
                         this.selectedmaq = response[x].ssecod;
+                        this.maq_DES = response[x].SSEDES;
+                        this.maq_NUM = response[x].ssecod;
                     }
                 }
                 //lista todas as maquinas se op. não utilizar mão de obra
@@ -166,9 +186,10 @@ export class NovaOperacaoComponent implements OnInit {
                             this.readonly_maq = true;
 
                             for (var x in response3) {
-                                this.maquina.push({ label: response3[x].SSEDES, value: response3[x].ssecod });
+                                this.maquina.push({ label: response3[x].ssecod + "/" + response3[x].SSEDES, value: { code: response3[x].ssecod, desc: response3[x].SSEDES } });
                             }
                             this.maquina = this.maquina.slice();
+                            this.selectedmaq = this.maquina.find(item => item.value.code === this.selectedmaq).value;
                             if (this.maquina.length > 0) {
                                 this.readonly_maq = false;
                             }
@@ -212,20 +233,58 @@ export class NovaOperacaoComponent implements OnInit {
         // this.operacao.push({ label: event.data.vin, value: { id: 5, name: 'Paris', code: event.data.vin } });
     }
 
-    //Quando o botão "Selecionar só 1 referencia" é ciclado abre mensagem para confirmar trabalho apenas numa referencia. 
+    //Quando o botão "Selecionar só 1 referencia" pode sellecionar uma ref da tabela
     seleciona1ref() {
-        if (this.message != "") {
-            this.display2 = true;
-        }
-
+        this.color = "";
+        this.single = "single";
     }
 
     //Quando clica no botão inciar trabalho
 
     iniciartrab() {
-        if(this.num_of != "" && this.selected != "" && this.selectedmaq != ""){
+        if (this.num_of != "" && this.selected != "" && this.selectedmaq != "") {
             this.display3 = true;
         }
+    }
+
+    //carregar todas as operações não previstas
+    carregarmais() {
+        this.novaopera = [];
+        this.service.getAllOP().subscribe(
+            response => {
+                for (var x in response) {
+
+                    this.novaopera.push({ codigoop: response[x].OPECOD, design: response[x].OPEDES, SECNUMENR1: response[x].SECNUMENR1 });
+                }
+                this.novaopera = this.novaopera.slice();
+            },
+            error => console.log(error));
+    }
+    //daddosmaquina
+    maquinadados(event) {
+        this.maq_DES = event.value.desc;
+        this.maq_NUM = event.value.code;
+    }
+
+    criar(estado) {
+        var rpof = new RP_OF_CAB;
+        rpof.data_HORA_CRIA = new Date();
+        rpof.estado = estado;
+        rpof.of_NUM = this.num_of;
+        rpof.op_NUM = this.op_num;
+        rpof.op_DES = this.op_desc;
+        rpof.maq_NUM = this.maq_NUM;
+        rpof.maq_DES = this.maq_DES;;
+        rpof.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+        rpof.nome_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["name"];
+        rpof.of_OBS = this.observacoes;
+        rpof.sec_DES = "1";
+        rpof.sec_NUM = "2"
+
+        console.log(rpof);
+        this.RPOFCABService.create(rpof).then(() => {
+
+        });
     }
 
 }

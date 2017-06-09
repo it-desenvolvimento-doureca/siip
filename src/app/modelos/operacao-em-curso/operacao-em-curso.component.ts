@@ -14,14 +14,11 @@ export class OperacaoEmCursoComponent implements OnInit {
   cols2: any[];
 
 
-  constructor(private service: utilizadorService, private confirmationService: ConfirmationService) {
+  constructor(private confirmationService: ConfirmationService) {
   }
 
   ngOnInit() {
-    this.service.getUtilizadores().subscribe(
-      response => { this.utilizadores = response; },
-      error => console.log(error)
-    )
+   
 
   }
 

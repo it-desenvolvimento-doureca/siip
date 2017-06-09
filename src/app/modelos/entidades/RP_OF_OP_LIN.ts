@@ -1,21 +1,8 @@
 export class RP_OF_OP_LIN {
     id_OP_LIN: number;
-    id_CAB: number;
+    id_OP_CAB: number;
     ref_NUM: string;
     ref_DES: string;
-    data_INI: Date;
-    hora_INI: Date;
-    data_FIM: Date;
-    hora_FIM: Date;
-    id_EQUIPA: string;
-    id_UTZ_CRIA: string;
-    nome_UTZ_CRIA: string;
-    perfil_CRIA: string;
-    id_UTZ_MODIF: string;
-    nome_UTZ_MODIF: string;
-    perfil_MODIF: string;
-    data_HORA_MODIF: Date;
-    estado: string;
     ref_IND: string;
     ref_VAR1: string;
     ref_VAR2: string;
@@ -23,7 +10,4 @@ export class RP_OF_OP_LIN {
     quant_OF: number;
     quant_BOAS_TOTAL: number;
     quant_DEF_TOTAL: number;
-    tempo_PREP_TOTAL: Date;
-    tempo_PARA_TOTAL: Date;
-    tempo_EXEC_TOTAL: Date;
 }

@@ -75,9 +75,9 @@
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-            <button type="button" [hidden]="isHidden1" pButton routerLink="/nova-operacao" label="OPERADOR" style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden1" pButton (click)="novaoperacao()" label="OPERADOR" style="float: none; width: auto;"></button>
             <button type="button" [hidden]="isHidden2" pButton (click)="adminlogin()" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
-            <button type="button" [hidden]="isHidden3" pButton routerLink="/controlo" label="CONTROLO" style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden3" pButton (click)="controlo()" label="CONTROLO" style="float: none; width: auto;"></button>
         </div>
     </p-footer>
 </p-dialog>

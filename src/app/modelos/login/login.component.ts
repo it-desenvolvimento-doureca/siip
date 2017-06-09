@@ -98,12 +98,15 @@ export class LoginComponent implements OnInit {
             dataacess.push(response[x].perfil);
             switch (response[x].perfil) {
               case "O":
+                localStorage.setItem('perfil', JSON.stringify("O"));
                 this.router.navigate(['./nova-operacao']);
                 break;
               case "G":
+                localStorage.setItem('perfil', JSON.stringify("G"));
                 this.router.navigate(['./controlo']);
                 break;
               case "A":
+                localStorage.setItem('perfil', JSON.stringify("A"));
                 this.adminlogin();
                 break;
             }
@@ -138,8 +141,20 @@ export class LoginComponent implements OnInit {
   adminlogin() {
     this.display = false;
     this.display2 = true;
+    localStorage.setItem('perfil', JSON.stringify("A"));
   }
 
+  //reencaminha para nova operação
+  novaoperacao() {
+    localStorage.setItem('perfil', JSON.stringify("O"));
+    this.router.navigate(['./nova-operacao']);
+  }
+
+  //reencaminha para controlo
+  controlo() {
+    localStorage.setItem('perfil', JSON.stringify("G"));
+    this.router.navigate(['./controlo']);
+  }
   ngOnInit() {
   }
 

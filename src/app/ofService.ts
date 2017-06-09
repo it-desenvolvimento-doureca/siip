@@ -35,6 +35,15 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+
+    getAllOPNOTIN(data: String) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allopNOTIN/'+data+'';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     getMaq(SECNUMENR) {
         const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/maquina/' + SECNUMENR + '';
         return this.http
@@ -43,7 +52,7 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-     getFamilias() {
+    getFamilias() {
         const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/familias/';
         return this.http
             .get(url)

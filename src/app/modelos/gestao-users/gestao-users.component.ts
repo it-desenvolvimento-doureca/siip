@@ -9,6 +9,8 @@ import { RP_CONF_CHEF_SEC } from "app/modelos/entidades/RP_CONF_CHEF_SEC";
 import { ofService } from "app/ofService";
 import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 import { RP_CONF_OP } from "app/modelos/entidades/RP_CONF_OP";
+import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
+import { RP_CONF_OP_NPREV } from "app/modelos/entidades/RP_CONF_OP_NPREV";
 
 @Component({
   selector: 'app-gestao-users',
@@ -16,10 +18,16 @@ import { RP_CONF_OP } from "app/modelos/entidades/RP_CONF_OP";
   styleUrls: ['./gestao-users.component.css']
 })
 export class GestaoUsersComponent implements OnInit {
+  secnumenr1_OP: any;
+  selectedoppermitida_name: any;
+  selectedfam_name: any;
+  selectedallop_name = "";
+  selectedop = "";
+  selectedallop = "";
+  listaop: any[];
+  listallop: any[];
   listidfam: any;
   novafam: boolean;
-
-  listw1: Response;
   listid: number;
   seccao_no = "";
   chefe_seccao_no = "";
@@ -47,41 +55,45 @@ export class GestaoUsersComponent implements OnInit {
   selected2: string = "";
   selectedfam: string = "";
   selectedoppermitida: string = "";
+  selefam = "";
+  seleopp= "";
 
-  constructor(private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
+  constructor(private op_service: RPCONFOPNPREVService, private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.list1 = [];
     this.fam = [];
     this.list2 = [];
-    this.fam = [{ label: 'Seleccione Operação Principal', value: "0" }];
-    this.ofservice.getFamilias().subscribe(
+    this.fam = [{ label: 'Seleccione Operação Principal', value: 0 }];
+    this.ofservice.getAllOP().subscribe(
       response => {
         for (var x in response) {
-          this.fam.push({ label: response[x].fam, value: response[x].fam });
+          this.fam.push({ label:  response[x].OPECOD +"-"+response[x].OPEDES, value: { code: response[x].OPECOD, name: response[x].OPEDES} });
         }
       },
       error => console.log(error));
 
 
-    this.brand2 = [{ label: 'Seleccione Secção', value: "0" }];
+    this.brand2 = [{ label: 'Seleccione Secção', value: 0 }];
     this.service.getUtilizadoresSilver().subscribe(
       response => {
         for (var x in response) {
           this.list2.push({ name: response[x].RESDES, no: response[x].RESCOD, field: response[x].RESCOD + " - " + response[x].RESDES });
         }
         this.list2 = this.list2.slice();
+        this.service.getSeccoes().subscribe(
+          response => {
+            for (var x in response) {
+              this.brand2.push({ label: response[x].SECLIB, value: response[x].SECCOD });
+            }
+            this.brand2 = this.brand2.slice();
+            this.preenche_op();
+          },
+          error => console.log(error));
       },
       error => console.log(error));
 
-    this.service.getSesoes().subscribe(
-      response => {
-        for (var x in response) {
-          this.brand2.push({ label: response[x].SECLIB, value: response[x].SECCOD });
-        }
-        this.brand2 = this.brand2.slice();
-      },
-      error => console.log(error));
+
 
     this.preenchetabelas();
     this.preenche_chefe();
@@ -91,6 +103,7 @@ export class GestaoUsersComponent implements OnInit {
   //inserir o utilizador num perfil
   insere(list) {
     var conf_utiliz = new RP_CONF_UTZ_PERF;
+    var conf_op = new RP_CONF_OP_NPREV;
     switch (list) {
       //Operador
       case "list3":
@@ -131,6 +144,18 @@ export class GestaoUsersComponent implements OnInit {
           }
         }
         break;
+      //Lista das Operações
+      case "listop":
+
+        if (this.selectedallop != "") {
+          conf_op.id_OP = this.selectedallop;
+          conf_op.name_OP = this.selectedallop_name;
+          conf_op.secnumenr1_OP = this.secnumenr1_OP;
+          this.op_service.create(conf_op).then(() => {
+            this.preenche_op();
+          });
+        }
+        break;
     }
   }
 
@@ -161,6 +186,15 @@ export class GestaoUsersComponent implements OnInit {
           this.no5 = "";
         }
         break;
+      //Lista das Operações
+      case "listop":
+        if (this.selectedop != "") {
+          this.op_service.delete(this.selectedop).then(() => {
+            this.preenche_op();
+          });
+          this.no5 = "";
+        }
+        break;
     }
   }
 
@@ -177,6 +211,14 @@ export class GestaoUsersComponent implements OnInit {
   }
   onRowSelect5(event) {
     this.no5 = event.data.id;
+  }
+  onRowSelectallop(event) {
+    this.selectedallop = event.data.codigoop;
+    this.selectedallop_name = event.data.design; 
+    this.secnumenr1_OP = event.data.SECNUMENR1;
+  }
+  onRowSelectop(event) {
+    this.selectedop = event.data.id;
   }
 
   //popup para adicionar responsáveis a uma seccão.
@@ -231,8 +273,9 @@ export class GestaoUsersComponent implements OnInit {
     if (this.novafam) {
       if (this.selectedfam != "" && this.selectedoppermitida != "") {
         fam.id_OP_PRINC = this.selectedfam;
+        fam.name_OP_PRINC = this.selectedfam_name;
+        fam.name_OP_SEC = this.selectedoppermitida_name;
         fam.id_OP_SEC = this.selectedoppermitida;
-        console.log(fam);
         this.fam_service.create(fam).then(() => {
           this.preenche_fam();
         });
@@ -242,15 +285,16 @@ export class GestaoUsersComponent implements OnInit {
         fam.id_CONF_OP = this.listidfam;
         fam.id_OP_PRINC = this.selectedfam;
         fam.id_OP_SEC = this.selectedoppermitida;
+        fam.name_OP_PRINC = this.selectedfam_name;
+        fam.name_OP_SEC = this.selectedoppermitida_name;
         this.fam_service.update(fam).then(() => {
           this.preenche_fam();
         });
       }
 
     }
-
     this.selectedfam = "";
-    this.selectedfam = "";
+    this.selectedoppermitida = "";
     this.listidfam = 0;
     this.displayfamdialog = false;
   }
@@ -279,11 +323,37 @@ export class GestaoUsersComponent implements OnInit {
   //ao clicar na tabela Familia de Defeitos abre popup para editar
   onRowSelectfam(event) {
     this.novafam = false;
-    this.selectedfam = event.data.fam;
-    this.selectedoppermitida = event.data.op;
+    this.selectedoppermitida=event.data.op;
+    this.selectedfam_name=event.data.fam_name;
+    this.selectedoppermitida_name=event.data.op_name;
+    this.selectedfam=event.data.fam;
+    this.selefam = this.fam.find(item => item.value.code === event.data.fam).value;
+    this.seleopp = this.fam.find(item => item.value.code === event.data.op).value;
     this.listidfam = event.data.id;
     this.displayfamdialog = true;
   }
+
+  //carregar dados do chefe 
+  carregafam(event, label, value) {
+    if (value != "") {
+      this.selectedfam = value.code;
+      this.selectedfam_name = value.name;
+    } else {
+      this.selectedfam = "";
+      this.selectedfam_name = "";
+    }
+  }
+  //carregar dados do chefe 
+  carregaoppermitida(event, label, value) {
+    if (value != "") {
+      this.selectedoppermitida = value.code;
+      this.selectedoppermitida_name = value.name;
+    } else {
+      this.selectedoppermitida = "";
+      this.selectedoppermitida_name = "";
+    }
+  }
+
 
   //carregar dados do chefe 
   carregachefe(event, label, value) {
@@ -294,8 +364,6 @@ export class GestaoUsersComponent implements OnInit {
       this.chefe_seccao = "";
       this.chefe_seccao_no = "";
     }
-
-
   }
 
   //carregar dados da seccão
@@ -322,8 +390,10 @@ export class GestaoUsersComponent implements OnInit {
     ;
   }
 
-  //opup para adicionarà tabela familias de defeitos
+  //popup para adicionarà tabela familias de defeitos
   AddFamDef() {
+    this.selefam ="";
+    this.seleopp = "";
     this.listid = 0;
     this.selectedoppermitida = "0";
     this.selectedfam = "0";
@@ -398,10 +468,45 @@ export class GestaoUsersComponent implements OnInit {
     this.fam_service.getAll().subscribe(
       response => {
         for (var x in response) {
-          this.list1.push({ fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP });
+          this.list1.push({ fam_field:response[x].id_OP_PRINC.trim()+"-"+response[x].name_OP_PRINC, op_field:response[x].id_OP_SEC.trim()+"-"+response[x].name_OP_SEC,fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP , op_name: response[x].name_OP_SEC, fam_name: response[x].name_OP_PRINC});
         }
         this.list1 = this.list1.slice();
       },
       error => console.log(error));
+  }
+
+  //preenche tabelas operações
+  preenche_op() {
+    this.listallop = [];
+    this.listaop = [];
+    var data = "";
+    var control = false;
+    this.op_service.getAll().subscribe(
+      response => {
+        for (var x in response) {
+          this.listaop.push({ field: response[x].id_OP.trim() + " - " + response[x].name_OP, id: response[x].id_CONF_OP_NPREV });
+          if (control) data += ","
+          data += response[x].id_OP.trim();
+          control = true;
+        }
+        this.listaop = this.listaop.slice();
+        if (this.listaop.length == 0) data = "null";
+
+        this.ofservice.getAllOPNOTIN(data).subscribe(
+          response => {
+            for (var x in response) {
+
+              this.listallop.push({ field: response[x].OPECOD + " - " + response[x].OPEDES, codigoop: response[x].OPECOD, design: response[x].OPEDES, SECNUMENR1: response[x].SECNUMENR1 });
+            }
+            this.listallop = this.listallop.slice();
+            this.selectedallop = "";
+            this.selectedop = "";
+            this.selectedallop_name = "";
+            this.secnumenr1_OP = "";
+          },
+          error => console.log(error));
+      },
+      error => console.log(error));
+
   }
 }

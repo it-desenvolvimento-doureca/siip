@@ -10,5 +10,6 @@ export class RP_OF_PARA_LIN {
     data_HORA_MODIF: Date;
     tipo_PARAGEM: string;
     des_PARAGEM: string;
+    momento_PARAGEM: string;
     estado: string;
 }

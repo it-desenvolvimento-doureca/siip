@@ -8,7 +8,7 @@ body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .u
     font-size: 1em;
 }
 body .ui-widget-content {
-    background-color: #ffffff;
+    background-color: #ffffff;   
     border: 1px solid #c7c7c7;
 }
 body .ui-widget-header {
@@ -915,7 +915,7 @@ body .ui-tabview.ui-tabview-left .ui-tabview-nav,
 body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     padding: 0;
     border: 0 none;
-    background: #ffffff;
+    /*background: #ffffff;*/
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
@@ -1259,6 +1259,15 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     border-bottom-color: #0275d8;
 }
 /* TIAGO PEREIRA */
+.gestao > .ui-widget-content {
+   background-color: rgba(9, 9, 9, 0.45) !important;
+}
+.disabletable .ui-datatable .ui-datatable-data > tr > td {
+    padding: .75em;
+    text-align: center;
+    background: #c7c7c7;
+}
+
 .gestao .ui-datatable .ui-datatable-thead > tr > th, body .ui-datatable .ui-datatable-tfoot > tr > td {
     background-color: #b2b2b2 !important;
 }

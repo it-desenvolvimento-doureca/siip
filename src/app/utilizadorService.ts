@@ -14,15 +14,7 @@ export class utilizadorService {
     private headers = new Headers({ 'Content-Type': 'application/json' });
 
     constructor(private http: Http) { }
-    getHero() {
-        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/user`;
-        return this.http.get(url).toPromise()
-            .then(response => {//console.log(response.json())
-                return response
-            })
-            .catch(this.handleError);
-    }
-    
+        
     searchuser(RESCOD) {
         const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/searchuser/' + RESCOD + '';
         return this.http
@@ -31,7 +23,7 @@ export class utilizadorService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    createHero() {
+    /*createHero() {
         return this.http
             .put(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/user3`, JSON.stringify({ name: name }), { headers: this.headers })
             .toPromise()
@@ -45,7 +37,7 @@ export class utilizadorService {
             .get(url)
             .map(this.extractData)
             .catch((error: any) => Observable.throw('Server error'));
-    }
+    }*/
 
     getUtilizadoresSilver() {
         const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/users`;
@@ -55,7 +47,7 @@ export class utilizadorService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    getSesoes() {
+    getSeccoes() {
         const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/sessoes`;
         return this.http
             .get(url)
