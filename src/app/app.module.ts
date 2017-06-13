@@ -26,6 +26,9 @@ import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.serv
 import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
 import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
+import { RPOFOPCABService } from "app/modelos/services/rp-of-op-cab.service";
+import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
+import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service";
 
 const routes: Routes = [
   {
@@ -113,7 +116,10 @@ const routes: Routes = [
   RPCONFCHEFSECService,
   RPCONFOPService,
   RPCONFOPNPREVService,
-  RPOFCABService
+  RPOFCABService,
+  RPOFOPCABService,
+  RPOFOPLINService,
+  RPOFPREPLINService
   ],
   bootstrap: [AppComponent]
 })

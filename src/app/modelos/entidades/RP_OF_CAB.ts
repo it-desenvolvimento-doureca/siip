@@ -1,5 +1,5 @@
 export class RP_OF_CAB {
-    id_CAB: number;
+    iD_OF_CAB: number;
     of_NUM: string;
     of_OBS: string;
     op_NUM: string;

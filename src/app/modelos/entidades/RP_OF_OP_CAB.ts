@@ -2,7 +2,7 @@ export class RP_OF_OP_CAB {
     id_OP_CAB: number;
     id_OF_CAB: number;
     data_INI: Date;
-    hora_INI: Date;
+    hora_INI: String;
     data_FIM: Date;
     hora_FIM: Date;
     id_EQUIPA: string;

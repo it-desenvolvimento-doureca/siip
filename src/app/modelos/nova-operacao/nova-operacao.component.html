@@ -64,11 +64,11 @@
       <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
       <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
     </div>
-    <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb" #dt dataKey="codigoop"
+    <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb" #dt dataKey="OPECOD"
       scrollable="true" scrollHeight="400px" [responsive]="true" [rows]="10">
       <p-header>Operações</p-header>
-      <p-column field="codigoop" header="Código" [sortable]="true"></p-column>
-      <p-column field="design" header="Designação"></p-column>
+      <p-column field="OPECOD" header="Código" [sortable]="true"></p-column>
+      <p-column field="OPEDES" header="Designação"></p-column>
     </p-dataTable>
     <br>
     <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
@@ -97,8 +97,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="cancelar()" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
-      <button type="button" pButton (click)="cancelar()" label="EXECUÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('P',true)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',true)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
@@ -115,8 +115,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="criar('P')" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
-      <button type="button" pButton (click)="criar('E')" label="EXECUÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
     </div>
   </p-footer>

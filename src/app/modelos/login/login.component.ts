@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { utilizadorService } from "app/utilizadorService";
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
+import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,8 @@ import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.serv
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  displaypausa: boolean = false;
+  current_of: any;
 
   operation: string = '';
   count = 1;
@@ -19,8 +22,8 @@ export class LoginComponent implements OnInit {
   isHidden1: boolean = true;
   isHidden2: boolean = true;
   isHidden3: boolean = true;
-
-  constructor(private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService) {
+  displayprep: boolean = false;
+  constructor(private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
     //limpar a sessão
     //localStorage.clear();
   }
@@ -85,54 +88,80 @@ export class LoginComponent implements OnInit {
 
   //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
   redirect() {
-    this.isHidden1 = true;
-    this.isHidden2 = true;
-    this.isHidden3 = true;
-    var dataacess: any[] = [];
-
-    this.service__utz.getbyid(JSON.parse(localStorage.getItem('user'))["username"]).subscribe(
+    var id = JSON.parse(localStorage.getItem('user'))["username"];
+    this.RPOFCABService.listofcurrentof(id).subscribe(
       response => {
         var count = Object.keys(response).length;
-        if (count == 1) {
+        if (count > 0) {
           for (var x in response) {
-            dataacess.push(response[x].perfil);
-            switch (response[x].perfil) {
-              case "O":
-                localStorage.setItem('perfil', JSON.stringify("O"));
-                this.router.navigate(['./nova-operacao']);
+            switch (response[x].estado) {
+              case "I":
+              this.router.navigate(['./operacao-em-curso']);
                 break;
-              case "G":
-                localStorage.setItem('perfil', JSON.stringify("G"));
-                this.router.navigate(['./controlo']);
+              case "P":
+                this.displayprep = true;
                 break;
-              case "A":
-                localStorage.setItem('perfil', JSON.stringify("A"));
-                this.adminlogin();
+              case "S":
+                this.displaypausa = true;
                 break;
+              case "E":
+              this.router.navigate(['./operacao-em-curso']);
+                break;
+
             }
           }
-        } else if (count == 0) {
-          alert("SEM ACESSO");
+
         } else {
-          for (var x in response) {
-            dataacess.push(response[x].perfil);
-            switch (response[x].perfil) {
-              case "O":
-                this.isHidden1 = false;
-                break;
-              case "G":
-                this.isHidden3 = false;
-                break;
-              case "A":
-                this.isHidden2 = false;
-                break;
-            }
-            this.display = true;
-          }
+          this.isHidden1 = true;
+          this.isHidden2 = true;
+          this.isHidden3 = true;
+          var dataacess: any[] = [];
+          this.service__utz.getbyid(id).subscribe(
+            response => {
+              var count = Object.keys(response).length;
+              if (count == 1) {
+                for (var x in response) {
+                  dataacess.push(response[x].perfil);
+                  switch (response[x].perfil) {
+                    case "O":
+                      localStorage.setItem('perfil', JSON.stringify("O"));
+                      this.router.navigate(['./nova-operacao']);
+                      break;
+                    case "G":
+                      localStorage.setItem('perfil', JSON.stringify("G"));
+                      this.router.navigate(['./controlo']);
+                      break;
+                    case "A":
+                      localStorage.setItem('perfil', JSON.stringify("A"));
+                      this.adminlogin();
+                      break;
+                  }
+                }
+              } else if (count == 0) {
+                alert("SEM ACESSO");
+              } else {
+                for (var x in response) {
+                  dataacess.push(response[x].perfil);
+                  switch (response[x].perfil) {
+                    case "O":
+                      this.isHidden1 = false;
+                      break;
+                    case "G":
+                      this.isHidden3 = false;
+                      break;
+                    case "A":
+                      this.isHidden2 = false;
+                      break;
+                  }
+                  this.display = true;
+                }
+              }
+
+              localStorage.setItem('access', JSON.stringify(dataacess));
+
+            },
+            error => console.log(error));
         }
-
-        localStorage.setItem('access', JSON.stringify(dataacess));
-
       },
       error => console.log(error));
   }
@@ -157,5 +186,6 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit() {
   }
+
 
 }

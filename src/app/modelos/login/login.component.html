@@ -90,3 +90,34 @@
         <button type="button" pButton routerLink="/controlo" label="CONTROLO" style="float: none; width: auto;"></button>
     </div>
 </p-dialog>
+
+<!-- Preparação em curso -->
+
+<p-dialog [(visible)]="displayprep" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div style="text-align:center;">
+        <h1>Que operação pretende fazer?</h1>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+            <button type="button"  pButton (click)="finalizarprep()" label="FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO" style="float: none; width: auto;"></button>
+            <button type="button"  pButton (click)="pausa()" label="FAZER PAUSA NA PREPARAÇÃO" style="float: none; width: auto;"></button>
+            <button type="button"  pButton (click)="concluir()" label="CONCLUIR TRABALHO" style="float: none; width: auto;"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!-- Pausa em curso -->
+
+<p-dialog [(visible)]="displaypausa" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div style="text-align:center;">
+        <h1>ESTÁ EM PAUSA. PRETENDE RETOMAR O TRABALHO?</h1>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+            <button type="button"  pButton (click)="finalizarpausa()" label="SIM" style="float: none; width: auto;"></button>
+            <button type="button"  pButton (click)="cancelar()" label="NÃO" style="float: none; width: auto;"></button>
+        </div>
+    </p-footer>
+</p-dialog>

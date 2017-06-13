@@ -5,7 +5,7 @@ import { RP_OF_CAB } from "app/modelos/entidades/RP_OF_CAB";
 @Injectable()
 export class RPOFCABService {
 
-  
+
   handleError: any;
 
   private headers = new Headers({ 'Content-Type': 'application/json' });
@@ -15,9 +15,8 @@ export class RPOFCABService {
   create(data: RP_OF_CAB) {
     return this.http
       .post(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/createRP_OF_CAB`, JSON.stringify(data), { headers: this.headers })
-      .toPromise()
-      .then(res => res.json().data)
-      .catch(this.handleError);
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
   }
 
   delete(id) {
@@ -44,6 +43,14 @@ export class RPOFCABService {
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
+  }
+
+  listofcurrentof(id) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/listofcurrentof/'+id+'';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
   }
 
   private extractData(res: Response) {
