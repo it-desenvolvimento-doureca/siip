@@ -44,6 +44,13 @@ export class RPCONFOPService {
       .catch(this.handleError);
   }
 
+    getAllbyid(id): Observable<RP_CONF_OP[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_CONF_OPbyid/'+id+'';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 
   private extractData(res: Response) {
     let body = res.json();

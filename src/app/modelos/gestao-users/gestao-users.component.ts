@@ -149,7 +149,7 @@ export class GestaoUsersComponent implements OnInit {
 
         if (this.selectedallop != "") {
           conf_op.id_OP = this.selectedallop;
-          conf_op.name_OP = this.selectedallop_name;
+          conf_op.nome_OP = this.selectedallop_name;
           conf_op.secnumenr1_OP = this.secnumenr1_OP;
           this.op_service.create(conf_op).then(() => {
             this.preenche_op();
@@ -273,8 +273,8 @@ export class GestaoUsersComponent implements OnInit {
     if (this.novafam) {
       if (this.selectedfam != "" && this.selectedoppermitida != "") {
         fam.id_OP_PRINC = this.selectedfam;
-        fam.name_OP_PRINC = this.selectedfam_name;
-        fam.name_OP_SEC = this.selectedoppermitida_name;
+        fam.nome_OP_PRINC = this.selectedfam_name;
+        fam.nome_OP_SEC = this.selectedoppermitida_name;
         fam.id_OP_SEC = this.selectedoppermitida;
         this.fam_service.create(fam).then(() => {
           this.preenche_fam();
@@ -285,8 +285,8 @@ export class GestaoUsersComponent implements OnInit {
         fam.id_CONF_OP = this.listidfam;
         fam.id_OP_PRINC = this.selectedfam;
         fam.id_OP_SEC = this.selectedoppermitida;
-        fam.name_OP_PRINC = this.selectedfam_name;
-        fam.name_OP_SEC = this.selectedoppermitida_name;
+        fam.nome_OP_PRINC = this.selectedfam_name;
+        fam.nome_OP_SEC = this.selectedoppermitida_name;
         this.fam_service.update(fam).then(() => {
           this.preenche_fam();
         });
@@ -468,7 +468,7 @@ export class GestaoUsersComponent implements OnInit {
     this.fam_service.getAll().subscribe(
       response => {
         for (var x in response) {
-          this.list1.push({ fam_field:response[x].id_OP_PRINC.trim()+"-"+response[x].name_OP_PRINC, op_field:response[x].id_OP_SEC.trim()+"-"+response[x].name_OP_SEC,fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP , op_name: response[x].name_OP_SEC, fam_name: response[x].name_OP_PRINC});
+          this.list1.push({ fam_field:response[x].id_OP_PRINC.trim()+"-"+response[x].nome_OP_PRINC, op_field:response[x].id_OP_SEC.trim()+"-"+response[x].nome_OP_SEC,fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP , op_name: response[x].nome_OP_SEC, fam_name: response[x].nome_OP_PRINC});
         }
         this.list1 = this.list1.slice();
       },
@@ -484,7 +484,7 @@ export class GestaoUsersComponent implements OnInit {
     this.op_service.getAll().subscribe(
       response => {
         for (var x in response) {
-          this.listaop.push({ field: response[x].id_OP.trim() + " - " + response[x].name_OP, id: response[x].id_CONF_OP_NPREV });
+          this.listaop.push({ field: response[x].id_OP.trim() + " - " + response[x].nome_OP, id: response[x].id_CONF_OP_NPREV });
           if (control) data += ","
           data += response[x].id_OP.trim();
           control = true;

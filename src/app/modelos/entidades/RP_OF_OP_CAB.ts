@@ -14,7 +14,7 @@ export class RP_OF_OP_CAB {
     perfil_MODIF: string;
     data_HORA_MODIF: Date;
     estado: string;
-    tempo_PREP_TOTAL: Date;
-    tempo_PARA_TOTAL: Date;
-    tempo_EXEC_TOTAL: Date;
+    tempo_PREP_TOTAL: string;
+    tempo_PARA_TOTAL: string;
+    tempo_EXEC_TOTAL: string;
 }

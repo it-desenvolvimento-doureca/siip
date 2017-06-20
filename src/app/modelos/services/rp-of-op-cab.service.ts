@@ -45,6 +45,22 @@ export class RPOFOPCABService {
       .catch(this.handleError);
   }
 
+  getdataof(id,user){
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getdataof/'+id+'/'+user+'';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+   getbyid(id){
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_CABid/'+id+'';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
   private extractData(res: Response) {
     let body = res.json();
     return body;

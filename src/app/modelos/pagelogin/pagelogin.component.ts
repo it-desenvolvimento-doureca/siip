@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OperacaoEmCursoComponent } from "app/modelos/operacao-em-curso/operacao-em-curso.component";
+import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 
 @Component({
   selector: 'app-pagelogin',
@@ -10,7 +11,7 @@ export class PageloginComponent implements OnInit {
   confirmationService: any;
   displayDialog: boolean;
 
- operation: string = '';
+  operation: string = '';
   count = 1;
   testUser = [{ username: '1233', name: 'Pedro', type: ["1", "2"] }, { username: '1234', name: 'Administrador', type: ["1", "2", "3"] }, { username: '1224', name: 'Ana', type: '2' }];
   edited = false;
@@ -20,8 +21,8 @@ export class PageloginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
 
-  constructor(private emitter:OperacaoEmCursoComponent) {
-    
+  constructor(private service: RPCONFUTZPERFService, private emitter: OperacaoEmCursoComponent) {
+
   }
 
   //adiciona número ao input de login
@@ -39,20 +40,28 @@ export class PageloginComponent implements OnInit {
 
   //verificar se utilizador existe
   userexists() {
-    for (var x in this.testUser) {
-      if (this.operation === this.testUser[x].username) {
-        this.edited = true;
-        this.name = this.testUser[x].name;
-        return true;
-      } else {
-        this.edited = false;
-        this.name = "";
-      }
-    }
-  }
-  
+    this.service.getbyid(this.operation).subscribe(
+      response => {
 
-//Tecla de limpar número
+        var count = Object.keys(response).length;
+        //se existir uma of vai preencher combobox operações
+        if (count > 0) {
+          localStorage.setItem('user', JSON.stringify({ username: response[0].id_UTZ, name: response[0].nome_UTZ }));
+          this.edited = true;
+          this.name = response[0].nome_UTZ;
+
+          //guarda os dados do login
+          return true;
+        } else {
+          this.edited = false;
+          this.name = "";
+        }
+      },
+      error => console.log(error));
+  }
+
+
+  //Tecla de limpar número
   undo() {
     if (this.operation != '') {
       this.operation = this.operation.slice(0, -1);
@@ -63,7 +72,7 @@ export class PageloginComponent implements OnInit {
     }
   }
 
-//Limpar input 
+  //Limpar input 
   reset() {
     this.count = 1;
     this.edited = false;
@@ -71,10 +80,10 @@ export class PageloginComponent implements OnInit {
     this.operation = "";
   }
 
-//adiciona  operador
+  //adiciona  operador
   redirect() {
-   this.emitter.save(this.operation);
-   this.reset();
+    this.emitter.save(this.operation);
+    this.reset();
   }
 
 

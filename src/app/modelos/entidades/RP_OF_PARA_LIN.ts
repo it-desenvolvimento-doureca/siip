@@ -1,10 +1,10 @@
 export class RP_OF_PARA_LIN {
-    ID_PARA_LIN: number;
-    ID_OP_LIN: number;
-    DATA_INI: Date;
-    HORA_INI: Date;
+    id_PARA_LIN: number;
+    id_OP_CAB: number;
+    data_INI: Date;
+    hora_INI: String;
     data_FIM: Date;
-    hora_FIM: Date;
+    hora_FIM: String;
     id_UTZ_CRIA: string;
     id_UTZ_MODIF: string;
     data_HORA_MODIF: Date;

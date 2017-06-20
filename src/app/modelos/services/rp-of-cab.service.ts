@@ -46,11 +46,20 @@ export class RPOFCABService {
   }
 
   listofcurrentof(id) {
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/listofcurrentof/'+id+'';
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/listofcurrentof/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
+  }
+  
+  getof(id) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getof/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+
   }
 
   private extractData(res: Response) {

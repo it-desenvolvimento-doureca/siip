@@ -36,7 +36,7 @@ export class RPCONFOPNPREVService {
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
-
+  
   private extractData(res: Response) {
     let body = res.json();
     return body;

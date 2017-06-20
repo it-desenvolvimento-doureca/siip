@@ -1281,11 +1281,11 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
 }
 
 .tabcss .ui-tabview.ui-tabview-left .ui-tabview-nav li:hover {
-    height: 54px;
+    min-height: 54px;
 }
 .tabcss .ui-tabview.ui-tabview-left .ui-tabview-nav li {
-    height: 54px;
-    font-size: 23px;
+    min-height: 54px;
+    font-size: 20px;
 }
 
 .novoop .ui-dialog.ui-widget .ui-dialog-titlebar {

@@ -15,3 +15,16 @@ input:read-only {
 .nopadding {
    padding-left: 0 !important;
 }
+
+.fundoverde{
+    background: #0eac4e !important;
+}
+
+.fundoamarelo{
+    background: yellow !important;
+}
+
+.fundovermelho{
+    background: red !important;
+    ;
+}

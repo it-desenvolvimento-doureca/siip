@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { RP_OF_OP_LIN } from "app/modelos/entidades/RP_OF_OP_LIN";
+import { RP_OF_CAB } from "app/modelos/entidades/RP_OF_CAB";
 
 @Injectable()
 export class RPOFOPLINService {
@@ -37,6 +38,37 @@ export class RPOFOPLINService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  getAllbyid(id): Observable<RP_OF_OP_LIN[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_LINid/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  getRP_OF_OP_LINallid(id): Observable<RP_OF_OP_LIN[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_LINallid/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  getRP_OF_OP_LINOp(id): Observable<RP_OF_CAB[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_LINOp/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  getRP_OF_OP_LIN(id): Observable<RP_OF_OP_LIN[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_LIN/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 
   update(data: RP_OF_OP_LIN) {
     return this.http

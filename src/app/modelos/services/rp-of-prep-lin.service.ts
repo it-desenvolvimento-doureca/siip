@@ -36,6 +36,15 @@ export class RPOFPREPLINService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  getbyid(id): Observable<RP_OF_PREP_LIN[]> {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getbyidRP_OF_PREP_LIN/'+id+'';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+
 
   update(data: RP_OF_PREP_LIN) {
     return this.http

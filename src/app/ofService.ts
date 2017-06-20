@@ -37,7 +37,7 @@ export class ofService {
 
 
     getAllOPNOTIN(data: String) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allopNOTIN/'+data+'';
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allopNOTIN/' + data + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -60,8 +60,16 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    getAllMaq() {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allmaquina/';
+    defeitos(fam) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/defeitos/' + fam + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getAllMaq(SECCOD) {
+        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allmaquina/'+SECCOD+'';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
