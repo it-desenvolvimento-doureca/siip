@@ -13,13 +13,9 @@ export class PageloginComponent implements OnInit {
 
   operation: string = '';
   count = 1;
-  testUser = [{ username: '1233', name: 'Pedro', type: ["1", "2"] }, { username: '1234', name: 'Administrador', type: ["1", "2", "3"] }, { username: '1224', name: 'Ana', type: '2' }];
   edited = false;
   name = "";
   display: boolean = false;
-  isHidden1: boolean = true;
-  isHidden2: boolean = true;
-  isHidden3: boolean = true;
 
   constructor(private service: RPCONFUTZPERFService, private emitter: OperacaoEmCursoComponent) {
 
@@ -40,24 +36,27 @@ export class PageloginComponent implements OnInit {
 
   //verificar se utilizador existe
   userexists() {
-    this.service.getbyid(this.operation).subscribe(
-      response => {
+    //apenas verifica se utilizador existe se o código for diferente do dele
+    if (this.operation != JSON.parse(localStorage.getItem('user'))["username"]){
+      this.service.getbyid(this.operation).subscribe(
+        response => {
 
-        var count = Object.keys(response).length;
-        //se existir uma of vai preencher combobox operações
-        if (count > 0) {
-          localStorage.setItem('user', JSON.stringify({ username: response[0].id_UTZ, name: response[0].nome_UTZ }));
-          this.edited = true;
-          this.name = response[0].nome_UTZ;
+          var count = Object.keys(response).length;
+          //se existir uma of vai preencher combobox operações
+          if (count > 0) {
+            this.edited = true;
+            this.name = response[0].nome_UTZ;
 
-          //guarda os dados do login
-          return true;
-        } else {
-          this.edited = false;
-          this.name = "";
-        }
-      },
-      error => console.log(error));
+            //guarda os dados do login
+            return true;
+          } else {
+            this.edited = false;
+            this.name = "";
+          }
+        },
+        error => console.log(error));
+    }
+
   }
 
 
@@ -82,7 +81,7 @@ export class PageloginComponent implements OnInit {
 
   //adiciona  operador
   redirect() {
-    this.emitter.save(this.operation);
+    this.emitter.save(this.operation, this.name);
     this.reset();
   }
 

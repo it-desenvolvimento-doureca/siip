@@ -5,7 +5,7 @@ import { RP_OF_OP_CAB } from "app/modelos/entidades/RP_OF_OP_CAB";
 
 @Injectable()
 export class RPOFOPCABService {
- 
+
   handleError: any;
 
   private headers = new Headers({ 'Content-Type': 'application/json' });
@@ -36,6 +36,13 @@ export class RPOFOPCABService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  getMaxID() {
+    const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getMaxID`;
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 
   update(data: RP_OF_OP_CAB) {
     return this.http
@@ -45,16 +52,24 @@ export class RPOFOPCABService {
       .catch(this.handleError);
   }
 
-  getdataof(id,user){
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getdataof/'+id+'/'+user+'';
+  getdataof(id, user) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getdataof/' + id + '/' + user + '';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-   getbyid(id){
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_CABid/'+id+'';
+  getbyid(id) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_OP_CABid/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  listofcurrentof(id) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/checkuser/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)

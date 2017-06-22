@@ -33,6 +33,8 @@ import { RP_OF_DEF_LIN } from "app/modelos/entidades/RP_OF_DEF_LIN";
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    display_op_em_curso: boolean = false;
+    pessoa_op_em_curso: string;
     op_NUM: any;
     max_num: number;
     OFBQTEINI: any;
@@ -135,7 +137,7 @@ export class NovaOperacaoComponent implements OnInit {
                                 for (var x in response1) {
                                     if (first) this.operacao.push({ label: "Seleccione a Operação", value: 0 });
                                     first = false;
-                                    this.operacao.push({ label: response1[x].OPENUM + "/" +response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
+                                    this.operacao.push({ label: response1[x].OPENUM + "/" + response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
                                     this.max_num = response1[x].OPENUM;
                                 }
                                 this.readonly_op = false;
@@ -186,7 +188,7 @@ export class NovaOperacaoComponent implements OnInit {
 
     //ao alterar a operação preenche SelectItem das maquinas
     carregamaquinas(event) {
-         
+
         if (event != 0) {
             this.op_cod = event.OPECOD;
             this.op_desc = event.OPEDES;
@@ -254,10 +256,10 @@ export class NovaOperacaoComponent implements OnInit {
 
     //ao seleccionar uma nova operação da tabela, é adicionada ao SelectItem maquina
     onRowSelect3(event) {
-        var OPENUM = this.max_num * 1 + 10 *1;
+        var OPENUM = this.max_num * 1 + 10 * 1;
         this.state = 'secondpos';
         if (!this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM)) {
-            this.operacao.push({ label: OPENUM + "/" +event.data.OPECOD + "/" + event.data.OPEDES, value: { OPEDES: event.data.OPEDES,OPENUM: OPENUM, OPECOD: event.data.OPECOD, SECNUMENR1: event.data.SECNUMENR1 } });
+            this.operacao.push({ label: OPENUM + "/" + event.data.OPECOD + "/" + event.data.OPEDES, value: { OPEDES: event.data.OPEDES, OPENUM: OPENUM, OPECOD: event.data.OPECOD, SECNUMENR1: event.data.SECNUMENR1 } });
             this.selected = this.operacao[this.operacao.length - 1].value;
         } else {
             this.selected = this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM).value;
@@ -276,7 +278,19 @@ export class NovaOperacaoComponent implements OnInit {
 
     iniciartrab() {
         if (this.num_of != "" && this.selected != "" && this.selectedmaq != "") {
-            this.display3 = true;
+
+            //verifica se existe alguma of com a mesma operação em execução 
+            this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM).subscribe(
+                response => {
+                    var c = Object.keys(response).length;
+                    if (c > 0) {
+                        this.pessoa_op_em_curso = response[0].nome_UTZ_CRIA;
+                        this.display_op_em_curso = true;
+                    } else {
+                        this.display3 = true;
+                    }
+                },
+                error => console.log(error));
         }
     }
 
@@ -358,6 +372,8 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.ref_VAR2 = this.ref_VAR2;
             rpofoplin.ref_INDNUMENR = this.INDNUMENR;
             rpofoplin.quant_OF = parseInt(this.OFBQTEINI);
+            rpofoplin.quant_BOAS_TOTAL = 0;
+            rpofoplin.quant_DEF_TOTAL = 0;
             this.RPOFOPLINService.create(rpofoplin).subscribe(
                 res => {
                     this.deftoref(res.id_OP_LIN);
@@ -372,6 +388,8 @@ export class NovaOperacaoComponent implements OnInit {
                 rpofoplin.ref_IND = this.referencias[x].INDREF;
                 rpofoplin.ref_VAR1 = this.referencias[x].var1;
                 rpofoplin.ref_VAR2 = this.referencias[x].var2;
+                rpofoplin.quant_BOAS_TOTAL = 0;
+                rpofoplin.quant_DEF_TOTAL = 0;
                 rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
                 rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
                 this.RPOFOPLINService.create(rpofoplin).subscribe(
@@ -434,25 +452,25 @@ export class NovaOperacaoComponent implements OnInit {
                 }
 
                 //adicionar a própria lista de defeitos da operação
-             /*   this.service.defeitos(this.op_cod).subscribe(
-                    result => {
-                        console.log(result);
-                        var count = Object.keys(result).length;
-                         if (count > 0) {
-                             //inserir em RP_OF_DEF_LIN
-                             for (var x in result) {
-                                 var def = new RP_OF_DEF_LIN();
-                                 def.cod_DEF = result[x].QUACOD;
-                                 def.desc_DEF = result[x].QUALIB;
-                                 def.id_OP_LIN = id_OP_LIN;
-                                 def.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
-                                 def.quant_DEF = 0;
-                                 def.data_HORA_REG = new Date();
-                                 this.RPOFDEFLINService.create(def);
-                             }
-                         }
-                    },
-                    error => console.log(error));*/
+                /*   this.service.defeitos(this.op_cod).subscribe(
+                       result => {
+                           console.log(result);
+                           var count = Object.keys(result).length;
+                            if (count > 0) {
+                                //inserir em RP_OF_DEF_LIN
+                                for (var x in result) {
+                                    var def = new RP_OF_DEF_LIN();
+                                    def.cod_DEF = result[x].QUACOD;
+                                    def.desc_DEF = result[x].QUALIB;
+                                    def.id_OP_LIN = id_OP_LIN;
+                                    def.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+                                    def.quant_DEF = 0;
+                                    def.data_HORA_REG = new Date();
+                                    this.RPOFDEFLINService.create(def);
+                                }
+                            }
+                       },
+                       error => console.log(error));*/
             },
             error => console.log(error));
     }

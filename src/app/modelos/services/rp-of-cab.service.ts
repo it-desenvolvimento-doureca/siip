@@ -52,9 +52,18 @@ export class RPOFCABService {
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
-  
+
   getof(id) {
     const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getof/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+
+  }
+
+  verifica(of_num, op_cod, op_num) {
+    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/verifica/' + of_num + '/' + op_cod + '/' + op_num + '';
     return this.http
       .get(url)
       .map(this.extractData)

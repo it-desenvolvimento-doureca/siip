@@ -56,7 +56,7 @@ export class ControloComponent implements OnInit {
       color5: "red",
     },
     {
-      codigo: "teste1",
+      codigo: "teste3",
       codigo2: "teste2",
       codigo3: "teste1",
       codigo4: "teste1",

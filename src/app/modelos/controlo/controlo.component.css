@@ -5,14 +5,17 @@
 
 .red{
     background: red;
+    height: 100%;
 }
 
 .green{
     background: green;
+    height: 100%;
 }
 
 .yellow{
     background: yellow;
+    height: 100%;
 }
 
 
@@ -42,4 +45,9 @@
 .nopadding {
    padding-left: 0 !important;
    max-height: 264px;
+}
+
+tbody {
+    display: inline-grid !important;
+    width: 100%
 }

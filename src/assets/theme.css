@@ -1299,8 +1299,14 @@ body .ui-datatable .ui-datatable-data > tr > td {
     padding: .75em;
     text-align: center;
 }
+
+body .ui-datatable .ui-cell-data {
+    height: 100%;
+    display: block;
+}
 body .tabelacontrolo .ui-datatable-data > tr > td {
     padding: 0px !important;
+    height: 100%;
 }
 
 .tabelacontrolo .ui-datatable-thead > tr > th{

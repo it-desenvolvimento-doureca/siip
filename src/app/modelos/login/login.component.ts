@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit {
   //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
   redirect() {
     var id = JSON.parse(localStorage.getItem('user'))["username"];
-    this.RPOFCABService.listofcurrentof(id).subscribe(
+    this.RPOFOPCABService.listofcurrentof(id).subscribe(
       response => {
         var count = Object.keys(response).length;
         if (count > 0) {
@@ -364,6 +364,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
 

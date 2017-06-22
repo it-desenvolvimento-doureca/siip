@@ -30,11 +30,13 @@ export class OperacaoEmCursoComponent implements OnInit {
   data_fim = "";
   hora_fim = "";
   id_op_cab = "";
+  utilizadores_adici: any[] = [];
 
   constructor(private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
+
     //verifica se tem o id_of_cab
     if (localStorage.getItem('id_of_cab')) {
       //preencher campos
@@ -53,6 +55,9 @@ export class OperacaoEmCursoComponent implements OnInit {
             this.id_op_cab = response[x][0].id_OP_CAB;
             this.listadefeitos(response[x][0].id_OP_CAB);
           }
+
+          //verificar se existe operadores adicionais
+          //...
         },
         error => console.log(error));
 
@@ -74,8 +79,9 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   //adiciona  operador
-  save(code_login) {
+  save(code_login,nome) {
     this.displayDialog = false;
+    this.utilizadores_adici.push(nome);
     var rpofop = new RP_OF_OP_CAB;
     /*
         rpofop.id_OF_CAB = id_OF_CAB;
@@ -95,7 +101,6 @@ export class OperacaoEmCursoComponent implements OnInit {
             }
           },
           error => console.log(error));*/
-    console.log(code_login);
     this.confirmationService.confirm({
       message: 'Pretende adicionar mais um Operador?',
       accept: () => {

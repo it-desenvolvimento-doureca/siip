@@ -152,9 +152,8 @@ export class RegistoQuantidadesComponent implements OnInit {
   getdefeitos(id) {
     this.tabSets = [];
     this.RPOFOPLINService.getRP_OF_OP_LINOp(id).subscribe(res => {
-
       var index = 0;
-      this.RPCONFOPService.getAllbyid(res[0].op_NUM).subscribe(res2 => {
+      this.RPCONFOPService.getAllbyid(res[0].op_COD).subscribe(res2 => {
 
         for (var x in res2) {
           index++;

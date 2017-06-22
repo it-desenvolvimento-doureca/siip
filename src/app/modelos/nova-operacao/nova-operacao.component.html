@@ -5,8 +5,8 @@
       <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
       <div class="input-group">
         <div class="icon-addon " style="width: 100%;">
-          <input type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}" [(ngModel)]="num_of" #of
-            (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
+          <input type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}" [(ngModel)]="num_of"
+            #of (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
         </div>
         <span class="input-group-btn">
           <button (click)="pesquisaof()" class="btn {{bt_class}}" type="button" style="line-height: 0;"><i *ngIf="refresh" class="fa fa-refresh"></i>
@@ -28,8 +28,8 @@
 
     <div class="form-group">
       <label class="control-label " for="subject">Máquina</label>
-      <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq" (onChange)="maquinadados($event)"
-        [style]="{'width':'100%'}"></p-dropdown>
+      <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
+        (onChange)="maquinadados($event)" [style]="{'width':'100%'}"></p-dropdown>
     </div>
 
     <div class="form-group">
@@ -73,9 +73,9 @@
     <br>
     <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
       <a (click)="carregarmais()" style="cursor: pointer;">
-      <h3>
-        <u> VER MAIS </u>
-      </h3>
+        <h3>
+          <u> VER MAIS </u>
+        </h3>
       </a>
     </div>
   </div>
@@ -109,15 +109,32 @@
   [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
-      <p>
-        Qual o Serviço que vai iniciar?
-      </p>
+      Qual o Serviço que vai iniciar?
+    </p>
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
       <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+<p-dialog [(visible)]="display_op_em_curso" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      <b> OPERAÇÃO EM CURSO </b>
+    </p>
+    <p>
+      Solicite a {{pessoa_op_em_curso}} que o(a) adicione à operação
+    </p>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton routerLink="/home" label="OK" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
