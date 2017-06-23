@@ -4,6 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { webUrl } from "webUrl";
 
 @Injectable()
 export class ofService {
@@ -12,7 +13,7 @@ export class ofService {
 
 
     getOF(ofnum) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/silver/' + ofnum + '';
+        const url = webUrl.host+'/rest/demo/silver/' + ofnum + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -20,7 +21,7 @@ export class ofService {
     }
 
     getOP(ofanumenr) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/operacao/' + ofanumenr + '';
+        const url = webUrl.host+'/rest/demo/operacao/' + ofanumenr + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -28,7 +29,7 @@ export class ofService {
     }
 
     getAllOP() {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allop';
+        const url = webUrl.host+'/rest/demo/allop';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -37,7 +38,7 @@ export class ofService {
 
 
     getAllOPNOTIN(data: String) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allopNOTIN/' + data + '';
+        const url = webUrl.host+'/rest/demo/allopNOTIN/' + data + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -45,7 +46,7 @@ export class ofService {
     }
 
     getMaq(SECNUMENR) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/maquina/' + SECNUMENR + '';
+        const url = webUrl.host+'/rest/demo/maquina/' + SECNUMENR + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -53,7 +54,7 @@ export class ofService {
     }
 
     getFamilias() {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/familias/';
+        const url = webUrl.host+'/rest/demo/familias/';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -61,7 +62,7 @@ export class ofService {
     }
 
     defeitos(fam) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/defeitos/' + fam + '';
+        const url = webUrl.host+'/rest/demo/defeitos/' + fam + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -69,7 +70,7 @@ export class ofService {
     }
 
     getAllMaq(SECCOD) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/allmaquina/'+SECCOD+'';
+        const url = webUrl.host+'/rest/demo/allmaquina/'+SECCOD+'';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -77,7 +78,7 @@ export class ofService {
     }
 
     getTipoFalta() {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/tipofaltas';
+        const url = webUrl.host+'/rest/demo/tipofaltas';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -85,7 +86,7 @@ export class ofService {
     }
 
     getRef(OFANUMENR) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/referencias/' + OFANUMENR + '';
+        const url = webUrl.host+'/rest/demo/referencias/' + OFANUMENR + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())

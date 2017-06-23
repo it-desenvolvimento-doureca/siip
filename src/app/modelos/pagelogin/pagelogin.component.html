@@ -1,39 +1,39 @@
 <div class="container">
     <div class="row">
        
-        <div class="col-md-8 col-lg-9 phone">
+         <div class="col-md-9 col-sm-12 col-lg-9 phone" style="padding: 0px; text-align: -webkit-center;">
             <div class="row1">
-                <div class="col-md-12">
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-10">
                     <div class="num-pad">
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(1)" label="1" pButton></button>
+                            <button type="button" class="num" (click)="append('1')" label="1" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(2)" label="2" pButton></button>
+                            <button type="button" class="num" (click)="append('2')" label="2" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(3)" label="3" pButton></button>
+                            <button type="button" class="num" (click)="append('3')" label="3" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(4)" label="4" pButton></button>
+                            <button type="button" class="num" (click)="append('4')" label="4" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(5)" label="5" pButton></button>
+                            <button type="button" class="num" (click)="append('5')" label="5" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(6)" label="6" pButton></button>
+                            <button type="button" class="num" (click)="append('6')" label="6" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(7)" label="7" pButton></button>
+                            <button type="button" class="num" (click)="append('7')" label="7" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(8)" label="8" pButton></button>
+                            <button type="button" class="num" (click)="append('8')" label="8" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(9)" label="9" pButton></button>
+                            <button type="button" class="num" (click)="append('9')" label="9" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(0)" label="0" pButton></button>
+                            <button type="button" class="num" (click)="append('0')" label="0" pButton></button>
                         </div>
                         <div class="span4">
                             <button type="button" class="num num1" (click)="undo()" label="APAGAR" pButton></button>
@@ -46,7 +46,7 @@
 
             <div class="clearfix">
             </div>
-            <input readonly type="text" name="name" id="telNumber" #box (keypress)="append1(box.value,$event)" class="form-control tel"
+            <input readonly type="text" name="name" id="telNumber" #box class="form-control tel"
                 value="{{ operation }}" maxlength="4" />
         </div>
     </div>

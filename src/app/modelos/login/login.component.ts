@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   displayprep: boolean = false;
   constructor(private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
     //limpar a sessão
-    //localStorage.clear();
+    localStorage.clear();
   }
 
   //adiciona número ao input de login
@@ -53,7 +53,6 @@ export class LoginComponent implements OnInit {
 
     this.service.searchuser(this.operation).subscribe(
       response => {
-
         var count = Object.keys(response).length;
         //se existir uma of vai preencher combobox operações
         if (count > 0) {
@@ -79,8 +78,11 @@ export class LoginComponent implements OnInit {
     if (this.operation != '') {
       this.operation = this.operation.slice(0, -1);
       this.count--;
-      if (this.count >= 3) {
+      if (this.count > 3) {
         this.userexists();
+      } else {
+        this.edited = false;
+        this.name = "";
       }
     }
   }
@@ -96,6 +98,7 @@ export class LoginComponent implements OnInit {
 
   //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
   redirect() {
+     var dataacess: any[] = [];
     var id = JSON.parse(localStorage.getItem('user'))["username"];
     this.RPOFOPCABService.listofcurrentof(id).subscribe(
       response => {
@@ -103,6 +106,8 @@ export class LoginComponent implements OnInit {
         if (count > 0) {
           for (var x in response) {
             localStorage.setItem('id_of_cab', JSON.stringify(response[x].id_OF_CAB));
+            dataacess = ["O"];
+            localStorage.setItem('access', JSON.stringify(dataacess));
             switch (response[x].estado) {
               case "I":
                 this.router.navigate(['./operacao-em-curso']);
@@ -124,7 +129,7 @@ export class LoginComponent implements OnInit {
           this.isHidden1 = true;
           this.isHidden2 = true;
           this.isHidden3 = true;
-          var dataacess: any[] = [];
+          dataacess = [];
           this.service__utz.getbyid(id).subscribe(
             response => {
               var count = Object.keys(response).length;

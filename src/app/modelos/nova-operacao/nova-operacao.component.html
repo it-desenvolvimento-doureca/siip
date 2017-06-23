@@ -43,12 +43,13 @@
 <div class="col-md-6 col-md-offset-8" style="float:left;">
 
 
-  <p-dataTable [value]="referencias" [selectionMode]="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)"
-    class="{{color}}" (onRowUnselect)="onRowUnselect(t)" dataKey="codigo" scrollable="true" scrollHeight="600px" [responsive]="true"
+  <p-dataTable [value]="referencias" [selectionMode]="single" (onRowSelect)="onRowSelect($event)"
+    class="{{color}}" (onRowUnselect)="onRowUnselect($event)" dataKey="codigo" scrollable="true" scrollHeight="600px" [responsive]="true"
     [rows]="10">
     <p-header>REFERÊNCIA</p-header>
     <p-column field="codigo" header="Código" [sortable]="true"></p-column>
     <p-column field="design" header="Designação"></p-column>
+    <p-column field="OFBQTEINI" header="Qtd."></p-column>
   </p-dataTable>
 </div>
 <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
@@ -59,7 +60,7 @@
 </div>
 
 <div id="adicionaop">
-  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow: scroll;" (clickOutside)="ontogglestates()">
     <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
       <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
       <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
@@ -71,7 +72,7 @@
       <p-column field="OPEDES" header="Designação"></p-column>
     </p-dataTable>
     <br>
-    <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
+    <div [hidden]="displayvermais" class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
       <a (click)="carregarmais()" style="cursor: pointer;">
         <h3>
           <u> VER MAIS </u>

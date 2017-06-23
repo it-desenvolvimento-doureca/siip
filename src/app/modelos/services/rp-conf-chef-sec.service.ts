@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RP_CONF_CHEF_SEC } from "app/modelos/entidades/RP_CONF_CHEF_SEC";
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
+import { webUrl } from "webUrl";
 
 @Injectable()
 export class RPCONFCHEFSECService {
@@ -14,7 +15,7 @@ export class RPCONFCHEFSECService {
 
   create(data: RP_CONF_CHEF_SEC) {
     return this.http
-      .post(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/createRP_CONF_CHEF_SEC`, JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host+'/rest/siip/createRP_CONF_CHEF_SEC', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
@@ -22,7 +23,7 @@ export class RPCONFCHEFSECService {
 
   delete(id) {
     return this.http
-      .delete('http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/deleteRP_CONF_CHEF_SEC/' + id + '')
+      .delete(webUrl.host+'/rest/siip/deleteRP_CONF_CHEF_SEC/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -30,7 +31,7 @@ export class RPCONFCHEFSECService {
 
 
   getAll(): Observable<RP_CONF_CHEF_SEC[]> {
-    const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_CONF_CHEF_SEC`;
+    const url = webUrl.host+'/rest/siip/getRP_CONF_CHEF_SEC';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -40,7 +41,7 @@ export class RPCONFCHEFSECService {
 
   update(data: RP_CONF_CHEF_SEC) {
     return this.http
-      .put(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/updateRP_CONF_CHEF_SEC`, JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host+'/rest/siip/updateRP_CONF_CHEF_SEC', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);

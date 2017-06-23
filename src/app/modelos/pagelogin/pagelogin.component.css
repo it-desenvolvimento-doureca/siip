@@ -144,3 +144,21 @@ p
   opacity: 1;
   padding: 10px;
 }
+
+@media screen and (max-width: 575px) {
+  .phone {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 523px) {
+  .phone {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 463px) {
+  .phone {
+    width: 100%;
+  }
+}

@@ -72,6 +72,7 @@ export class NovaOperacaoComponent implements OnInit {
     displaybtref = true;
     single = "";
     color = "disabletable";
+    displayvermais= false;
     @ViewChild('inputFocous') inputFocous: any;
 
     constructor(private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
@@ -121,7 +122,7 @@ export class NovaOperacaoComponent implements OnInit {
                         this.service.getRef(response[0].ofanumenr).subscribe(
                             response2 => {
                                 for (var x in response2) {
-                                    this.referencias.push({ codigo: response2[x].PROREF, design: response2[x].PRODES1, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: response2[x].OFBQTEINI, INDNUMENR: response2[x].INDNUMENR });
+                                    this.referencias.push({ codigo: response2[x].PROREF, design: response2[x].PRODES1, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR });
                                 }
                                 this.referencias = this.referencias.slice();
                                 if (this.referencias.length > 1) {
@@ -297,6 +298,7 @@ export class NovaOperacaoComponent implements OnInit {
     //carregar todas as operações não previstas
     carregarmais() {
         this.novaopera = [];
+        this.displayvermais = true;
         this.service.getAllOP().subscribe(
             response => {
                 for (var x in response) {
@@ -473,6 +475,9 @@ export class NovaOperacaoComponent implements OnInit {
                        error => console.log(error));*/
             },
             error => console.log(error));
+    }
+    onRowUnselect(event) {
+
     }
 
 }

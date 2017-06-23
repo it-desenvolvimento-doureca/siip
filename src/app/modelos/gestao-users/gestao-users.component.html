@@ -1,8 +1,8 @@
 <button type="button" class="ui-button-secondary" pButton routerLink="/home" label="Voltar" style="float: right;"></button>
 <p-tabView class="gestao">
   <p-tabPanel header="Famílias de defeitos">
-    <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true" selectionMode="single" [(selection)]="selectedfamrow"
-      (onRowSelect)="onRowSelectfam($event)" datakey="id">
+    <p-dataTable [value]="list1" [paginator]="true" rows="10" [responsive]="true" selectionMode="single" (onRowSelect)="onRowSelectfam($event)"
+      datakey="id">
       <p-column field="fam_field" header="Operação Principal" [sortable]="true" [style]="{'overflow':'visible'}">
       </p-column>
       <p-column field="op_field" header="Operações permitidas"></p-column>
@@ -25,8 +25,8 @@
           <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
           <input #gba type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
         </div>
-        <p-dataTable [globalFilter]="gba" #dt1 [value]="list2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)"
-          (onRowUnselect)="onRowUnselect($event)" dataKey="no" scrollable="true" scrollHeight="600px" [responsive]="true" [rows]="10">
+        <p-dataTable [globalFilter]="gba" #dt1 [value]="list2" selectionMode="single" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+          dataKey="no" scrollable="true" scrollHeight="600px" [responsive]="true" [rows]="10">
           <p-column field="field" header="Utilizadores" [sortable]="true"></p-column>
         </p-dataTable>
       </div>
@@ -52,19 +52,19 @@
       </div>
       <div class="col-md-5 col-md-offset-5" style="float:left;">
         <div style="height: 250px;">
-          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list3" selectionMode="single" [(selection)]="selectedC3" (onRowSelect)="onRowSelect3($event)"
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list3" selectionMode="single" (onRowSelect)="onRowSelect3($event)"
             (onRowUnselect)="onRowUnselect($event)" dataKey="no">
             <p-column field="field" header="Perfil Operador" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
-          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list4" selectionMode="single" [(selection)]="selected4" (onRowSelect)="onRowSelect4($event)"
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list4" selectionMode="single" (onRowSelect)="onRowSelect4($event)"
             (onRowUnselect)="onRowUnselect($event)" dataKey="no">
             <p-column field="field" header="Perfil Chefe de Seção" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
-          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" [(selection)]="selected5" (onRowSelect)="onRowSelect5($event)"
+          <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" (onRowSelect)="onRowSelect5($event)"
             (onRowUnselect)="onRowUnselect($event)" dataKey="no">
             <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
           </p-dataTable>
@@ -75,7 +75,7 @@
 
   <p-tabPanel header="Responsáveis de cada secção">
 
-    <p-dataTable [value]="list6" selectionMode="single" [(selection)]="selectedCar" (onRowSelect)="onRowSelect6($event)" [paginator]="true"
+    <p-dataTable [value]="list6" selectionMode="single" (onRowSelect)="onRowSelect6($event)" [paginator]="true"
       rows="10" [responsive]="true">
       <p-header>Responsáveis</p-header>
       <p-column field="name" header="Chefe de Secção" [sortable]="true"></p-column>

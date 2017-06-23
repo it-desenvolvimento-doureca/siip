@@ -85,7 +85,7 @@ export class RegistoQuantidadesComponent implements OnInit {
         this.items.push({ cod: res[x].cod_DEF, des: res[x].desc_DEF.trim(), value: res[x].quant_DEF, id_DEF_LIN: res[x].id_DEF_LIN });
       }
     }, error => console.log(error));
-
+ 
   }
 
 
@@ -110,7 +110,7 @@ export class RegistoQuantidadesComponent implements OnInit {
 
 
   //passa para a referência seguinte
-  nextItem() {
+  nextItem() { 
     this.i = this.i + 1;
     this.i = this.i % this.ref.length;
     this.ref_name = this.ref[this.i].design;
@@ -154,14 +154,17 @@ export class RegistoQuantidadesComponent implements OnInit {
     this.RPOFOPLINService.getRP_OF_OP_LINOp(id).subscribe(res => {
       var index = 0;
       this.RPCONFOPService.getAllbyid(res[0].op_COD).subscribe(res2 => {
+        var count = Object.keys(res2).length;
+        //se existir operações
+        if (count > 0) {
+          for (var x in res2) {
+            index++;
+            this.tabSets.push({ label: res2[x].id_OP_SEC + " - " + res2[x].nome_OP_SEC, id: res2[x].id_OP_SEC.trim(), id_op: id });
+            this.positions.push({ index: index, id: res2[x].id_OP_SEC.trim() });
 
-        for (var x in res2) {
-          index++;
-          this.tabSets.push({ label: res2[x].id_OP_SEC + " - " + res2[x].nome_OP_SEC, id: res2[x].id_OP_SEC.trim(), id_op: id });
-          this.positions.push({ index: index, id: res2[x].id_OP_SEC.trim() });
-
+          }
+          this.getinputs(this.positions[0].id);
         }
-        this.getinputs(this.positions[0].id);
       }, error => console.log(error));
 
     }, error => console.log(error));

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { RP_OF_DEF_LIN } from "app/modelos/entidades/RP_OF_DEF_LIN";
+import { webUrl } from "webUrl";
 
 @Injectable()
 export class RPOFDEFLINService {
@@ -15,14 +16,14 @@ export class RPOFDEFLINService {
 
   create(data: RP_OF_DEF_LIN) {
     return this.http
-      .post(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/createRP_OF_DEF_LIN`, JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host+'/rest/siip/createRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
   getAll(): Observable<RP_OF_DEF_LIN[]> {
-    const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_OF_DEF_LIN`;
+    const url = webUrl.host+'/rest/siip/getRP_OF_DEF_LIN';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -30,7 +31,7 @@ export class RPOFDEFLINService {
   }
 
   getbyid(id,id2): Observable<RP_OF_DEF_LIN[]> {
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getbyidRP_OF_DEF_LIN/' + id + '/' + id2 + '';
+    const url = webUrl.host+'/rest/siip/getbyidRP_OF_DEF_LIN/' + id + '/' + id2 + '';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -38,7 +39,7 @@ export class RPOFDEFLINService {
   }
   
   getbyidDEF(id): Observable<RP_OF_DEF_LIN[]> {
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getbyidDEF/' + id + '';
+    const url = webUrl.host+'/rest/siip/getbyidDEF/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -47,7 +48,7 @@ export class RPOFDEFLINService {
 
   delete(id) {
     return this.http
-      .delete('http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/deleteRP_OF_DEF_LIN/' + id + '')
+      .delete(webUrl.host+'/rest/siip/deleteRP_OF_DEF_LIN/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -55,7 +56,7 @@ export class RPOFDEFLINService {
 
   update(data: RP_OF_DEF_LIN) {
     return this.http
-      .put(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/updateRP_OF_DEF_LIN`, JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host+'/rest/siip/updateRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { RP_CONF_OP } from "app/modelos/entidades/RP_CONF_OP";
+import { webUrl } from "webUrl";
 
 @Injectable()
 export class RPCONFOPService {
@@ -14,14 +15,14 @@ export class RPCONFOPService {
 
   create(data: RP_CONF_OP) {
     return this.http
-      .post(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/createRP_CONF_OP`, JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host+'/rest/siip/createRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
   getAll(): Observable<RP_CONF_OP[]> {
-    const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_CONF_OP`;
+    const url = webUrl.host+'/rest/siip/getRP_CONF_OP';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -30,7 +31,7 @@ export class RPCONFOPService {
 
     delete(id) {
     return this.http
-      .delete('http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/deleteRP_CONF_OP/' + id + '')
+      .delete(webUrl.host+'/rest/siip/deleteRP_CONF_OP/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -38,14 +39,14 @@ export class RPCONFOPService {
 
   update(data: RP_CONF_OP) {
     return this.http
-      .put(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/updateRP_CONF_OP`, JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host+'/rest/siip/updateRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
     getAllbyid(id): Observable<RP_CONF_OP[]> {
-    const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRP_CONF_OPbyid/'+id+'';
+    const url = webUrl.host+'/rest/siip/getRP_CONF_OPbyid/'+id+'';
     return this.http
       .get(url)
       .map(this.extractData)

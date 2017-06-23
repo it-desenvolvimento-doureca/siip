@@ -56,9 +56,9 @@
     <p-tabView *ngIf="tabSets" orientation="left" class="tabcss" (onChange)="handleChange($event)">
       <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
         <div class="col-md-12 col-md-offset-12" style="height: auto;">
-          <div *ngFor="let item of items"  class="col-md-2 col-md-offset-2 nopadding"
+          <div *ngFor="let item of items"  class="col-md-4 col-sm-4 col-lg-3  col-md-offset-3 nopadding"
             style="float:left;">
-            <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; min-height:48px; " for="{{ item.cod }}">{{ item.cod }} - {{ item.des }}</label>
+            <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 21px; " for="{{ item.cod }}">{{ item.cod }} - {{ item.des }}</label>
             <input class="form-control" id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN)" name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" type="number" min="0" style="height: 45px; font-size: 25px;"
             />
           </div>

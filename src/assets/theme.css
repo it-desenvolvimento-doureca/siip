@@ -1292,6 +1292,10 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     padding: 2px 11px 0px 19px !important;
 }
 
+.novoop .ui-dialog .ui-dialog-content {
+    padding: 1px !important;
+}
+
 .novoop > .ui-dialog {
     top: 5px !important;
 }

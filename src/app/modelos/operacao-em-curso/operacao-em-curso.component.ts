@@ -47,7 +47,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           for (var x in response) {
             localStorage.setItem('id_op_cab', JSON.stringify(response[x][0].id_OP_CAB));
             this.of_num = response[x][1].of_NUM.trim()
-            this.op_num = response[x][1].op_NUM.trim() + " - " + response[x][1].op_DES.trim();
+            this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD.trim() + " - " + response[x][1].op_DES.trim();
             this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
             this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][1].nome_UTZ_CRIA.trim();
             this.data_ini = response[x][0].data_INI;
@@ -79,7 +79,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   //adiciona  operador
-  save(code_login,nome) {
+  save(code_login, nome) {
     this.displayDialog = false;
     this.utilizadores_adici.push(nome);
     var rpofop = new RP_OF_OP_CAB;
@@ -116,7 +116,11 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.defeitos = [];
         for (var x in res) {
           var total = res[x].quant_BOAS_TOTAL + res[x].quant_DEF_TOTAL;
-          this.defeitos.push({ ref_num: res[x].ref_NUM, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total });
+          var cor = "rgba(255, 255, 0, 0.78)";
+          if (total == res[x].quant_OF) cor = "#2be32b";
+          if (total > res[x].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
+
+          this.defeitos.push({ ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total });
         }
         this.defeitos = this.defeitos.slice();
       },

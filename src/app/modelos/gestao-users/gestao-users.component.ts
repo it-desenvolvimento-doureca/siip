@@ -509,4 +509,8 @@ export class GestaoUsersComponent implements OnInit {
       error => console.log(error));
 
   }
+
+  onRowUnselect(event){
+    
+  }
 }

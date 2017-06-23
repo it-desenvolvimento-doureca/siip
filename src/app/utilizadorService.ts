@@ -5,7 +5,8 @@ import { Observable } from "rxjs/Observable";
 import { Utilizador } from "app/modelos/entidades/utilizador";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
- 
+import { webUrl } from "webUrl";
+
 @Injectable()
 export class utilizadorService {
 
@@ -16,7 +17,7 @@ export class utilizadorService {
     constructor(private http: Http) { }
         
     searchuser(RESCOD) {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/searchuser/' + RESCOD + '';
+        const url = webUrl.host+'/rest/demo/searchuser/' + RESCOD + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -25,14 +26,14 @@ export class utilizadorService {
 
     /*createHero() {
         return this.http
-            .put(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/user3`, JSON.stringify({ name: name }), { headers: this.headers })
+            .put(webUrl.host+'/rest/demo/user3', JSON.stringify({ name: name }), { headers: this.headers })
             .toPromise()
             .then(res => res.json().data)
             .catch(this.handleError);
     }
 
     getUtilizadores(): Observable<Utilizador[]> {
-        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/user`;
+        const url = webUrl.host+'/rest/demo/user';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -40,7 +41,7 @@ export class utilizadorService {
     }*/
 
     getUtilizadoresSilver() {
-        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/users`;
+        const url = webUrl.host+'/rest/demo/users';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -48,7 +49,7 @@ export class utilizadorService {
     }
 
     getSeccoes() {
-        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/demo/sessoes`;
+        const url = webUrl.host+'/rest/demo/sessoes';
         return this.http
             .get(url)
             .map(this.extractData)

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { RP_CONF_UTZ_PERF } from "app/modelos/entidades/RP_CONF_UTZ_PERF";
 import { Observable } from "rxjs/Observable";
+import { webUrl } from "webUrl";
 
 @Injectable()
 export class RPCONFUTZPERFService {
@@ -14,7 +15,7 @@ export class RPCONFUTZPERFService {
 
     create(data: RP_CONF_UTZ_PERF) {
         return this.http
-            .post(`http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/createRPCONFUTZPERF`, JSON.stringify(data), { headers: this.headers })
+            .post(webUrl.host+'/rest/siip/createRPCONFUTZPERF', JSON.stringify(data), { headers: this.headers })
             .toPromise()
             .then(res => res.json().data)
             .catch(this.handleError);
@@ -22,7 +23,7 @@ export class RPCONFUTZPERFService {
 
     delete(id) {
         return this.http
-            .delete('http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/deleteRPCONFUTZPERF/' + id + '')
+            .delete(webUrl.host+'/rest/siip/deleteRPCONFUTZPERF/' + id + '')
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -30,7 +31,7 @@ export class RPCONFUTZPERFService {
 
 
     getAll(): Observable<RP_CONF_UTZ_PERF[]> {
-        const url = `http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRPCONFUTZPERF`;
+        const url = webUrl.host+'/rest/siip/getRPCONFUTZPERF';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -38,7 +39,7 @@ export class RPCONFUTZPERFService {
     }
 
     getbyid(id): Observable<RP_CONF_UTZ_PERF[]> {
-        const url = 'http://localhost:8080/app-0.0.1-SNAPSHOT/rest/siip/getRPCONFUTZPERFid/' + id + '';
+        const url = webUrl.host+'/rest/siip/getRPCONFUTZPERFid/' + id + '';
         return this.http
             .get(url)
             .map(this.extractData)
