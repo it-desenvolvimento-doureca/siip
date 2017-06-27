@@ -59,6 +59,7 @@
     style="float:none;"></button>
 </div>
 
+<!-- Lista de operções não previstas -->
 <div id="adicionaop">
   <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow: scroll;" (clickOutside)="ontogglestates()">
     <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
@@ -84,7 +85,7 @@
 </div>
 
 
-
+<!-- Popup caso o operador só escolhe-se um referencia (Não vai ser utilizada) -->
 
 <p-dialog header="Operações" [(visible)]="display2" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
@@ -105,7 +106,7 @@
   </p-footer>
 </p-dialog>
 
-
+<!-- Popup para saber o serviço que o operador pretende para todas as ref's-->
 <p-dialog header="Operações" [(visible)]="display3" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
@@ -122,7 +123,7 @@
   </p-footer>
 </p-dialog>
 
-
+<!--POPUP- Caso o operador queira inciar o trabalho para uma of e operação em execução-->
 <p-dialog [(visible)]="display_op_em_curso" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
