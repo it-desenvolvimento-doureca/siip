@@ -14,6 +14,11 @@ import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
 import { RPOFDEFLINService } from "app/modelos/services/rp-of-def-lin.service";
 import { RP_OF_DEF_LIN } from "app/modelos/entidades/RP_OF_DEF_LIN";
+import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
+import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
+import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
+import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.service";
+import { RP_OF_OUTRODEF_LIN } from "app/modelos/entidades/RP_OF_OUTRODEF_LIN";
 
 @Component({
     selector: 'app-nova-operacao',
@@ -33,6 +38,11 @@ import { RP_OF_DEF_LIN } from "app/modelos/entidades/RP_OF_DEF_LIN";
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    [x: string]: any;
+    sec_des: any;
+    perfil_utz: any;
+    nome_utz: any;
+    username: any;
     display_op_em_curso: boolean = false;
     pessoa_op_em_curso: string;
     op_NUM: any;
@@ -72,10 +82,10 @@ export class NovaOperacaoComponent implements OnInit {
     displaybtref = true;
     single = "";
     color = "disabletable";
-    displayvermais= false;
+    displayvermais = false;
     @ViewChild('inputFocous') inputFocous: any;
 
-    constructor(private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
+    constructor(private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
         this.operacao = [];
 
     }
@@ -84,7 +94,9 @@ export class NovaOperacaoComponent implements OnInit {
 
         this.inputFocous.nativeElement.focus();
         this.referencias = [];
-
+        this.username = JSON.parse(localStorage.getItem('user'))["username"];
+        this.nome_utz = JSON.parse(localStorage.getItem('user'))["name"];
+        this.perfil_utz = JSON.parse(localStorage.getItem('perfil'));
         this.novaopera = [];
         this.op_service.getAll().subscribe(
             response => {
@@ -107,6 +119,9 @@ export class NovaOperacaoComponent implements OnInit {
         this.maquina = [];
         this.displaybtref = true;
         this.input_class = "";
+        this.selected = "";
+        this.selectedmaq = "";
+        this.observacoes="";
         if (this.num_of != "") {
             this.service.getOF(this.num_of).subscribe(
                 response => {
@@ -115,20 +130,18 @@ export class NovaOperacaoComponent implements OnInit {
                     this.readonly_maq = true;
                     var first = true;
                     var count = Object.keys(response).length;
-                    //se existir uma of vai preencher combobox operações
+                    //se existir uma of vai preencher combobox operações e tabela referencias
                     if (count > 0) {
                         this.observacoes = response[0].ofref;
                         //preenche tabela referencias
                         this.service.getRef(response[0].ofanumenr).subscribe(
                             response2 => {
                                 for (var x in response2) {
-                                    this.referencias.push({ codigo: response2[x].PROREF, design: response2[x].PRODES1, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR });
+                                    this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
+                                    //verifica familia
+                                    this.veirificafam(response2[x].FAMCOD, response2[x].PROREF);
                                 }
                                 this.referencias = this.referencias.slice();
-                                if (this.referencias.length > 1) {
-                                    //mostra botão selecionar uma ref
-                                    this.displaybtref = true;
-                                }
                             },
                             error => console.log(error));
 
@@ -142,7 +155,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     this.max_num = response1[x].OPENUM;
                                 }
                                 this.readonly_op = false;
-                                this.selected = "0";
+                                this.selected = "";
                             },
                             error => console.log(error));
                     } else {
@@ -161,6 +174,40 @@ export class NovaOperacaoComponent implements OnInit {
         }
 
     }
+
+    //verifica FAM
+    veirificafam(codfam, ref, response = null) {
+        if (codfam != "") {
+            this.RPCONFFAMILIACOMPService.getcodfam(codfam).subscribe(
+                response1 => {
+                    var count1 = Object.keys(response1).length;
+                    if (count1 > 0) {
+                        if (response != null) {
+                            this.referencias.push({ codigo: response.PROREF, design: response.PRODES1, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
+                            this.referencias = this.referencias.slice();
+                        }
+                        this.get_filhos(ref);
+                    }
+                },
+                error => console.log(error));
+        }
+
+    }
+
+    //pesquisar componentes
+    get_filhos(ref) {
+        this.service.getfilhos(ref).subscribe(
+            response1 => {
+                var count1 = Object.keys(response1).length;
+                if (count1 > 0) {
+                    for (var x in response1) {
+                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x]);
+                    }
+                }
+            },
+            error => console.log(error));
+    }
+
     //Seleccionar uma referência da Tabela Referência
     onRowSelect(event) {
         this.ref_code = event.data.codigo;
@@ -205,10 +252,16 @@ export class NovaOperacaoComponent implements OnInit {
                             find = true;
                             this.maq_DES = response[x].SSEDES;
                             this.maq_NUM = response[x].ssecod;
+                            this.selectedmaq = response[x].ssecod;
+                            this.sec_des = response[x].SECLIB;
+                            this.sec_num = response[x].SECCOD;
                         } else {
                             this.selectedmaq = response[x].ssecod;
                             this.maq_DES = response[x].SSEDES;
                             this.maq_NUM = response[x].ssecod;
+                            this.sec_des = response[x].SECLIB;
+                            this.sec_num = response[x].SECCOD;
+
                         }
                     }
                     //lista todas as maquinas se op. não utilizar mão de obra
@@ -326,84 +379,166 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.op_DES = this.op_desc;
         rpof.maq_NUM = this.maq_NUM;
         rpof.maq_DES = this.maq_DES;;
-        rpof.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
-        rpof.nome_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["name"];
+        rpof.id_UTZ_CRIA = this.username
+        rpof.nome_UTZ_CRIA = this.nome_utz;
         rpof.of_OBS = this.observacoes;
-        rpof.sec_DES = "1";
-        rpof.sec_NUM = "2"
+        rpof.sec_DES = this.sec_des;
+        rpof.sec_NUM = this.sec_num;
 
         this.RPOFCABService.create(rpof).subscribe(
             res => {
-                this.criatabelaRPOFOPCAB(res.id_OF_CAB, estado, ref_select);
+                this.criatabelaRPOFOPCAB(res.id_OF_CAB, estado, false);
+                this.criatabelacomp(res.id_OF_CAB, estado);
+            },
+            error => console.log(error));
+    }
+
+    //criar RP_OF_CAB para os componentes
+    criatabelacomp(id, estado) {
+        var opnum = 1010;
+        for (var x in this.referencias) {
+            if (this.referencias[x].tipo == "COMP") {
+                var rpof = new RP_OF_CAB;
+                rpof.data_HORA_CRIA = new Date();
+                rpof.estado = estado;
+                rpof.id_OF_CAB_ORIGEM = id;
+                rpof.of_NUM = null;
+                rpof.op_COD = '60';
+                rpof.op_NUM = '' + opnum;
+                rpof.op_DES = null;
+                rpof.maq_NUM = '000';
+                rpof.maq_DES = 'MÃO DE OBRA';
+                rpof.id_UTZ_CRIA = this.username
+                rpof.nome_UTZ_CRIA = this.nome_utz;
+                rpof.of_OBS = null;
+                rpof.sec_DES = this.sec_des;
+                rpof.sec_NUM = this.sec_num;
+
+                this.createRPOFCABComp(rpof, estado, this.referencias[x].codigo)
+
+                opnum = opnum + 10;
+            }
+        }
+    }
+
+    createRPOFCABComp(rpof, estado, ref) {
+
+        this.RPOFCABService.create(rpof).subscribe(
+            res => {
+                this.criatabelaRPOFOPCAB(res.id_OF_CAB, estado, true, ref);
             },
             error => console.log(error));
     }
 
     //criar cabeçalho Operação OF
-    criatabelaRPOFOPCAB(id_OF_CAB, estado, ref_select) {
-        var rpofop = new RP_OF_OP_CAB;
+    criatabelaRPOFOPCAB(id_OF_CAB, estado, comp, ref = null) {
 
-        rpofop.id_OF_CAB = id_OF_CAB;
+        var rpofopcab = new RP_OF_OP_CAB;
+        rpofopcab.id_OF_CAB = id_OF_CAB;
+        this.RPOFOPCABService.create(rpofopcab).subscribe(
+            res => {
+                this.criartabelaRPOPFUNC(res.id_OP_CAB, estado, comp);
+                if (comp) {
+                    this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);
+                } else {
+                    this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);
+                }
+            },
+            error => console.log(error));
+
+
+    }
+
+    criartabelaRPOPFUNC(id_OP_CAB, estado, comp) {
+
+        var rpofop = new RP_OF_OP_FUNC;
+
+        rpofop.id_OP_CAB = id_OP_CAB;
         rpofop.data_INI = new Date();
         var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         rpofop.hora_INI = time;
-        rpofop.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
-        rpofop.nome_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["name"];
-        rpofop.perfil_CRIA = JSON.parse(localStorage.getItem('perfil'));
+        rpofop.id_UTZ_CRIA = this.username
+        rpofop.nome_UTZ_CRIA = this.nome_utz;
+        rpofop.perfil_CRIA = this.perfil_utz;
         rpofop.estado = estado;
-        this.RPOFOPCABService.create(rpofop).subscribe(
+        this.RPOPFUNCService.create(rpofop).subscribe(
             res => {
-                this.criatabelaRPOFOPLIN(res.id_OP_CAB, ref_select);
-                if (estado == "P") {
+
+                if (estado == "P" && !comp) {
                     this.iniciapreparacao(res.id_OP_CAB);
                 }
             },
             error => console.log(error));
+
     }
 
     //Adiciona referências seleccionadas
-    criatabelaRPOFOPLIN(id_OP_CAB, ref_select) {
-        if (ref_select) {
+    criatabelaRPOFOPLIN(id_OP_CAB, comp, ref) {
+
+        if (comp) {
+            var ref = this.referencias.find(item => item.codigo == ref);
             var rpofoplin = new RP_OF_OP_LIN;
             rpofoplin.id_OP_CAB = id_OP_CAB;
-            rpofoplin.ref_NUM = this.ref_code;
-            rpofoplin.ref_DES = this.ref_name;
-            rpofoplin.ref_IND = this.ref_IND
-            rpofoplin.ref_VAR1 = this.ref_VAR1;
-            rpofoplin.ref_VAR2 = this.ref_VAR2;
-            rpofoplin.ref_INDNUMENR = this.INDNUMENR;
-            rpofoplin.quant_OF = parseInt(this.OFBQTEINI);
+            rpofoplin.ref_NUM = ref.codigo;
+            rpofoplin.ref_DES = ref.design;
+            rpofoplin.ref_IND = ref.INDREF;
+            rpofoplin.ref_VAR1 = ref.var1;
+            rpofoplin.ref_VAR2 = ref.var2;
             rpofoplin.quant_BOAS_TOTAL = 0;
             rpofoplin.quant_DEF_TOTAL = 0;
+            rpofoplin.perc_OBJETIV = parseFloat(ref.perc_obj);
+            rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
+            rpofoplin.quant_OF = parseInt(ref.OFBQTEINI);
             this.RPOFOPLINService.create(rpofoplin).subscribe(
                 res => {
-                    this.deftoref(res.id_OP_LIN);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
                 },
                 error => console.log(error));
         } else {
             for (var x in this.referencias) {
-                var rpofoplin = new RP_OF_OP_LIN;
-                rpofoplin.id_OP_CAB = id_OP_CAB;
-                rpofoplin.ref_NUM = this.referencias[x].codigo;
-                rpofoplin.ref_DES = this.referencias[x].design;
-                rpofoplin.ref_IND = this.referencias[x].INDREF;
-                rpofoplin.ref_VAR1 = this.referencias[x].var1;
-                rpofoplin.ref_VAR2 = this.referencias[x].var2;
-                rpofoplin.quant_BOAS_TOTAL = 0;
-                rpofoplin.quant_DEF_TOTAL = 0;
-                rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
-                rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
-                this.RPOFOPLINService.create(rpofoplin).subscribe(
-                    res => {
-                        this.deftoref(res.id_OP_LIN);
-                    },
-                    error => console.log(error));
+                if (this.referencias[x].tipo == "PF") {
+                    var rpofoplin = new RP_OF_OP_LIN;
+                    rpofoplin.id_OP_CAB = id_OP_CAB;
+                    rpofoplin.ref_NUM = this.referencias[x].codigo;
+                    rpofoplin.ref_DES = this.referencias[x].design;
+                    rpofoplin.ref_IND = this.referencias[x].INDREF;
+                    rpofoplin.ref_VAR1 = this.referencias[x].var1;
+                    rpofoplin.ref_VAR2 = this.referencias[x].var2;
+                    rpofoplin.quant_BOAS_TOTAL = 0;
+                    rpofoplin.quant_DEF_TOTAL = 0;
+                    rpofoplin.perc_OBJETIV = parseFloat(this.referencias[x].perc_obj);
+                    rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
+                    rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
+                    this.RPOFOPLINService.create(rpofoplin).subscribe(
+                        res => {
+                            this.deftoref(res.id_OP_LIN);
+                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
+                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
+                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
+                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
+                        },
+                        error => console.log(error));
+                }
             }
-
         }
 
         this.router.navigate(['./home']);
+    }
+
+    cria_RP_OF_OUTRODEF_LIN(id, id_outro) {
+        var data = new RP_OF_OUTRODEF_LIN;
+        data.id_OP_LIN = id;
+        data.id_UTZ_CRIA = this.username;
+        data.id_DEF_OUTRO = id_outro;
+        this.RPOFOUTRODEFLINService.create(data).subscribe(
+            res => {
+
+            },
+            error => console.log(error));
     }
 
     //cria tabela preparação
@@ -414,7 +549,7 @@ export class NovaOperacaoComponent implements OnInit {
         prep.id_OP_CAB = id_OP_CAB;
         prep.data_INI = date;
         prep.hora_INI = time;
-        prep.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+        prep.id_UTZ_CRIA = this.username
         prep.estado = "P";
 
         this.prepservice.create(prep).subscribe(
@@ -442,7 +577,7 @@ export class NovaOperacaoComponent implements OnInit {
                                         def.cod_DEF = result[x].QUACOD;
                                         def.desc_DEF = result[x].QUALIB;
                                         def.id_OP_LIN = id_OP_LIN;
-                                        def.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+                                        def.id_UTZ_CRIA = this.username
                                         def.quant_DEF = 0;
                                         def.data_HORA_REG = new Date();
                                         this.RPOFDEFLINService.create(def);
@@ -465,7 +600,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     def.cod_DEF = result[x].QUACOD;
                                     def.desc_DEF = result[x].QUALIB;
                                     def.id_OP_LIN = id_OP_LIN;
-                                    def.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+                                    def.id_UTZ_CRIA =  this.username
                                     def.quant_DEF = 0;
                                     def.data_HORA_REG = new Date();
                                     this.RPOFDEFLINService.create(def);

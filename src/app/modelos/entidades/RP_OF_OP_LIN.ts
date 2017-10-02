@@ -10,4 +10,6 @@ export class RP_OF_OP_LIN {
     quant_OF: number;
     quant_BOAS_TOTAL: number;
     quant_DEF_TOTAL: number;
+    perc_OBJETIV: number;
+    perc_DEF: number;
 }

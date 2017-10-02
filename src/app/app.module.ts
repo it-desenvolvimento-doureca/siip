@@ -31,6 +31,9 @@ import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
 import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service";
 import { RPOFDEFLINService } from "app/modelos/services/rp-of-def-lin.service";
 import { RPOFPARALINService } from "app/modelos/services/rp-of-para-lin.service";
+import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
+import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
+import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.service";
 
 const routes: Routes = [
   {
@@ -123,6 +126,9 @@ const routes: Routes = [
   RPOFOPLINService,
   RPOFPREPLINService,
   RPOFDEFLINService,
+  RPOPFUNCService,
+  RPOFOUTRODEFLINService,
+  RPCONFFAMILIACOMPService,
   RPOFPARALINService
   ],
   bootstrap: [AppComponent]

@@ -1,30 +1,78 @@
-.form-group{
+.form-group {
     width: 10%;
     float: left;
 }
 
-.form-group1{
+.form-group1 {
     padding-top: 4px;
     float: none;
 }
 
-input:read-only { 
+input:read-only {
     background-color: #c0c0c0;
 }
 
 .nopadding {
-   padding-left: 0 !important;
+    padding-left: 0 !important;
 }
 
-.fundoverde{
+.fundoverde {
     background: #0eac4e !important;
 }
 
-.fundoamarelo{
+.fundoamarelo {
     background: yellow !important;
 }
 
-.fundovermelho{
+.fundovermelho {
     background: red !important;
     ;
 }
+
+.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon, .radio label input[type="radio"]:checked + .cr > .cr-icon {
+    transform: scale(1) rotateZ(0deg);
+    opacity: 1;
+}
+
+.checkbox label input[type="checkbox"]:disabled + .cr, .radio label input[type="radio"]:disabled + .cr {
+    opacity: .5;
+}
+
+.radio .cr .cr-icon {
+    margin-left: 0.04em;
+}
+
+.checkbox label input[type="checkbox"], .radio label input[type="radio"] {
+    display: none;
+}
+
+.checkbox label input[type="checkbox"] + .cr > .cr-icon, .radio label input[type="radio"] + .cr > .cr-icon {
+    transform: scale(3) rotateZ(-20deg);
+    opacity: 0;
+    transition: all .3s ease-in;
+}
+
+.checkbox .cr .cr-icon, .radio .cr .cr-icon {
+    position: absolute;
+    font-size: .8em;
+    line-height: 0;
+    top: 50%;
+    left: 20%;
+}
+
+.checkbox .cr, .radio .cr {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #000000;
+    border-radius: .25em;
+    width: 1.3em;
+    height: 1.3em;
+    float: left;
+    margin-right: .5em;
+}
+
+.checkbox label:after, .radio label:after {
+    content: '';
+    display: table;
+}
+

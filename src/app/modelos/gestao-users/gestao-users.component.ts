@@ -11,6 +11,8 @@ import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 import { RP_CONF_OP } from "app/modelos/entidades/RP_CONF_OP";
 import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.service";
 import { RP_CONF_OP_NPREV } from "app/modelos/entidades/RP_CONF_OP_NPREV";
+import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
+import { RP_CONF_FAMILIA_COMP } from "app/modelos/entidades/RP_CONF_FAMILIA_COMP";
 
 @Component({
   selector: 'app-gestao-users',
@@ -18,6 +20,11 @@ import { RP_CONF_OP_NPREV } from "app/modelos/entidades/RP_CONF_OP_NPREV";
   styleUrls: ['./gestao-users.component.css']
 })
 export class GestaoUsersComponent implements OnInit {
+  selectedallfam_name = "";
+  selectedallfam: string;
+  selectedfamcomp: string;
+  listafam: any[];
+  listallfam: any[];
   secnumenr1_OP: any;
   selectedoppermitida_name: any;
   selectedfam_name: any;
@@ -56,9 +63,9 @@ export class GestaoUsersComponent implements OnInit {
   selectedfam: string = "";
   selectedoppermitida: string = "";
   selefam = "";
-  seleopp= "";
+  seleopp = "";
 
-  constructor(private op_service: RPCONFOPNPREVService, private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
+  constructor(private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private op_service: RPCONFOPNPREVService, private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.list1 = [];
@@ -68,7 +75,7 @@ export class GestaoUsersComponent implements OnInit {
     this.ofservice.getAllOP().subscribe(
       response => {
         for (var x in response) {
-          this.fam.push({ label:  response[x].OPECOD +"-"+response[x].OPEDES, value: { code: response[x].OPECOD, name: response[x].OPEDES} });
+          this.fam.push({ label: response[x].OPECOD + "-" + response[x].OPEDES, value: { code: response[x].OPECOD, name: response[x].OPEDES } });
         }
       },
       error => console.log(error));
@@ -88,6 +95,7 @@ export class GestaoUsersComponent implements OnInit {
             }
             this.brand2 = this.brand2.slice();
             this.preenche_op();
+            this.preenche_famcomp();
           },
           error => console.log(error));
       },
@@ -100,10 +108,11 @@ export class GestaoUsersComponent implements OnInit {
     this.preenche_fam();
   }
 
-  //inserir o utilizador num perfil
+  //inserir nas listas
   insere(list) {
     var conf_utiliz = new RP_CONF_UTZ_PERF;
     var conf_op = new RP_CONF_OP_NPREV;
+    var fam_comp = new RP_CONF_FAMILIA_COMP;
     switch (list) {
       //Operador
       case "list3":
@@ -146,7 +155,6 @@ export class GestaoUsersComponent implements OnInit {
         break;
       //Lista das Operações
       case "listop":
-
         if (this.selectedallop != "") {
           conf_op.id_OP = this.selectedallop;
           conf_op.nome_OP = this.selectedallop_name;
@@ -156,10 +164,20 @@ export class GestaoUsersComponent implements OnInit {
           });
         }
         break;
+      //Lista familias componentes
+      case "listfamcomp":
+        if (this.selectedallfam != "") {
+          fam_comp.cod_FAMILIA_COMP = this.selectedallfam;
+          fam_comp.nome_FAMILIA_COMP = this.selectedallfam_name;
+          this.RPCONFFAMILIACOMPService.create(fam_comp).then(() => {
+            this.preenche_famcomp();
+          });
+        }
+        break;
     }
   }
 
-  //remove o utilizador de um perfil
+  //remover das listas
   apagar(list) {
     switch (list) {
       case "list3":
@@ -195,6 +213,14 @@ export class GestaoUsersComponent implements OnInit {
           this.no5 = "";
         }
         break;
+      //Lista familias componentes
+      case "listfamcomp":
+        if (this.selectedfamcomp != "") {
+          this.RPCONFFAMILIACOMPService.delete(this.selectedfamcomp).then(() => {
+            this.preenche_famcomp();
+          });
+        }
+        break;
     }
   }
 
@@ -214,11 +240,18 @@ export class GestaoUsersComponent implements OnInit {
   }
   onRowSelectallop(event) {
     this.selectedallop = event.data.codigoop;
-    this.selectedallop_name = event.data.design; 
+    this.selectedallop_name = event.data.design;
     this.secnumenr1_OP = event.data.SECNUMENR1;
   }
   onRowSelectop(event) {
     this.selectedop = event.data.id;
+  }
+  onRowSelectallfam(event) {
+    this.selectedallfam = event.data.codigofam;
+    this.selectedallfam_name = event.data.design;
+  }
+  onRowSelectfamsel(event) {
+    this.selectedfamcomp = event.data.id;
   }
 
   //popup para adicionar responsáveis a uma seccão.
@@ -323,10 +356,10 @@ export class GestaoUsersComponent implements OnInit {
   //ao clicar na tabela Familia de Defeitos abre popup para editar
   onRowSelectfam(event) {
     this.novafam = false;
-    this.selectedoppermitida=event.data.op;
-    this.selectedfam_name=event.data.fam_name;
-    this.selectedoppermitida_name=event.data.op_name;
-    this.selectedfam=event.data.fam;
+    this.selectedoppermitida = event.data.op;
+    this.selectedfam_name = event.data.fam_name;
+    this.selectedoppermitida_name = event.data.op_name;
+    this.selectedfam = event.data.fam;
     this.selefam = this.fam.find(item => item.value.code === event.data.fam).value;
     this.seleopp = this.fam.find(item => item.value.code === event.data.op).value;
     this.listidfam = event.data.id;
@@ -392,7 +425,7 @@ export class GestaoUsersComponent implements OnInit {
 
   //popup para adicionarà tabela familias de defeitos
   AddFamDef() {
-    this.selefam ="";
+    this.selefam = "";
     this.seleopp = "";
     this.listid = 0;
     this.selectedoppermitida = "0";
@@ -468,7 +501,7 @@ export class GestaoUsersComponent implements OnInit {
     this.fam_service.getAll().subscribe(
       response => {
         for (var x in response) {
-          this.list1.push({ fam_field:response[x].id_OP_PRINC.trim()+"-"+response[x].nome_OP_PRINC, op_field:response[x].id_OP_SEC.trim()+"-"+response[x].nome_OP_SEC,fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP , op_name: response[x].nome_OP_SEC, fam_name: response[x].nome_OP_PRINC});
+          this.list1.push({ fam_field: response[x].id_OP_PRINC.trim() + "-" + response[x].nome_OP_PRINC, op_field: response[x].id_OP_SEC.trim() + "-" + response[x].nome_OP_SEC, fam: response[x].id_OP_PRINC.trim(), op: response[x].id_OP_SEC.trim(), id: response[x].id_CONF_OP, op_name: response[x].nome_OP_SEC, fam_name: response[x].nome_OP_PRINC });
         }
         this.list1 = this.list1.slice();
       },
@@ -510,7 +543,38 @@ export class GestaoUsersComponent implements OnInit {
 
   }
 
-  onRowUnselect(event){
-    
+  //preenche tabelas operações
+  preenche_famcomp() {
+    this.listallfam = [];
+    this.listafam = [];
+    var data = "";
+    var control = false;
+    this.RPCONFFAMILIACOMPService.getAll().subscribe(
+      response => {
+        for (var x in response) {
+          this.listafam.push({ field: response[x].cod_FAMILIA_COMP.trim() + " - " + response[x].nome_FAMILIA_COMP, id: response[x].cod_FAMILIA_COMP });
+          if (control) data += ","
+          data += response[x].cod_FAMILIA_COMP.trim();
+          control = true;
+        }
+        this.listafam = this.listafam.slice();
+        if (this.listafam.length == 0) data = "null";
+
+        this.ofservice.getAllFAMNOTIN(data).subscribe(
+          response => {
+            for (var x in response) {
+
+              this.listallfam.push({ field: response[x].FAMCOD + " - " + response[x].FAMLIB, codigofam: response[x].FAMCOD, design: response[x].FAMLIB });
+            }
+            this.listallfam = this.listallfam.slice();
+            this.selectedallfam = "";
+            this.selectedfamcomp = "";
+            this.selectedallfam_name = "";
+          },
+          error => console.log(error));
+      },
+      error => console.log(error));
+
   }
+
 }

@@ -2,52 +2,54 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { webUrl } from "webUrl";
-import { RP_OF_OUTRODEF_LIN } from "app/modelos/entidades/RP_OF_OUTRODEF_LIN";
+import { RP_CONF_FAMILIA_COMP } from "app/modelos/entidades/RP_CONF_FAMILIA_COMP";
+
 
 @Injectable()
-export class RPOFOUTRODEFLINService {
+export class RPCONFFAMILIACOMPService {
+
   handleError: any;
 
   private headers = new Headers({ 'Content-Type': 'application/json' });
 
   constructor(private http: Http) { }
 
-  create(data: RP_OF_OUTRODEF_LIN) {
+  create(data: RP_CONF_FAMILIA_COMP) {
     return this.http
-      .post(webUrl.host + '/rest/siip/createRP_OF_OUTRODEF_LIN', JSON.stringify(data), { headers: this.headers })
-      .map(this.extractData)
-      .catch((error: any) => Observable.throw('Server error'));
+      .post(webUrl.host+'/rest/siip/createRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
+      .toPromise()
+      .then(res => res.json().data)
+      .catch(this.handleError);
   }
 
   delete(id) {
     return this.http
-      .delete(webUrl.host + '/rest/siip/deleteRP_OF_OUTRODEF_LIN/' + id + '')
+      .delete(webUrl.host+'/rest/siip/deleteRP_CONF_FAMILIA_COMP/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
   }
 
 
-  getAll(): Observable<RP_OF_OUTRODEF_LIN[]> {
-    const url = webUrl.host + '/rest/siip/getRP_OF_OUTRODEF_LIN';
+  getAll(): Observable<RP_CONF_FAMILIA_COMP[]> {
+    const url = webUrl.host+'/rest/siip/getRP_CONF_FAMILIA_COMP';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-  getbyid(id): Observable<RP_OF_OUTRODEF_LIN[]> {
-    const url = webUrl.host + '/rest/siip/getbyidRP_OF_OUTRODEF_LINF/' + id + '';
+  getcodfam(codfam): Observable<RP_CONF_FAMILIA_COMP[]> {
+    const url = webUrl.host+'/rest/siip/getRP_CONF_FAMILIA_COMPcodfam/'+codfam;
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-
-  update(data: RP_OF_OUTRODEF_LIN) {
+  update(data: RP_CONF_FAMILIA_COMP) {
     return this.http
-      .put(webUrl.host + '/rest/siip/updateRP_OF_OUTRODEF_LIN', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host+'/rest/siip/updateRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);

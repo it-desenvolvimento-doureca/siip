@@ -9,6 +9,8 @@ import { RP_OF_OP_CAB } from "app/modelos/entidades/RP_OF_OP_CAB";
 import { RP_OF_CAB } from "app/modelos/entidades/RP_OF_CAB";
 import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 import { Router } from "@angular/router";
+import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
+import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 
 @Component({
   selector: 'app-tipo-pausa',
@@ -17,7 +19,7 @@ import { Router } from "@angular/router";
 })
 export class TipoPausaComponent implements OnInit {
   pausas: any[];
-  constructor(private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
+  constructor(private RPOPFUNCService :RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
 
   ngOnInit() {
     this.pausas = [];
@@ -73,7 +75,7 @@ export class TipoPausaComponent implements OnInit {
 
   estados(id_op_cab, user, nome, date) {
 
-    this.RPOFOPCABService.getbyid(id_op_cab).subscribe(result => {
+    this.RPOPFUNCService.getbyid(id_op_cab,user).subscribe(result => {
       //estado rp_of_cab
       var rp_of_cab = new RP_OF_CAB();
       rp_of_cab = result[0][1];
@@ -82,17 +84,17 @@ export class TipoPausaComponent implements OnInit {
       rp_of_cab.data_HORA_MODIF = date;
       rp_of_cab.estado = "S"
 
-      //estado rp_of_op_cab
-      var rp_of_op_cab = new RP_OF_OP_CAB();
-      rp_of_op_cab = result[0][0];
-      rp_of_op_cab.id_UTZ_MODIF = user;
-      rp_of_op_cab.nome_UTZ_MODIF = nome;
-      rp_of_op_cab.data_HORA_MODIF = date;
-      rp_of_op_cab.perfil_MODIF = "O";
-      rp_of_op_cab.estado = "S";
+      //estado rp_of_op_func
+      var rpfunc = new RP_OF_OP_FUNC();
+      rpfunc = result[0][0];
+      rpfunc.id_UTZ_MODIF = user;
+      rpfunc.nome_UTZ_MODIF = nome;
+      rpfunc.data_HORA_MODIF = date;
+      rpfunc.perfil_MODIF = "O";
+      rpfunc.estado = "S";
 
       this.RPOFCABService.update(rp_of_cab);
-      this.RPOFOPCABService.update(rp_of_op_cab);
+      this.RPOPFUNCService.update(rpfunc);
       this.router.navigate(['./home']);
     }, error => console.log(error));
   }

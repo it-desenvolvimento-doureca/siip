@@ -17,9 +17,8 @@ export class RPOFDEFLINService {
   create(data: RP_OF_DEF_LIN) {
     return this.http
       .post(webUrl.host+'/rest/siip/createRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
-      .toPromise()
-      .then(res => res.json().data)
-      .catch(this.handleError);
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
   }
 
   getAll(): Observable<RP_OF_DEF_LIN[]> {

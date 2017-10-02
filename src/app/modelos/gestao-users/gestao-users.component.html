@@ -25,7 +25,7 @@
           <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
           <input #gba type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
         </div>
-        <p-dataTable [globalFilter]="gba" #dt1 [value]="list2" selectionMode="single" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+        <p-dataTable [globalFilter]="gba" #dt1 [value]="list2" selectionMode="single" (onRowSelect)="onRowSelect($event)"
           dataKey="no" scrollable="true" scrollHeight="600px" [responsive]="true" [rows]="10">
           <p-column field="field" header="Utilizadores" [sortable]="true"></p-column>
         </p-dataTable>
@@ -53,19 +53,19 @@
       <div class="col-md-5 col-md-offset-5" style="float:left;">
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list3" selectionMode="single" (onRowSelect)="onRowSelect3($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+             dataKey="no">
             <p-column field="field" header="Perfil Operador" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list4" selectionMode="single" (onRowSelect)="onRowSelect4($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+             dataKey="no">
             <p-column field="field" header="Perfil Chefe de Seção" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
         <div style="height: 250px;">
           <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" (onRowSelect)="onRowSelect5($event)"
-            (onRowUnselect)="onRowUnselect($event)" dataKey="no">
+             dataKey="no">
             <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
@@ -126,6 +126,41 @@
     </div>
 
   </p-tabPanel>
+
+   <p-tabPanel header="Famílias c/ Componentes">
+
+    <div class="col-md-12 col-md-offset-12" style="height: 600px;">
+      <div class="col-md-5 col-md-offset-5" style="float:left;">
+        <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+          <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
+          <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
+        </div>
+        <p-dataTable [globalFilter]="gb" #dt [value]="listallfam" selectionMode="single" (onRowSelect)="onRowSelectallfam($event)"
+          dataKey="codigofam" scrollable="true" scrollHeight="500px" [responsive]="true" [rows]="10">
+          <p-column field="field" header="Todas as Familias" [sortable]="true"></p-column>
+        </p-dataTable>
+      </div>
+      <div class="col-md-2 col-md-offset-2" style="float:left; text-align: center;">
+        <div style="height: 250px; padding-top: 30%;">
+          <button (click)="insere('listfamcomp')" icon="fa-angle-double-right" pbutton="" type="button" ng-reflect-icon="fa-angle-double-right"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-right"></span><span class="ui-button-text ui-c">ui-button</span></button>
+          <button (click)="apagar('listfamcomp')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
+            class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
+        </div>
+
+      </div>
+      <div class="col-md-5 col-md-offset-5" style="float:left;">
+        <div>
+          <p-dataTable scrollable="true" [value]="listafam" selectionMode="single" scrollHeight="500px" (onRowSelect)="onRowSelectfamsel($event)"
+            dataKey="id">
+            <p-column field="field" header="Famílias Seleccionadas" [sortable]="true"></p-column>
+          </p-dataTable>
+        </div>
+
+      </div>
+    </div>
+
+  </p-tabPanel>
 </p-tabView>
 
 <!-- POPUP RESPONS. SECÇÃO-->
@@ -152,7 +187,7 @@
 </p-dialog>
 
 <!-- POPUP FAMILIAS DE DEFEITOS-->
-<p-dialog header="Responsável" [(visible)]="displayfamdialog" modal="modal" width="750" [responsive]="true" [dismissableMask]="true"
+<p-dialog header="Famílias de Defeitos" [(visible)]="displayfamdialog" modal="modal" width="750" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
   <div class="col-md-6 col-md-offset-6" style="height: 200px; float: left; font-size: 18px;">
     <div class="ui-grid-row">

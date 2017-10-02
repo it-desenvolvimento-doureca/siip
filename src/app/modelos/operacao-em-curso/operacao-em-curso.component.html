@@ -52,7 +52,7 @@
           <b> Operadores Adicionais</b>
           <ul *ngFor="let ut of utilizadores_adici">
             <li>
-              {{ut}}
+              {{ut.label}}
             </li>
           </ul>
         </div>
@@ -62,13 +62,17 @@
 
   <div class="col-md-7 col-md-offset-7 nopadding" style="float:left;">
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
-      <button type="button" class="ui-button-success" pButton routerLink="/registo-quantidades" label="REGISTO DE QUANTIDADES E DEFEITOS"
+      <button [disabled]="disabledRegisto" type="button" class="ui-button-success" pButton routerLink="/registo-quantidades" label="REGISTO DE QUANTIDADES E DEFEITOS"
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
       <p-dataTable [value]="defeitos" dataKey="ref_num">
         <p-header>Lista dos defeitos Registados</p-header>
-        <p-column field="ref_num" header="Código" [sortable]="true"></p-column>
+        <p-column field="ref_num" header="Código" [sortable]="true">
+          <ng-template let-col let-x="rowData" pTemplate="body">  
+            <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
+          </ng-template>
+        </p-column>
         <p-column field="ref_des" header="Designação"></p-column>
         <p-column field="quant_of" header="Quant. OF"></p-column>
         <p-column field="quant_boas" header="Quant. Boas"></p-column>
@@ -100,6 +104,18 @@
         <!-- <label class="control-label ">PIN DO UTILIZADOR</label>
         <input class="form-control" type="number" />-->
         <app-pagelogin></app-pagelogin>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!--popup adicionar operador -->
+<p-dialog header="UTILIZADOR EM USO" [(visible)]="displayDialogutz" class="novoop" modal="modal" width="700" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group">
+        O Utilizador {{utilizador_insere}} já se encontra a executar esta OF!
       </div>
     </div>
   </div>

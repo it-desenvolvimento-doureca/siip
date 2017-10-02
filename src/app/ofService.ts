@@ -13,7 +13,7 @@ export class ofService {
 
 
     getOF(ofnum) {
-        const url = webUrl.host+'/rest/demo/silver/' + ofnum + '';
+        const url = webUrl.host + '/rest/demo/silver/' + ofnum + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -21,7 +21,7 @@ export class ofService {
     }
 
     getOP(ofanumenr) {
-        const url = webUrl.host+'/rest/demo/operacao/' + ofanumenr + '';
+        const url = webUrl.host + '/rest/demo/operacao/' + ofanumenr + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -29,7 +29,7 @@ export class ofService {
     }
 
     getAllOP() {
-        const url = webUrl.host+'/rest/demo/allop';
+        const url = webUrl.host + '/rest/demo/allop';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -38,7 +38,15 @@ export class ofService {
 
 
     getAllOPNOTIN(data: String) {
-        const url = webUrl.host+'/rest/demo/allopNOTIN/' + data + '';
+        const url = webUrl.host + '/rest/demo/allopNOTIN/' + data + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getAllFAMNOTIN(data: String) {
+        const url = webUrl.host + '/rest/demo/allfamNOTIN/' + data + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -46,7 +54,7 @@ export class ofService {
     }
 
     getMaq(SECNUMENR) {
-        const url = webUrl.host+'/rest/demo/maquina/' + SECNUMENR + '';
+        const url = webUrl.host + '/rest/demo/maquina/' + SECNUMENR + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -54,7 +62,15 @@ export class ofService {
     }
 
     getFamilias() {
-        const url = webUrl.host+'/rest/demo/familias/';
+        const url = webUrl.host + '/rest/demo/familias/';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getfilhos(pai) {
+        const url = webUrl.host + '/rest/demo/getfilhos/' + pai;
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -62,7 +78,7 @@ export class ofService {
     }
 
     defeitos(fam) {
-        const url = webUrl.host+'/rest/demo/defeitos/' + fam + '';
+        const url = webUrl.host + '/rest/demo/defeitos/' + fam + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -70,7 +86,7 @@ export class ofService {
     }
 
     getAllMaq(SECCOD) {
-        const url = webUrl.host+'/rest/demo/allmaquina/'+SECCOD+'';
+        const url = webUrl.host + '/rest/demo/allmaquina/' + SECCOD + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -78,7 +94,15 @@ export class ofService {
     }
 
     getTipoFalta() {
-        const url = webUrl.host+'/rest/demo/tipofaltas';
+        const url = webUrl.host + '/rest/demo/tipofaltas';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getEtiqueta(etiqueta) {
+        const url = webUrl.host + '/rest/demo/getEtiqueta/' + etiqueta + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
@@ -86,10 +110,12 @@ export class ofService {
     }
 
     getRef(OFANUMENR) {
-        const url = webUrl.host+'/rest/demo/referencias/' + OFANUMENR + '';
+        const url = webUrl.host + '/rest/demo/referencias/' + OFANUMENR + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
+
+
 }
