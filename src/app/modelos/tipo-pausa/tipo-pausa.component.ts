@@ -44,7 +44,7 @@ export class TipoPausaComponent implements OnInit {
         var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
-        this.RPOFOPCABService.getdataof(id_of, user).subscribe(result => {
+        this.RPOFOPCABService.getdataof(id_of, user,"T").subscribe(result => {
           var id_op_cab = result[0][0].id_OP_CAB;
           var rp_of_para_lin = new RP_OF_PARA_LIN();
           rp_of_para_lin.data_INI = date;

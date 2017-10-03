@@ -1,50 +1,60 @@
-.divtable{
+.divtable {
     padding: .75em;
     text-align: center;
 }
 
-.red{
+.divtable > .divspan {
+    top: 45%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.red {
     background: red;
     height: 100%;
+    /* border-bottom: 2px solid #6e6e6e;*/
 }
 
-.green{
+.green {
     background: green;
     height: 100%;
+    border-bottom: 2px solid #6e6e6e;
 }
 
-.yellow{
+.yellow {
     background: yellow;
     height: 100%;
+    /*border-bottom: 2px solid #6e6e6e;*/
 }
 
-
-.redicon{
+.redicon {
     color: red;
 }
 
-.greenicon{
+.greenicon {
     color: green;
 }
 
-.yellowicon{
+.yellowicon {
     color: yellow;
 }
 
-.adicionaop{
+.adicionaop {
     position: fixed;
     width: 50%;
     right: 0;
-    top:0;
+    top: 0;
     height: 100%;
     background: #f7f7f7;
-    padding-top:  5%;
+    padding-top: 5%;
     z-index: 2;
 }
 
 .nopadding {
-   padding-left: 0 !important;
-   max-height: 264px;
+    padding-left: 0 !important;
+    max-height: 264px;
 }
 
 tbody {

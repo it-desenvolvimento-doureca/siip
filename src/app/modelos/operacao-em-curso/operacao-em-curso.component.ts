@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { utilizadorService } from "app/utilizadorService";
 import { Utilizador } from "app/modelos/entidades/utilizador";
 import { ConfirmationService } from "primeng/primeng";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { RPOFOPCABService } from "app/modelos/services/rp-of-op-cab.service";
 import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
 import { RP_OF_CAB } from "app/modelos/entidades/RP_OF_CAB";
@@ -20,6 +20,11 @@ import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  perfil: string;
+  concluido: boolean = false;
+  modoedicao: boolean = false;
+  estado;
+  count_id: any = 0;
   disabledRegisto: boolean;
   count: number;
   utilizador_insere = "";
@@ -39,22 +44,49 @@ export class OperacaoEmCursoComponent implements OnInit {
   data_fim = "";
   hora_fim = "";
   id_op_cab = "";
+  estados_array = [{label:"---",value:""},{label:"Execução",value:"E"},{label:"Concluido",value:"C"},{label:"P",value:"P"}];
+  estado_val = "";
   utilizadores_adici: any[] = [];
 
-  constructor(private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
+  constructor(private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
 
+    this.perfil = localStorage.getItem('access');
     //verifica se tem o id_of_cab
     if (localStorage.getItem('id_of_cab')) {
       //preencher campos
-      this.user = JSON.parse(localStorage.getItem('user'))["username"];
-      this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), this.user).subscribe(
+      var id;
+      var sub = this.route
+        .queryParams
+        .subscribe(params => {
+          id = params['id'] || 0;
+        });
+
+      var url = this.router.routerState.snapshot.url;
+      url = url.slice(1);
+      var urlarray = url.split("/");
+      if (urlarray.length > 1) {
+        if (urlarray[1].match("view")) {
+          this.modoedicao = true;
+        }
+      }
+
+      if (id != 0) {
+        this.user = id;
+        this.estado = "T";
+      } else {
+        this.user = JSON.parse(localStorage.getItem('user'))["username"];
+        this.estado = "'C','A','M'";
+      }
+
+      this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), this.user, this.estado).subscribe(
         response => {
           this.id_op_cab_lista = [];
           for (var x in response) {
             var comp = true;
+
             if (response[x][1].id_OF_CAB_ORIGEM == null) {
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][0].id_OP_CAB));
@@ -64,15 +96,21 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
               this.data_ini = response[x][0].data_INI;
               this.hora_ini = response[x][0].hora_INI;
+              this.hora_fim = response[x][0].hora_FIM;
+              this.data_fim = response[x][0].data_FIM;
               this.id_op_cab = response[x][0].id_OP_CAB;
               this.id_of_cab = response[x][1].id_OF_CAB;
+              this.estado_val = response[x][0].estado;
               this.id_op_cab_lista.push({ id: response[x][0].id_OP_CAB, comp: false });
+              if (response[x][0].data_FIM != null) {
+                this.concluido = true;
+              }
             }
             this.id_op_cab_lista.push({ id: response[x][0].id_OP_CAB, comp: true });
             this.defeitos = [];
-
             this.listadefeitos(response[x][0].id_OP_CAB, comp);
           }
+          this.id_op_cab_lista = this.id_op_cab_lista.slice();
 
           this.verificar_operadores(this.id_of_cab);
         },
@@ -122,7 +160,7 @@ export class OperacaoEmCursoComponent implements OnInit {
       var rpofop = new RP_OF_OP_CAB;
       var rpofopfunc = new RP_OF_OP_FUNC;
 
-      this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), user).subscribe(
+      this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), user, this.estado).subscribe(
         response => {
           this.id_op_cab_lista = [];
           for (var x in response) {
@@ -165,6 +203,8 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   //atualizar lista de defeitos
   listadefeitos(id_op_cab, comp) {
+    this.count_id++;
+    var count = this.count_id;
     this.RPOFOPLINService.getRP_OF_OP_LINallid(id_op_cab).subscribe(
       res => {
 
@@ -174,12 +214,28 @@ export class OperacaoEmCursoComponent implements OnInit {
           if (total == res[x].quant_OF) cor = "#2be32b";
           if (total > res[x].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
 
-          this.defeitos.push({ ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
+          this.defeitos.push({ id: count, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
+        this.ordernar();
       },
       error => console.log(error));
   }
+
+  ordernar() {
+    this.defeitos.sort((n1, n2) => {
+      if (n1.id > n2.id) {
+        return 1;
+      }
+
+      if (n1.id < n2.id) {
+        return -1;
+      }
+
+      return 0;
+    });
+  }
+
 
   // ao clicar no botão concluir
   createfile() {
@@ -359,7 +415,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           this.RPOPFUNCService.update(rp_of_op_func);
         }
 
-         this.router.navigate(['./home']);
+        this.router.navigate(['./home']);
       }, error => console.log(error));
     }, error => console.log(error));
   }
@@ -382,6 +438,13 @@ export class OperacaoEmCursoComponent implements OnInit {
     return hours + ":" + minutes + ":" + seconds;
   }
 
-
+  //botãocancelar
+  cancelar() {
+    if (this.modoedicao) {
+      this.router.navigate(['./controlo']);
+    } else {
+      this.router.navigate(['./home']);
+    }
+  }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, Renderer, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
 import { Router } from "@angular/router";
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { RPOFDEFLINService } from "app/modelos/services/rp-of-def-lin.service";
 import { RPCONFOPService } from "app/modelos/services/rp-conf-op.service";
 import { RP_OF_DEF_LIN } from "app/modelos/entidades/RP_OF_DEF_LIN";
@@ -44,15 +45,22 @@ export class RegistoQuantidadesComponent implements OnInit {
   disabledrefseguinte = true;
   disabledrefanterior = true;
   displayDialog: boolean;
+  location: Location;
   @ViewChild('fileInput') fileInput: ElementRef;
   @ViewChild('dialogwaiting') dialogwaiting: ElementRef;
   @ViewChild('closewaiting') closewaiting: ElementRef;
+  @ViewChild('editarclick2') editarclick2: ElementRef;
 
-  constructor(private RPOFCABService: RPOFCABService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer, private RPCONFOPService: RPCONFOPService, private RPOFDEFLINService: RPOFDEFLINService, private router: Router, private RPOFOPLINService: RPOFOPLINService) { };
 
-  ngOnInit() {    
+  constructor(private RPOFCABService: RPOFCABService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer, private RPCONFOPService: RPCONFOPService, private RPOFDEFLINService: RPOFDEFLINService, private router: Router, private RPOFOPLINService: RPOFOPLINService, location: Location) {
+    this.location = location;
+  };
+
+  ngOnInit() {
     this.username = JSON.parse(localStorage.getItem('user'))["username"];
     this.inicia();
+
+
   }
 
   inicia() {
@@ -65,7 +73,7 @@ export class RegistoQuantidadesComponent implements OnInit {
     } else {
       this.router.navigate(['./home']);
     }
-  } 
+  }
 
   //preencher campos
   carregaref(id_op_cab) {
@@ -102,17 +110,20 @@ export class RegistoQuantidadesComponent implements OnInit {
 
   //pesquisar numero etiqueta
   pesquisaetiqueta() {
+
     this.bt_class = "btn-primary";
     if (this.num_etiqueta != "") {
+      this.simular(this.dialogwaiting);
       this.spinner = true;
       this.refresh = false;
       var etiqueta = "0000000000" + this.num_etiqueta;
       this.service.getEtiqueta(etiqueta.substring(etiqueta.length - 10)).subscribe(
         response => {
+          console.log("a")
           var count = Object.keys(response).length;
           //se existir etiquena com o numero
           if (count > 0) {
-            this.simular(this.dialogwaiting);
+            this.simular(this.editarclick2);
             for (var x in response) {
               this.num_lote = response[x].OFNUM;
               this.atualizarRPOFCAB(response[x].OFNUM, response[x].ofref, response[x].ofanumenr, response[x].OFBQTEINI, response[x].INDNUMENR, response[x].VA2REF, response[x].VA1REF, response[x].INDREF);
@@ -121,6 +132,7 @@ export class RegistoQuantidadesComponent implements OnInit {
             this.spinner = false;
             this.refresh = true;
           } else {
+            this.simular(this.closewaiting);
             this.bt_class = "btn-danger";
             this.spinner = false;
             this.refresh = true;
@@ -148,7 +160,7 @@ export class RegistoQuantidadesComponent implements OnInit {
       //create
       this.RPOFCABService.update(rp_of_cab).then(
         res => {
-          this.atualizarRPOFOPLIN(qtd_of, ref_INDNUMENR, ref_VAR2, ref_VAR1, ofanumenr, ref_ind);
+          this.atualizarRPOFOPLIN(rp_of_cab, qtd_of, ref_INDNUMENR, ref_VAR2, ref_VAR1, ofanumenr, ref_ind);
         },
         error => {
           console.log(error);
@@ -165,7 +177,8 @@ export class RegistoQuantidadesComponent implements OnInit {
   }
 
   //atualizar dados RP_OF_OP_LIN
-  atualizarRPOFOPLIN(qtd_of, ref_INDNUMENR, ref_VAR2, ref_VAR1, ofanumenr, ref_ind) {
+  atualizarRPOFOPLIN(rp_of_cab, qtd_of, ref_INDNUMENR, ref_VAR2, ref_VAR1, ofanumenr, ref_ind) {
+
     this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(resp => {
       var rp_lin = new RP_OF_OP_LIN();
       rp_lin = resp[0];
@@ -176,7 +189,7 @@ export class RegistoQuantidadesComponent implements OnInit {
       rp_lin.ref_IND = ref_ind;
       this.RPOFOPLINService.update(rp_lin).then(
         res => {
-          this.inserir_def(ofanumenr);
+          this.inserir_def(rp_of_cab, ofanumenr);
         },
         error => {
           console.log(error);
@@ -188,9 +201,14 @@ export class RegistoQuantidadesComponent implements OnInit {
   }
 
   //inserir os defeitos da ref apartir da etiqueta
-  inserir_def(ofanumenr) {
-    this.service.getOP(ofanumenr).subscribe(
+  inserir_def(rp_of_cab, ofanumenr) {
+    this.service.getOPTop1(ofanumenr).subscribe(
       response => {
+        //atualiza OPECOD
+        rp_of_cab.op_COD_ORIGEM = response[0].OPECOD
+        this.RPOFCABService.update(rp_of_cab).then(
+          res => { });
+
         var count1 = Object.keys(response).length;
         if (count1 > 0) {
           for (var x in response) {
@@ -218,34 +236,8 @@ export class RegistoQuantidadesComponent implements OnInit {
         if (count1 > 0) {
           //adicionar a lista de defeitos a partir da lista de familias
           for (var x in res) {
-            this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
-              result => {
-                var count = Object.keys(result).length;
-                if (count > 0) {
-                  //inserir em RP_OF_DEF_LIN
-                  for (var y in result) {
-                    var def = new RP_OF_DEF_LIN();
-                    def.cod_DEF = result[y].QUACOD;
-                    def.desc_DEF = result[y].QUALIB;
-                    def.id_OP_LIN = this.ref[this.i].id;
-                    def.id_UTZ_CRIA = this.username;
-                    def.quant_DEF = 0;
-                    def.data_HORA_REG = new Date();
-                    this.RPOFDEFLINService.create(def).subscribe(resp => {
-                      if ((parseInt(countto) + 1) == total) {
-                        this.simular(this.closewaiting);
-                        this.inicia();
-                      }
-                    });
-                  }
-
-                }
-              },
-              error => {
-                console.log(error);
-                this.simular(this.closewaiting);
-                this.inicia();
-              });
+            //getdefeitos
+            this.getdefeitosop(res, x, countto, total);
           }
         } else {
           if ((parseInt(countto) + 1) == total) {
@@ -261,6 +253,39 @@ export class RegistoQuantidadesComponent implements OnInit {
       });
   }
 
+  getdefeitosop(res, x, countto, total) {
+    this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
+      result => {
+        var count = Object.keys(result).length;
+        if (count > 0) {
+          //inserir em RP_OF_DEF_LIN
+          for (var y in result) {
+            var def = new RP_OF_DEF_LIN();
+            def.cod_DEF = result[y].QUACOD;
+            def.desc_DEF = result[y].QUALIB;
+            def.id_OP_LIN = this.ref[this.i].id;
+            def.id_UTZ_CRIA = this.username;
+            def.quant_DEF = 0;
+            def.data_HORA_REG = new Date();
+            this.inserRPOFDEFLINS(def, countto, total, y, count);
+          }
+
+        }
+      },
+      error => {
+        console.log(error);
+        this.simular(this.closewaiting);
+        this.inicia();
+      });
+  }
+  inserRPOFDEFLINS(def, countto, total, countto2, total2) {
+    this.RPOFDEFLINService.create(def).subscribe(resp => {
+      if ((parseInt(countto) + 1) == total && (parseInt(countto2) + 1) == total2) {
+        this.simular(this.closewaiting);
+        this.inicia();
+      }
+    });
+  }
   //ao alterar tab alterar inputs
   handleChange(event) {
     if (this.positions.find(item => item.index === event.index)) {
@@ -361,7 +386,13 @@ export class RegistoQuantidadesComponent implements OnInit {
     this.verificacoes_adicionais(id);
     this.RPOFOPLINService.getRP_OF_OP_LINOp(id).subscribe(res => {
       var index = 0;
-      this.RPCONFOPService.getAllbyid(res[0].op_COD).subscribe(res2 => {
+      var cod = null;
+      if (res[0].op_COD_ORIGEM != null) {
+        cod = res[0].op_COD_ORIGEM;
+      } else {
+        cod = res[0].op_COD;
+      }
+      this.RPCONFOPService.getAllbyid(cod).subscribe(res2 => {
         var count = Object.keys(res2).length;
         //se existir operações
         if (count > 0) {
@@ -455,7 +486,7 @@ export class RegistoQuantidadesComponent implements OnInit {
     }, error => console.log(error));
   }
 
-  concluir() {
+  gravar() {
     this.RPOFOUTRODEFLINService.getbyid(this.ref[this.i].id).subscribe(res => {
       for (var x in res) {
         var data = new RP_OF_OUTRODEF_LIN;
@@ -467,10 +498,14 @@ export class RegistoQuantidadesComponent implements OnInit {
         }
 
         this.RPOFOUTRODEFLINService.update(data).then(() => this.displayDialog = false);
+
       }
 
     }, error => console.log(error));
 
+  }
+  concluir() {
+    this.location.back();
   }
 
 }

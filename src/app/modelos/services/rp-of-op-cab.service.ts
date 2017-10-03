@@ -53,8 +53,8 @@ export class RPOFOPCABService {
       .catch(this.handleError);
   }
 
-  getdataof(id, user) {
-    const url = webUrl.host+'/rest/siip/getdataof/' + id + '/' + user + '';
+  getdataof(id, user,estado) {
+    const url = webUrl.host+'/rest/siip/getdataof/' + id + '/' + user + '/' + estado;
     return this.http
       .get(url)
       .map(this.extractData)

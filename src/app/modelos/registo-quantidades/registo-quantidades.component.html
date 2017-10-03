@@ -18,7 +18,7 @@
   </div>
 </div>
 <div class="col-md-12 col-md-offset-12 nopadding" style="height: 50px; margin: 23px 0 0 0; text-align: center;">
-  <div class="col-md-5 col-md-offset-5 nopadding" style="text-align: left; text-align: left; margin: 0 auto; display: table;">
+  <div [class.invisible]="!comp" class="col-md-5 col-md-offset-5 nopadding" style="text-align: left; text-align: left; margin: 0 auto; display: table;">
     <label class="control-label " for="name"><h6>Nº Etiqueta:</h6></label>
     <div class="icon-addon " style="width: 100%;">
       <input [disabled]="!comp" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()"
@@ -73,8 +73,7 @@
       <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
         <div class="col-md-12 col-md-offset-12" style="height: auto;">
           <div *ngFor="let item of items" class="col-md-4 col-sm-4 col-lg-3  col-md-offset-3 nopadding" style="float:left;">
-            <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 21px; "
-              for="{{ item.cod }}">{{ item.cod }} - {{ item.des }}</label>
+            <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 90%; " for="{{ item.cod }}">{{ item.cod }} - {{ item.des }}</label>
             <input class="form-control" id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN)" name="{{ item.cod }}"
               #inputvalue [(ngModel)]="item.value" type="number" min="0" style="height: 45px; font-size: 25px;" />
           </div>
@@ -97,14 +96,14 @@
       <div class="col-md-4 col-md-offset-4 nopadding" style="float: left">
         <div class="checkbox">
           <label style="font-size: 1.5em">
-                <input type="checkbox" value="" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}" >
+                <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}" >
                 <span class="cr"><i class="cr-icon fa fa-check"></i></span>
                 <span  style="font-size: 0.8em">Teste X-Ato</span>
             </label>
         </div>
         <div class="checkbox">
           <label style="font-size: 1.5em">
-                 <input type="checkbox" value="" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}" >
+                 <input type="checkbox" value=""  (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}" >
                 <span class="cr"><i class="cr-icon fa fa-check"></i></span>
                 <span  style="font-size: 0.8em">Teste Aderência</span>
             </label>
@@ -113,24 +112,24 @@
       <div class="col-md-4 col-md-offset-4 nopadding" style="float: left">
         <div class="checkbox">
           <label style="font-size: 1.5em">
-                <input type="checkbox" value="" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}" >
+                <input type="checkbox" value=""  (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}" >
                 <span class="cr"><i class="cr-icon fa fa-check"></i></span>
                 <span  style="font-size: 0.8em">Teste Fita Adesiva</span>
             </label>
         </div>
         <div class="checkbox">
           <label style="font-size: 1.5em">
-                 <input type="checkbox" value="" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}" >
+                 <input type="checkbox" value=""  (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}" >
                 <span class="cr"><i class="cr-icon fa fa-check"></i></span>
                 <span  style="font-size: 0.8em">Teste Dimensional</span>
             </label>
         </div>
       </div>
       <div class="col-md-4 col-md-offset-4 nopadding" style="float: right">
-        <button type="button" class="form-control btn btn-primary" routerLink="/operacao-em-curso" pButton style="width: 50%; height: 60px; float: right;"
+        <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton style="width: 50%; height: 60px; float: right;"
           label="Concluir"></button>
-        <button type="button" class="form-control btn btn-success" (click)="concluir()" pButton style="width: 48%; height: 60px; float: left;"
-          label="Gravar"></button>
+        <!--<button type="button" class="form-control btn btn-success ui-button-secondary" (click)="gravar()" pButton style="width: 48%; height: 60px; float: left;"
+          label="Gravar"></button>-->
       </div>
     </div>
 
@@ -138,11 +137,11 @@
 
 </div>
 
-
-<button type="button" [hidden]="true" #dialogwaiting class="btn btn-success" onclick="waitingDialog.show('A Inserir Dados...', {dialogSize: 'sm'});">Show dialog</button>
-<button type="button" [hidden]="true" #closewaiting class="btn btn-success" onclick="waitingDialog.hide();">Show dialog</button>
+<button #editarclick2 id="editarclick2" data-toggle="modal" [hidden]="true"></button>
+<button type="button" [hidden]="true" #dialogwaiting class="btn btn-success" onclick="waitingDialog.show('A Pesquisar...', {dialogSize: 'sm'});">Show dialog</button>
+<button type="button" [hidden]="true" #closewaiting class="btn btn-success" onclick="setTimeout(function () { waitingDialog.hide(); }, 500);">Show dialog</button>
 <!-- POPUP OBS DEFEITOS-->
-<p-dialog header="Responsável" [(visible)]="displayDialog" modal="modal" width="700" [responsive]="true" [dismissableMask]="true"
+<p-dialog header="Observações do Defeito" [(visible)]="displayDialog" modal="modal" width="700" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="height: 100px; float: left; font-size: 18px;">
     <div class="ui-grid-row">

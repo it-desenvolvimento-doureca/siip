@@ -28,6 +28,14 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    getOPTop1(ofanumenr) {
+        const url = webUrl.host + '/rest/demo/operacaoTop1/' + ofanumenr + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     getAllOP() {
         const url = webUrl.host + '/rest/demo/allop';
         return this.http

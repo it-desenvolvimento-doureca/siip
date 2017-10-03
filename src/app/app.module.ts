@@ -34,6 +34,7 @@ import { RPOFPARALINService } from "app/modelos/services/rp-of-para-lin.service"
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
 import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.service";
+import { CheckboxModule } from 'primeng/components/checkbox/checkbox';
 
 const routes: Routes = [
   {
@@ -47,8 +48,10 @@ const routes: Routes = [
   },
   {
     path: 'operacao-em-curso',
-    component: OperacaoEmCursoComponent,
-    canActivate: [LoginService]
+    component: AppComponent,
+    canActivate: [LoginService],children: [
+      { path: '', component: OperacaoEmCursoComponent, canActivate: [LoginService] },
+      { path: 'view', component: OperacaoEmCursoComponent, canActivate: [LoginService] },]
   },
   {
     path: 'gestao-users',
@@ -110,8 +113,9 @@ const routes: Routes = [
     TabViewModule,
     PickListModule,
     CalendarModule,
+    CheckboxModule,
     ConfirmDialogModule,
-    [RouterModule.forRoot(routes)]
+    [RouterModule.forRoot(routes,{ useHash: true })]
   ],
   providers: [ConfirmationService,
   LoginService, 

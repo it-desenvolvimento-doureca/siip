@@ -9,6 +9,9 @@
 input:read-only {
     background-color: #c0c0c0;
 }
+input:disabled {
+    background-color: #c0c0c0;
+}
 
 button {
     height: 70px;

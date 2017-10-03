@@ -1494,6 +1494,11 @@ body .tabelacontrolo .ui-datatable-data > tr > td {
     color: white !important;
 }
 
+.tabelacontrolo .ui-widget-content {
+    border-bottom-width: 2px !important;
+    border-bottom-color: #5f5f5f !important;
+}
+
 body .ui-datatable .ui-datatable-data tr td.ui-editable-column input {
     width: 100%;
     box-sizing: border-box;
@@ -2611,12 +2616,12 @@ body .ui-slidemenu .ui-slidemenu-backward {
 }
 
 body .ui-datatable .ui-cell-data {
-    font-size: 12px !important;
+    font-size: 10px !important;
 }
 
 .divtable tr {
-    min-height: 32px;
-    max-height: 32px;
+    min-height: 22px;
+    max-height: 22px;
     display: inline-table;
     width: 100%;
 }
@@ -2687,7 +2692,6 @@ body .ui-datatable .ui-cell-data {
     transition: width .6s ease;
     background-position: 40px 0 !important;
 }
-
 
 .progress1-striped .progress1-bar, .progress1-bar-striped {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);

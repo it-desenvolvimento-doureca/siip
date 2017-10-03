@@ -121,7 +121,7 @@ export class NovaOperacaoComponent implements OnInit {
         this.input_class = "";
         this.selected = "";
         this.selectedmaq = "";
-        this.observacoes="";
+        this.observacoes = "";
         if (this.num_of != "") {
             this.service.getOF(this.num_of).subscribe(
                 response => {
@@ -490,14 +490,7 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.perc_OBJETIV = parseFloat(ref.perc_obj);
             rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
             rpofoplin.quant_OF = parseInt(ref.OFBQTEINI);
-            this.RPOFOPLINService.create(rpofoplin).subscribe(
-                res => {
-                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
-                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
-                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
-                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
-                },
-                error => console.log(error));
+            this.insereref(rpofoplin, true);
         } else {
             for (var x in this.referencias) {
                 if (this.referencias[x].tipo == "PF") {
@@ -513,20 +506,24 @@ export class NovaOperacaoComponent implements OnInit {
                     rpofoplin.perc_OBJETIV = parseFloat(this.referencias[x].perc_obj);
                     rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
                     rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
-                    this.RPOFOPLINService.create(rpofoplin).subscribe(
-                        res => {
-                            this.deftoref(res.id_OP_LIN);
-                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
-                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
-                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
-                            this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
-                        },
-                        error => console.log(error));
+                    this.insereref(rpofoplin, false);
                 }
             }
         }
 
         this.router.navigate(['./home']);
+    }
+
+    insereref(rpofoplin, comp) {
+        this.RPOFOPLINService.create(rpofoplin).subscribe(
+            res => {
+                if (!comp) this.deftoref(res.id_OP_LIN);
+                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
+                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
+                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
+                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
+            },
+            error => console.log(error));
     }
 
     cria_RP_OF_OUTRODEF_LIN(id, id_outro) {
@@ -567,24 +564,7 @@ export class NovaOperacaoComponent implements OnInit {
                 if (count1 > 0) {
                     //adicionar a lista de defeitos a partir da lista de familias
                     for (var x in res) {
-                        this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
-                            result => {
-                                var count = Object.keys(result).length;
-                                if (count > 0) {
-                                    //inserir em RP_OF_DEF_LIN
-                                    for (var x in result) {
-                                        var def = new RP_OF_DEF_LIN();
-                                        def.cod_DEF = result[x].QUACOD;
-                                        def.desc_DEF = result[x].QUALIB;
-                                        def.id_OP_LIN = id_OP_LIN;
-                                        def.id_UTZ_CRIA = this.username
-                                        def.quant_DEF = 0;
-                                        def.data_HORA_REG = new Date();
-                                        this.RPOFDEFLINService.create(def);
-                                    }
-                                }
-                            },
-                            error => console.log(error));
+                        this.getdefeitosop(res, x, id_OP_LIN);
                     }
                 }
 
@@ -613,6 +593,30 @@ export class NovaOperacaoComponent implements OnInit {
     }
     onRowUnselect(event) {
 
+    }
+
+
+
+    getdefeitosop(res, x, id_OP_LIN) {
+        this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
+            result => {
+                var count = Object.keys(result).length;
+                if (count > 0) {
+                    //inserir em RP_OF_DEF_LIN
+                    for (var y in result) {
+                        var def = new RP_OF_DEF_LIN();
+                        def.cod_DEF = result[y].QUACOD;
+                        def.desc_DEF = result[y].QUALIB;
+                        def.id_OP_LIN = id_OP_LIN;
+                        def.id_UTZ_CRIA = this.username
+                        def.quant_DEF = 0;
+                        def.data_HORA_REG = new Date();
+                        this.RPOFDEFLINService.create(def).subscribe(resp => {
+                          });
+                    }
+                }
+            },
+            error => console.log(error));
     }
 
 }

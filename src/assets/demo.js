@@ -4,19 +4,30 @@
  * @author Eugene Maslovich <ehpc@em42.ru>
  */
 
+
+
+$('#editarclick2').click(function () {
+
+	$dialog.find('h3').text("A Inserir Dados...")
+
+});
+
+
+var $dialog = $(
+	'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+	'<div class="modal-dialog modal-m">' +
+	'<div class="modal-content">' +
+	'<div class="modal-header"><h3 id="titlemodal" style="margin:0; color: black;"></h3></div>' +
+	'<div class="modal-body">' +
+	'<div class="progress1 progress1-striped active" style="margin-bottom:0;"><div class="progress1-bar" style="width: 100%"></div></div>' +
+	'</div>' +
+	'</div></div></div>');
+
 var waitingDialog = waitingDialog || (function ($) {
-    'use strict';
+	'use strict';
 
 	// Creating modal dialog's DOM
-	var $dialog = $(
-		'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
-		'<div class="modal-dialog modal-m">' +
-		'<div class="modal-content">' +
-			'<div class="modal-header"><h3 style="margin:0; color: black;"></h3></div>' +
-			'<div class="modal-body">' +
-				'<div class="progress1 progress1-striped active" style="margin-bottom:0;"><div class="progress1-bar" style="width: 100%"></div></div>' +
-			'</div>' +
-		'</div></div></div>');
+
 
 	return {
 		/**

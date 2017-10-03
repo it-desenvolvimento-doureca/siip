@@ -17,4 +17,5 @@ export class RP_OF_CAB {
     nome_UTZ_MODIF: string;
     data_HORA_MODIF: Date;
     estado: string;
+    op_COD_ORIGEM: string;
 }

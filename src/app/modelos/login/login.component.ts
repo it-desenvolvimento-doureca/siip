@@ -228,7 +228,7 @@ export class LoginComponent implements OnInit {
 
 
       //estado RP_OF_OP_FUNC
-      this.RPOPFUNCService.getdataof(id_of, user).subscribe(result => {
+      this.RPOPFUNCService.getdataof(id_of, user,"T").subscribe(result => {
         var rpfunc = new RP_OF_OP_FUNC();
         rpfunc = result[0][0];
         rpfunc.id_UTZ_MODIF = user;
@@ -273,7 +273,7 @@ export class LoginComponent implements OnInit {
     var user = JSON.parse(localStorage.getItem('user'))["username"];
     var nome = JSON.parse(localStorage.getItem('user'))["name"];
     var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
-    this.RPOFOPCABService.getdataof(id_of, user).subscribe(
+    this.RPOFOPCABService.getdataof(id_of, user,"T").subscribe(
       response => {
         for (var x in response) {
 
@@ -303,7 +303,7 @@ export class LoginComponent implements OnInit {
     }, error => console.log(error));
 
     //estado RP_OF_OP_FUNC
-    this.RPOPFUNCService.getdataof(id_of, user).subscribe(result => {
+    this.RPOPFUNCService.getdataof(id_of, user,"T").subscribe(result => {
       var rp_of_op_cab = new RP_OF_OP_CAB;
       var rpfunc = new RP_OF_OP_FUNC();
       rpfunc = result[0][0];

@@ -10,39 +10,52 @@
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-            <input class="form-control" value="{{op_num}}" type="text" readonly />
+            <input class="form-control" value="{{op_num}}" type="text" [disabled]="true" />
           </div>
           <div class="form-group">
             <label class="control-label " for="subject">Máquina</label>
-            <input class="form-control" value="{{maq_num}}" type="text" readonly/>
+            <input class="form-control" value="{{maq_num}}" type="text" [disabled]="true" />
           </div>
           <div class="form-group">
             <label class="control-label ">Funcionário</label>
-            <input class="form-control" value="{{id_utz}}" type="text" readonly />
+            <input class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
           </div>
-          <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
-            <div class="form-group">
-              <label class="control-label ">Data Início</label>
-              <input class="form-control" value="{{data_ini}}" type="text" readonly />
+          <div class="col-md-12 col-md-offset-12 nopadding" style="display: -webkit-box;">
+            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
+              <div class="form-group">
+                <label class="control-label ">Data Início</label>
+                <input class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
+              <div class="form-group">
+                <label class="control-label ">Hora Início</label>
+                <input class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
+                />
+              </div>
             </div>
           </div>
-          <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
-            <div class="form-group">
-              <label class="control-label ">Hora Início</label>
-              <input class="form-control" value="{{hora_ini}}" type="text" readonly />
+          <div class="col-md-12 col-md-offset-12 nopadding">
+            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
+              <div class="form-group">
+                <label class="control-label ">Data Fim</label>
+                <input class="form-control" [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
+              <div class="form-group">
+                <label class="control-label ">Hora Fim</label>
+                <input class="form-control" [(ngModel)]="hora_fim" type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
+                />
+              </div>
             </div>
           </div>
-          <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
-            <div class="form-group">
-              <label class="control-label ">Data Fim</label>
-              <input class="form-control" value="{{data_fim}}" type="text" readonly />
-            </div>
-          </div>
-          <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
-            <div class="form-group">
-              <label class="control-label ">Hora Fim</label>
-              <input class="form-control" value="{{hora_fim}}" type="text" readonly />
-            </div>
+          <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="padding-top: 10px; display: -webkit-box;">
+              <label class="control-label ">Estado</label>
+            <p-dropdown [options]="estados_array" [style]="{'width':'200px'}" [(ngModel)]="estado_val" [ngModelOptions]="{standalone: true}"
+              [hidden]="!modoedicao" [disabled]="true" ></p-dropdown>
           </div>
         </form>
 
@@ -69,7 +82,7 @@
       <p-dataTable [value]="defeitos" dataKey="ref_num">
         <p-header>Lista dos defeitos Registados</p-header>
         <p-column field="ref_num" header="Código" [sortable]="true">
-          <ng-template let-col let-x="rowData" pTemplate="body">  
+          <ng-template let-col let-x="rowData" pTemplate="body">
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
         </p-column>
@@ -88,10 +101,11 @@
     </div>
   </div>
   <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
-    <button type="button" pButton routerLink="/home" label="CANCELAR" style="float: none;"></button>
-    <button type="button" pButton routerLink="/pausa" label="PAUSA" style="float: none;"></button>
-    <button type="button" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR" style="float: none;"></button>
-    <button type="button" pButton (click)="createfile()" label="CONCLUIR" style="float: none;"></button>
+    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR" style="float: none;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-secondary" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR"
+      style="float: none;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none;"></button>
   </div>
 </div>
 
