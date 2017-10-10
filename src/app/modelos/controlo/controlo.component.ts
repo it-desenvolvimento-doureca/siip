@@ -23,6 +23,8 @@ import { Router } from '@angular/router';
   ]
 })
 export class ControloComponent implements OnInit {
+  atualizacao: boolean = true;
+  count: any = 0;
   dados_old: any[];
   dados: any[] = [];
   items;
@@ -49,23 +51,27 @@ export class ControloComponent implements OnInit {
   }
 
   inicia() {
-    this.dados_old = this.dados;
-    this.dados = [];
-    this.items = 5;
-    this.RPOFCABService.getAll().subscribe(
-      res => {
-        var count = 0;
-        for (var y in res) {
-          if (res[y][0].id_OF_CAB_ORIGEM == null) {
-            this.preenchetabela(res, y, count)
-            count++;
+    if (this.atualizacao) {
+      this.atualizacao = false;
+      this.dados_old = this.dados;
+      this.dados = [];
+      this.items = 5;
+      this.RPOFCABService.getAll().subscribe(
+        res => {
+          this.count = 0;
+          var total = Object.keys(res).length;
+          for (var y in res) {
+            if (res[y][0].id_OF_CAB_ORIGEM == null) {
+              this.preenchetabela(total, res, y, this.count)
+              this.count++;
+            }
           }
-        }
-      },
-      error => console.log(error));
+        },
+        error => console.log(error));
+    }
   }
 
-  preenchetabela(res, y, count) {
+  preenchetabela(total, res, y, count) {
     this.RPOFOPLINService.getAllbyid(res[y][1].id_OP_CAB).subscribe(
       response => {
         var artigos = [];
@@ -86,8 +92,8 @@ export class ControloComponent implements OnInit {
         var cor_total_def = "";
         var cor_perc_def = "";
         var val_perc_def = 0;
-        for (var x in response) {
 
+        for (var x in response) {
 
           //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
           if ((response[x][0].quant_BOAS_TOTAL + response[x][0].quant_DEF_TOTAL) > response[x][0].quant_OF) {
@@ -131,74 +137,104 @@ export class ControloComponent implements OnInit {
             cor_of = "yellow";
           }
 
-          artigos.push(response[x][0].ref_DES);
+          artigos.push(response[x][0].ref_DES.substring(0, 35));
           refs.push(response[x][0].ref_NUM);
           qtd_of.push({ value: response[x][0].quant_OF, cor: cor_qtd_of });
           qtd_boas.push(response[x][0].quant_BOAS_TOTAL);
           total_def.push({ value: response[x][0].quant_DEF_TOTAL, cor: cor_total_def });
           perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString(), cor: cor_perc_def });
           perc_obj.push(response[x][0].perc_OBJETIV);
-
-          if (response[x][1].id_OF_CAB_ORIGEM == null && !inser) {
-
-            var dtfim = null;
-            var hfim = null;
-
-            if (res[y][2].data_FIM != null) dtfim = this.formatDate(res[y][2].data_FIM);
-            if (res[y][2].hora_FIM != null) hfim = res[y][2].hora_FIM.slice(0, 5);
-
-            if (res[y][0].estado == 'C') estado = "Concluido";
-            if (res[y][0].estado == 'I') estado = "Iniciado";
-            if (res[y][0].estado == 'M') estado = "Modificado";
-            if (res[y][0].estado == 'S') estado = "Pausa";
-            if (res[y][0].estado == 'E') estado = "Execução";
-            if (res[y][0].estado == 'P') estado = "Preparação";
-            this.dados.push({
-              pos: count,
-              id_of_cab: response[x][1].id_OF_CAB,
-              of: res[y][0].of_NUM,
-              operacao: res[y][0].op_NUM,
-              maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
-              func: res[y][2].id_UTZ_CRIA + ' - ' + (res[y][2].nome_UTZ_CRIA).substring(0,15),
-              id_func: res[y][2].id_UTZ_CRIA,
-              qtd_func: 550,
-              ref: refs,
-              artigo: artigos,
-              dt_inicio: this.formatDate(res[y][2].data_INI),
-              hora_inicio: res[y][2].hora_INI.slice(0, 5),
-              dt_fim: dtfim,
-              hora_fim: hfim,
-              tempo_prod: res[y][1].tempo_EXEC_TOTAL,
-              qtd_of: qtd_of,
-              qtd_boas: qtd_boas,
-              total_def: total_def,
-              perc_def: perc_def,
-              perc_obj: perc_obj,
-              estado: estado,
-              cor_of: cor_of,
-              cor_tempo_prod: cor_tempo_prod,
-              cor_estado: cor_estado
-            });
-            inser = true;
-          }
-          if (this.dados.find(item => item.pos == count)) {
-            this.dados.find(item => item.pos == count).cor_estado = cor_estado;
-            this.dados.find(item => item.pos == count).cor_of = cor_of;
-          }
-
-        }
-        if (this.dados_old.length == 0) {
-          this.tabela = this.dados.slice(0, 5);
-        } else {
-          this.tabela = this.dados_old.slice(0, 5);
         }
 
+        this.RPOFCABService.getRP_OF_CABbyid(res[y][0].id_OF_CAB).subscribe(
+          res5 => {
 
-        this.ordernar();
+            this.inserelinhas(total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado);
+
+          },
+          error => console.log(error));
 
 
       },
       error => console.log(error));
+  }
+
+  inserelinhas(total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado) {
+    var estado;
+
+    var dtfim = [];
+    var hfim = [];
+    var dt_inicio = [];
+    var hora_inicio = [];
+    var func = [];
+    var qtd_func = [];
+    var tempo_prod = [];
+
+    for (var n in res5) {
+
+      if (res5[n][1].data_FIM != null) var dtfim2 = this.formatDate(res5[n][1].data_FIM);
+      if (res5[n][1].hora_FIM != null) var hfim2 = res5[n][1].hora_FIM.slice(0, 5);
+
+      dtfim.push(dtfim2);
+      hfim.push(hfim2);
+      dt_inicio.push(this.formatDate(res5[n][1].data_INI));
+      hora_inicio.push(res5[n][1].hora_INI.slice(0, 5));
+      func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 15));
+      qtd_func.push('12');
+      tempo_prod.push(res5[n][0].tempo_EXEC_TOTAL);
+    }
+
+
+
+    if (res[y][0].estado == 'C') estado = "Concluido";
+    if (res[y][0].estado == 'I') estado = "Iniciado";
+    if (res[y][0].estado == 'M') estado = "Modificado";
+    if (res[y][0].estado == 'S') estado = "Pausa";
+    if (res[y][0].estado == 'E') estado = "Execução";
+    if (res[y][0].estado == 'P') estado = "Preparação";
+
+    this.dados.push({
+      pos: count,
+      id_of_cab: response[x][1].id_OF_CAB,
+      of: res[y][0].of_NUM,
+      operacao: res[y][0].op_NUM,
+      maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
+      func: func,
+      id_func: res[y][2].id_UTZ_CRIA,
+      qtd_func: qtd_func,
+      ref: refs,
+      artigo: artigos,
+      dt_inicio: dt_inicio,
+      hora_inicio: hora_inicio,
+      dt_fim: dtfim,
+      hora_fim: hfim,
+      tempo_prod: tempo_prod,
+      qtd_of: qtd_of,
+      qtd_boas: qtd_boas,
+      total_def: total_def,
+      perc_def: perc_def,
+      perc_obj: perc_obj,
+      estado: estado,
+      cor_of: cor_of,
+      cor_tempo_prod: cor_tempo_prod,
+      cor_estado: cor_estado
+    });
+
+
+    if (this.dados.length == total) {
+      this.atualizacao = true
+      if (this.dados.find(item => item.pos == count)) {
+        this.dados.find(item => item.pos == count).cor_estado = cor_estado;
+        this.dados.find(item => item.pos == count).cor_of = cor_of;
+      }
+      if (this.dados_old.length == 0) {
+        this.tabela = this.dados.slice(0, 5);
+      } else {
+        this.tabela = this.dados_old.slice(0, 5);
+      }
+      this.ordernar();
+    }
+
   }
 
   apaga() {

@@ -53,9 +53,9 @@
             </div>
           </div>
           <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="padding-top: 10px; display: -webkit-box;">
-              <label class="control-label ">Estado</label>
+            <label class="control-label ">Estado</label>
             <p-dropdown [options]="estados_array" [style]="{'width':'200px'}" [(ngModel)]="estado_val" [ngModelOptions]="{standalone: true}"
-              [hidden]="!modoedicao" [disabled]="true" ></p-dropdown>
+              [hidden]="!modoedicao" [disabled]="true"></p-dropdown>
           </div>
         </form>
 
@@ -81,16 +81,16 @@
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
       <p-dataTable [value]="defeitos" dataKey="ref_num">
         <p-header>Lista dos defeitos Registados</p-header>
-        <p-column field="ref_num" header="Código" [sortable]="true">
+        <p-column [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
         </p-column>
         <p-column field="ref_des" header="Designação"></p-column>
-        <p-column field="quant_of" header="Quant. OF"></p-column>
-        <p-column field="quant_boas" header="Quant. Boas"></p-column>
-        <p-column field="quant_def_total" header="Quant. Defeitos"></p-column>
-        <p-column field="quant_control" header="Quant. Control">
+        <p-column [style]="{'width':'10%'}" field="quant_of" header="Qtd. OF"></p-column>
+        <p-column [style]="{'width':'12%'}" field="quant_boas" header="Qtd. Boas"></p-column>
+        <p-column [style]="{'width':'10%'}" field="quant_def_total" header="Defeitos"></p-column>
+        <p-column [style]="{'width':'10%'}" field="quant_control" header="Control">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <div [style.background]="x['cor']">
               <span>{{x[col.field]}}</span>
@@ -101,11 +101,11 @@
     </div>
   </div>
   <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
-    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR" style="float: none;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-secondary" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR"
+    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 12%;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 12%;"></button>
+    <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR"
       style="float: none;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 12%;"></button>
   </div>
 </div>
 

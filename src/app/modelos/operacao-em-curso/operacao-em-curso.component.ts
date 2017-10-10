@@ -20,6 +20,7 @@ import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  disabledAdici: boolean;
   perfil: string;
   concluido: boolean = false;
   modoedicao: boolean = false;
@@ -44,7 +45,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   data_fim = "";
   hora_fim = "";
   id_op_cab = "";
-  estados_array = [{label:"---",value:""},{label:"Execução",value:"E"},{label:"Concluido",value:"C"},{label:"P",value:"P"}];
+  estados_array = [{ label: "---", value: "" }, { label: "Execução", value: "E" }, { label: "Concluido", value: "C" }, { label: "P", value: "P" }];
   estado_val = "";
   utilizadores_adici: any[] = [];
 
@@ -52,7 +53,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.disabledAdici = false;
     this.perfil = localStorage.getItem('access');
     //verifica se tem o id_of_cab
     if (localStorage.getItem('id_of_cab')) {
@@ -88,6 +89,7 @@ export class OperacaoEmCursoComponent implements OnInit {
             var comp = true;
 
             if (response[x][1].id_OF_CAB_ORIGEM == null) {
+              if (response[x][1].id_UTZ_CRIA != this.user) this.disabledAdici = true;
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][0].id_OP_CAB));
               this.of_num = response[x][1].of_NUM.trim()
@@ -196,6 +198,9 @@ export class OperacaoEmCursoComponent implements OnInit {
         message: 'Pretende adicionar mais um Operador?',
         accept: () => {
           this.displayDialog = true;
+        }, reject: () => {
+          this.displayDialog = false;
+          this.router.navigate(['./home']);
         }
       });
     }
@@ -335,11 +340,10 @@ export class OperacaoEmCursoComponent implements OnInit {
           timedif5 = parseInt(splitted_pausa_prep[0]) * 3600000 + parseInt(splitted_pausa_prep[1]) * 60000 + parseInt(splitted_pausa_prep[2]) * 1000;
         }
 
-        if (result[0][0].tempo_PARA_TOTAL != null) rp_of_op_cab.tempo_PREP_TOTAL = "0:0:0";
-
+        if (result[0][0].tempo_PARA_TOTAL != null) rp_of_op_cab.tempo_PARA_TOTAL = "0:0:0";
 
         //se o estado for em preparação conclui a preparação e calcula tempo
-        if (result[0][0].estado == "P") {
+        if (result[0][2].estado == "P") {
 
           var splitted_pausa = time_pausa_prep.split(":", 3);
           timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;

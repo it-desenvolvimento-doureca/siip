@@ -754,6 +754,9 @@ body .ui-buttonset .ui-button:last-child {
         -webkit-border-radius: 0.25em;
         border-radius: 0.25em;
     }
+    .iconmelon {
+        padding-top: 0
+    }
 }
 
 body .ui-splitbutton.ui-buttonset .ui-button {
@@ -1459,7 +1462,13 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd, body .
 
 .tabcss .ui-tabview.ui-tabview-left .ui-tabview-nav li {
     min-height: 54px;
-    font-size: 20px;
+    /*font-size: 20px;*/
+    font-size: 14pt;
+}
+
+.tabcss .ui-tabview-nav {
+    height: 100% !important;
+    position: absolute;
 }
 
 .novoop .ui-dialog.ui-widget .ui-dialog-titlebar {
@@ -2616,8 +2625,13 @@ body .ui-slidemenu .ui-slidemenu-backward {
 }
 
 body .ui-datatable .ui-cell-data {
+    font-size: 12px !important;
+}
+
+.tabelacontrolo .ui-datatable .ui-cell-data {
     font-size: 10px !important;
 }
+
 
 .divtable tr {
     min-height: 22px;
@@ -2883,6 +2897,9 @@ body .ui-datatable .ui-cell-data {
     .modal-sm {
         width: 300px
     }
+    .iconmelon {
+        padding-top: 28%
+    }
 }
 
 @media (min-width: 992px) {
@@ -2898,4 +2915,77 @@ body .ui-datatable .ui-cell-data {
 
 .modal-footer:after {
     clear: both
+}
+
+.row {
+    padding: 10px;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+html, body {
+    color: white !important;
+    margin: 0;
+    /*height: 100%;*/
+    /*background: rgb(208,228,247);
+    background: -moz-linear-gradient(top, rgba(208,228,247,1) 0%, rgba(115,177,231,1) 0%, rgba(10,119,213,1) 30%, rgba(83,159,225,1) 65%, rgba(135,188,234,1) 100%);
+    background: -webkit-linear-gradient(top, rgba(208,228,247,1) 0%,rgba(115,177,231,1) 0%,rgba(10,119,213,1) 30%,rgba(83,159,225,1) 65%,rgba(135,188,234,1) 100%);
+    background: linear-gradient(to bottom, rgba(208,228,247,1) 0%,rgba(115,177,231,1) 0%,rgba(10,119,213,1) 30%,rgba(83,159,225,1) 65%,rgba(135,188,234,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d0e4f7', endColorstr='#87bcea',GradientType=0 );*/
+    /* The image used */
+    background-image: url("../assets/fundo.jpeg");
+    /* background: rgba(131, 160, 196, 0.99) !important;*/
+    background-size: cover;
+    /* Full height */
+    /*height: 100%;*/
+    /* Center and scale the image nicely */
+    /*background-position: center;*/
+    background-repeat: no-repeat;
+}
+
+.loading {
+    transition: opacity .8s ease-in-out;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.loading h1 {
+    color: black;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    transform: translate(0, -50%);
+}
+
+#particles {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 0;
+}
+
+.iconmelon, .im {
+    position: relative;
+    text-align: center;
+    height: 129px;
+    display: block;
+    fill: #525151;
+}
+
+.iconmelon:after, .im:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }

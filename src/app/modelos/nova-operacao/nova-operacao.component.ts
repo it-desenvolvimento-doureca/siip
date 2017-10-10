@@ -53,7 +53,7 @@ export class NovaOperacaoComponent implements OnInit {
     ref_VAR1: any;
     ref_IND: any;
     op_desc: any;
-    op_cod: any;
+    op_cod: any = [];
     maq_DES: any;
     maq_NUM: any;
     input_class: string;
@@ -137,9 +137,9 @@ export class NovaOperacaoComponent implements OnInit {
                         this.service.getRef(response[0].ofanumenr).subscribe(
                             response2 => {
                                 for (var x in response2) {
-                                    this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
+                                    this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
                                     //verifica familia
-                                    this.veirificafam(response2[x].FAMCOD, response2[x].PROREF);
+                                    this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF);
                                 }
                                 this.referencias = this.referencias.slice();
                             },
@@ -183,7 +183,7 @@ export class NovaOperacaoComponent implements OnInit {
                     var count1 = Object.keys(response1).length;
                     if (count1 > 0) {
                         if (response != null) {
-                            this.referencias.push({ codigo: response.PROREF, design: response.PRODES1, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
+                            this.referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
                             this.referencias = this.referencias.slice();
                         }
                         this.get_filhos(ref);
@@ -235,12 +235,24 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //ao alterar a operação preenche SelectItem das maquinas
-    carregamaquinas(event) {
-
+    carregamaquinas(event, openum = null) {
+        this.op_cod = [];
         if (event != 0) {
-            this.op_cod = event.OPECOD;
+            var ope_num;
+            if (openum != null) {
+                ope_num = openum;
+            } else {
+                ope_num = event.OPENUM;
+            }
+            for (var x in this.operacao) {
+                if (this.operacao[x].value.OPENUM <= ope_num) {
+                    if (this.op_cod.indexOf(this.operacao[x].value.OPECOD) == -1) {
+                        this.op_cod.push(this.operacao[x].value.OPECOD);
+                    }
+                }
+            }
             this.op_desc = event.OPEDES;
-            this.op_NUM = event.OPENUM;
+            this.op_NUM = ope_num;
             this.service.getMaq(event.SECNUMENR1).subscribe(
                 response => {
                     this.maquina = [];
@@ -319,7 +331,7 @@ export class NovaOperacaoComponent implements OnInit {
             this.selected = this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM).value;
         }
 
-        this.carregamaquinas(event.data);
+        this.carregamaquinas(event.data, OPENUM);
     }
 
     //Quando o botão "Seleccionar só 1 referencia" pode seleccionar uma ref da tabela
@@ -374,7 +386,7 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.data_HORA_CRIA = new Date();
         rpof.estado = estado;
         rpof.of_NUM = this.num_of;
-        rpof.op_COD = this.op_cod;
+        rpof.op_COD = this.op_cod.toString();
         rpof.op_NUM = this.op_NUM;
         rpof.op_DES = this.op_desc;
         rpof.maq_NUM = this.maq_NUM;
@@ -558,7 +570,15 @@ export class NovaOperacaoComponent implements OnInit {
     //adicionar lista de defeitos às referencias
     //id= id operação 
     deftoref(id_OP_LIN) {
-        this.RPCONFOPService.getAllbyid(this.op_cod).subscribe(
+        for (var x in this.op_cod) {
+            this.famassociadas(id_OP_LIN, this.op_cod[x]);
+        }
+    }
+
+    //pesquisa as familias ligadas à operação
+    famassociadas(id_OP_LIN, op_cod) {
+
+        this.RPCONFOPService.getAllbyid(op_cod).subscribe(
             res => {
                 var count1 = Object.keys(res).length;
                 if (count1 > 0) {
@@ -591,11 +611,10 @@ export class NovaOperacaoComponent implements OnInit {
             },
             error => console.log(error));
     }
+
     onRowUnselect(event) {
 
     }
-
-
 
     getdefeitosop(res, x, id_OP_LIN) {
         this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
@@ -612,7 +631,7 @@ export class NovaOperacaoComponent implements OnInit {
                         def.quant_DEF = 0;
                         def.data_HORA_REG = new Date();
                         this.RPOFDEFLINService.create(def).subscribe(resp => {
-                          });
+                        });
                     }
                 }
             },

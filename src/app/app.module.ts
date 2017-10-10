@@ -19,7 +19,7 @@ import { utilizadorService } from "app/utilizadorService";
 import 'rxjs/add/operator/toPromise';
 import { ofService } from "app/ofService";
 import { ControloComponent } from './modelos/controlo/controlo.component';
-import {ConfirmDialogModule,ConfirmationService} from 'primeng/primeng';
+import { ConfirmDialogModule, ConfirmationService } from 'primeng/primeng';
 import { PageloginComponent } from './modelos/pagelogin/pagelogin.component';
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 import { RPCONFCHEFSECService } from "app/modelos/services/rp-conf-chef-sec.service";
@@ -48,13 +48,11 @@ const routes: Routes = [
   },
   {
     path: 'operacao-em-curso',
-    component: AppComponent,
-    canActivate: [LoginService],children: [
-      { path: '', component: OperacaoEmCursoComponent, canActivate: [LoginService] },
-      { path: 'view', component: OperacaoEmCursoComponent, canActivate: [LoginService] },]
+    component: OperacaoEmCursoComponent,
+    canActivate: [LoginService]
   },
   {
-    path: 'gestao-users',
+    path: 'config',
     component: GestaoUsersComponent,
     canActivate: [LoginService]
   },
@@ -115,25 +113,25 @@ const routes: Routes = [
     CalendarModule,
     CheckboxModule,
     ConfirmDialogModule,
-    [RouterModule.forRoot(routes,{ useHash: true })]
+    [RouterModule.forRoot(routes, { useHash: true })]
   ],
   providers: [ConfirmationService,
-  LoginService, 
-  utilizadorService, 
-  ofService,
-  RPCONFUTZPERFService,
-  RPCONFCHEFSECService,
-  RPCONFOPService,
-  RPCONFOPNPREVService,
-  RPOFCABService,
-  RPOFOPCABService,
-  RPOFOPLINService,
-  RPOFPREPLINService,
-  RPOFDEFLINService,
-  RPOPFUNCService,
-  RPOFOUTRODEFLINService,
-  RPCONFFAMILIACOMPService,
-  RPOFPARALINService
+    LoginService,
+    utilizadorService,
+    ofService,
+    RPCONFUTZPERFService,
+    RPCONFCHEFSECService,
+    RPCONFOPService,
+    RPCONFOPNPREVService,
+    RPOFCABService,
+    RPOFOPCABService,
+    RPOFOPLINService,
+    RPOFPREPLINService,
+    RPOFDEFLINService,
+    RPOPFUNCService,
+    RPOFOUTRODEFLINService,
+    RPCONFFAMILIACOMPService,
+    RPOFPARALINService
   ],
   bootstrap: [AppComponent]
 })

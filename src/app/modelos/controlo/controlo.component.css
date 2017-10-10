@@ -11,6 +11,14 @@
     bottom: 0;
 }
 
+.divtable tr {
+    border-bottom: 1px solid #9b9797;
+}
+
+.divtable tr:last-child {
+    border-bottom: none ;
+}
+
 .red {
     background: red;
     height: 100%;
@@ -20,13 +28,14 @@
 .green {
     background: green;
     height: 100%;
-    border-bottom: 2px solid #6e6e6e;
+   /* border-bottom: 2px solid #6e6e6e;*/
 }
 
 .yellow {
     background: yellow;
     height: 100%;
     /*border-bottom: 2px solid #6e6e6e;*/
+    border-color: black;
 }
 
 .redicon {

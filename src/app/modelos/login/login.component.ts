@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { Router } from "@angular/router";
 import { utilizadorService } from "app/utilizadorService";
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
@@ -32,13 +32,16 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
   displayprep: boolean = false;
-  constructor(private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
+  constructor(private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
     //limpar a sessão
     localStorage.clear();
   }
 
   ngOnInit() {
-
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = "assets/demo.js";
+    this.elementRef.nativeElement.appendChild(s);
   }
 
   //adiciona número ao input de login
@@ -99,7 +102,7 @@ export class LoginComponent implements OnInit {
     this.edited = false;
     this.name = "";
     this.operation = "";
-    //localStorage.clear();
+    localStorage.clear();
   }
 
   //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
@@ -149,7 +152,8 @@ export class LoginComponent implements OnInit {
                       break;
                     case "G":
                       localStorage.setItem('perfil', JSON.stringify("G"));
-                      this.router.navigate(['./controlo']);
+                      this.chefelogin();
+                      //this.router.navigate(['./controlo']);
                       break;
                     case "A":
                       localStorage.setItem('perfil', JSON.stringify("A"));
@@ -188,9 +192,26 @@ export class LoginComponent implements OnInit {
 
   //popupadministratoa
   adminlogin() {
-    this.display = false;
-    this.display2 = true;
+    this.display = true;
+    this.display2 = false;
+    this.isHidden1 = false;
+    this.isHidden2 = false;
+    this.isHidden3 = false;
+    localStorage.setItem('perfil', JSON.stringify("G"));
+  }
+
+  //popupadministratoa
+  chefelogin() {
+    this.display = true;
+    this.display2 = false;
+    this.isHidden1 = false;
+    this.isHidden2 = true;
+    this.isHidden3 = false;
     localStorage.setItem('perfil', JSON.stringify("A"));
+  }
+
+  adminarea() {
+    this.router.navigate(['./config']);
   }
 
   //reencaminha para nova operação
@@ -228,7 +249,7 @@ export class LoginComponent implements OnInit {
 
 
       //estado RP_OF_OP_FUNC
-      this.RPOPFUNCService.getdataof(id_of, user,"T").subscribe(result => {
+      this.RPOPFUNCService.getdataof(id_of, user, "T").subscribe(result => {
         var rpfunc = new RP_OF_OP_FUNC();
         rpfunc = result[0][0];
         rpfunc.id_UTZ_MODIF = user;
@@ -273,7 +294,7 @@ export class LoginComponent implements OnInit {
     var user = JSON.parse(localStorage.getItem('user'))["username"];
     var nome = JSON.parse(localStorage.getItem('user'))["name"];
     var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
-    this.RPOFOPCABService.getdataof(id_of, user,"T").subscribe(
+    this.RPOFOPCABService.getdataof(id_of, user, "T").subscribe(
       response => {
         for (var x in response) {
 
@@ -303,7 +324,7 @@ export class LoginComponent implements OnInit {
     }, error => console.log(error));
 
     //estado RP_OF_OP_FUNC
-    this.RPOPFUNCService.getdataof(id_of, user,"T").subscribe(result => {
+    this.RPOPFUNCService.getdataof(id_of, user, "T").subscribe(result => {
       var rp_of_op_cab = new RP_OF_OP_CAB;
       var rpfunc = new RP_OF_OP_FUNC();
       rpfunc = result[0][0];
@@ -317,14 +338,12 @@ export class LoginComponent implements OnInit {
 
       var id_op_cab = result[0][0].id_OP_CAB;
 
-
-      //estado rp_of_prep_lin
       if (result[0][1].id_OF_CAB_ORIGEM == null) {
         var rp_of_prep_lin = new RP_OF_PREP_LIN();
-        this.RPOFPREPLINService.getbyid(id_op_cab).subscribe(result => {
-           var countx = Object.keys(result).length;
-          if (countx > 0){
-            rp_of_prep_lin = result[0];
+        this.RPOFPREPLINService.getbyid(id_op_cab).subscribe(result3 => {
+          var countx = Object.keys(result3).length;
+          if (countx > 0) {
+            rp_of_prep_lin = result3[0];
             rp_of_prep_lin.estado = "C";
             rp_of_prep_lin.data_FIM = date;
             rp_of_prep_lin.hora_FIM = time;
@@ -356,7 +375,7 @@ export class LoginComponent implements OnInit {
 
             }
 
-            var date1 = new Date(result[0].data_INI + " " + result[0].hora_INI);
+            var date1 = new Date(result3[0].data_INI + " " + result3[0].hora_INI);
             var date2 = new Date(date);
 
             var splitted_pausa = time_pausa_prep.split(":", 3);

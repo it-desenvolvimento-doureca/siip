@@ -1,47 +1,46 @@
-.adicionaop{
+.adicionaop {
     position: fixed;
     width: 50%;
     right: 0;
-    top:0;
+    top: 0;
     height: 100%;
     background: #f7f7f7;
     z-index: 2;
+    margin-top: 48px;
 }
 
-.bt-cancelar{
+.bt-cancelar {
     width: auto;
-    padding:  10px;
+    padding: 10px;
     height: 100px;
-    margin-top:  20px;
+    margin-top: 20px;
     float: right;
 }
 
-.ui-dropdown    {
+.ui-dropdown {
     background: #c0c0c0 !important;
 }
-
 
 .ui-datatable .ui-datatable-scrollable-body {
     min-height: 0;
     max-height: 100% !important;
 }
 
-.input_class{
-        border: solid 2px #d9534f;
+.input_class {
+    border: solid 2px #d9534f;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    margin: 0; 
+    margin: 0;
 }
 
 textarea {
     resize: none;
 }
 
-textarea:read-only { 
+textarea:read-only {
     background-color: #c0c0c0;
 }
