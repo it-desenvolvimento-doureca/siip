@@ -1,0 +1,8 @@
+{
+    "data": [
+        {"id": 1, "codigo": "0001", "descricao": "PINTURA", "zona": 1}, 
+        {"id": 2, "codigo": "0001", "descricao": "ACABAMENTO", "zona": 2},
+        {"id": 3, "codigo": "0002", "descricao": "OPERACAO 1", "zona": 2},
+        {"id": 4, "codigo": "0003", "descricao": "OPERACAO 2", "zona": 1}
+    ]
+}
