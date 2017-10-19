@@ -18,7 +18,7 @@
 }
 
 .ui-dropdown {
-    background: #c0c0c0 !important;
+    background: rgba(235, 232, 232, 0.84) !important;
 }
 
 .ui-datatable .ui-datatable-scrollable-body {
@@ -42,5 +42,5 @@ textarea {
 }
 
 textarea:read-only {
-    background-color: #c0c0c0;
+    background-color: rgba(235, 232, 232, 0.84);
 }

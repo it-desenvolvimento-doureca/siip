@@ -10,19 +10,24 @@ import { webUrl } from "webUrl";
 @Injectable()
 export class utilizadorService {
 
-    handleError: any;
+    //handleError: any;
 
     private headers = new Headers({ 'Content-Type': 'application/json' });
 
     constructor(private http: Http) { }
-        
+
     searchuser(RESCOD) {
-        const url = webUrl.host+'/rest/demo/searchuser/' + RESCOD + '';
+        const url = webUrl.host + '/rest/demo/searchuser/' + RESCOD + '';
         return this.http
             .get(url)
             .map((res: Response) => res.json())
-            .catch((error: any) => Observable.throw('Server error'));
+            .catch(this.handleError);
     }
+
+    private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
+    }
+
 
     /*createHero() {
         return this.http
@@ -41,7 +46,7 @@ export class utilizadorService {
     }*/
 
     getUtilizadoresSilver() {
-        const url = webUrl.host+'/rest/demo/users';
+        const url = webUrl.host + '/rest/demo/users';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -49,7 +54,7 @@ export class utilizadorService {
     }
 
     getSeccoes() {
-        const url = webUrl.host+'/rest/demo/sessoes';
+        const url = webUrl.host + '/rest/demo/sessoes';
         return this.http
             .get(url)
             .map(this.extractData)

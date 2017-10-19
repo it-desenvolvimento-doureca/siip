@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class AppComponent {
   title = 'app works!';
   versao = "versão 1.0.1";
-  modulo = "Gestão de Banhos Químicos";
+  modulo = "Gestão de Registos de Produção";
 
   constructor(private router: Router) { }
 

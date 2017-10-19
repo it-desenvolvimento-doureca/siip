@@ -1,6 +1,6 @@
 <div class="row wrapper">
 
-  <div class="col-md-5 col-md-offset-5" style="float:left;">
+  <div class="col-md-4 col-md-offset-4" style="float:left;">
     <div class="row">
       <div class="col-md-12">
         <form>
@@ -20,15 +20,15 @@
             <label class="control-label ">Funcionário</label>
             <input class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
           </div>
-          <div class="col-md-12 col-md-offset-12 nopadding" style="display: -webkit-box;">
-            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
+          <div class="col-md-12 col-md-offset-12 nopadding">
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left;">
               <div class="form-group">
                 <label class="control-label ">Data Início</label>
-                <input class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
-                />
+                <input style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
+                  [disabled]="!modoedicao" />
               </div>
             </div>
-            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
+            <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
                 <input class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
@@ -37,14 +37,14 @@
             </div>
           </div>
           <div class="col-md-12 col-md-offset-12 nopadding">
-            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left;">
               <div class="form-group">
                 <label class="control-label ">Data Fim</label>
-                <input class="form-control" [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
-                />
+                <input class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim" min="{{data_ini}}" type="date"
+                  [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao" />
               </div>
             </div>
-            <div class="col-md-6 col-md-offset-6 nopadding" style="float:left; padding-right: 0px;">
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
                 <input class="form-control" [(ngModel)]="hora_fim" type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
@@ -62,7 +62,7 @@
       </div>
       <div class="col-md-12">
         <div *ngIf="utilizadores_adici?.length > 0">
-          <b> Operadores Adicionais</b>
+          <b> Utilizadores Adicionais</b>
           <ul *ngFor="let ut of utilizadores_adici">
             <li>
               {{ut.label}}
@@ -73,24 +73,24 @@
     </div>
   </div>
 
-  <div class="col-md-7 col-md-offset-7 nopadding" style="float:left;">
+  <div class="col-md-8 col-md-offset-8 nopadding" style="float:left;">
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
       <button [disabled]="disabledRegisto" type="button" class="ui-button-success" pButton routerLink="/registo-quantidades" label="REGISTO DE QUANTIDADES E DEFEITOS"
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
-      <p-dataTable [value]="defeitos" dataKey="ref_num">
-        <p-header>Lista dos defeitos Registados</p-header>
+      <p-dataTable [value]="defeitos" class="tabelaref_of" dataKey="ref_num">
+        <!--<p-header></p-header>-->
         <p-column [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
         </p-column>
         <p-column field="ref_des" header="Designação"></p-column>
-        <p-column [style]="{'width':'10%'}" field="quant_of" header="Qtd. OF"></p-column>
-        <p-column [style]="{'width':'12%'}" field="quant_boas" header="Qtd. Boas"></p-column>
+        <p-column [style]="{'width':'7%'}" field="quant_of" header="Qtd. OF"></p-column>
+        <p-column [style]="{'width':'8%'}" field="quant_boas" header="Qtd. Boas"></p-column>
         <p-column [style]="{'width':'10%'}" field="quant_def_total" header="Defeitos"></p-column>
-        <p-column [style]="{'width':'10%'}" field="quant_control" header="Control">
+        <p-column [style]="{'width':'10%'}" field="quant_control" header="Total Control">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <div [style.background]="x['cor']">
               <span>{{x[col.field]}}</span>
@@ -101,17 +101,17 @@
     </div>
   </div>
   <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
-    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 12%;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 12%;"></button>
-    <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()" label="ADICIONAR OPERADOR"
-      style="float: none;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 12%;"></button>
+    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
+      label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 
 <!--popup adicionar operador -->
-<p-dialog header="ADICIONAR OPERADOR" [(visible)]="displayDialog" class="novoop" modal="modal" width="700" [responsive]="true"
-  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+<p-dialog header="ADICIONAR OPERADOR" [(visible)]="displayDialog" class="novoop" modal="modal" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left;">
     <div class="ui-grid-row">
       <div class="form-group">
@@ -130,6 +130,31 @@
     <div class="ui-grid-row">
       <div class="form-group">
         O Utilizador {{utilizador_insere}} já se encontra a executar esta OF!
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!--popup adicionar operador em uso-->
+<p-dialog header="UTILIZADOR EM USO" [(visible)]="displayDialogutz_em_uso" class="novoop" modal="modal" width="700" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group">
+        O Utilizador {{utilizador_insere}} já se encontra a executar outra OF, é necessário concluir a OF em Execução!
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!--popup adicionar operador em uso-->
+<p-dialog header="UTILIZADORES ADICIONAIS COM TRABALHO POR CONCLUIR" [(visible)]="displayDialogLider" class="novoop" modal="modal"
+  width="700" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="padding: 20px;">
+        Existem outros utilizadores adicionados ao trabalho. Eles deverão primeiro concluir o trabalho para que possa então concluir
+        o seu!
       </div>
     </div>
   </div>

@@ -35,6 +35,9 @@ import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
 import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.service";
 import { CheckboxModule } from 'primeng/components/checkbox/checkbox';
+import { AppGlobals } from 'webUrl';
+import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
+import { RPOFOPETIQUETAService } from 'app/modelos/services/rp-of-op-etiqueta.service';
 
 const routes: Routes = [
   {
@@ -131,7 +134,10 @@ const routes: Routes = [
     RPOPFUNCService,
     RPOFOUTRODEFLINService,
     RPCONFFAMILIACOMPService,
-    RPOFPARALINService
+    RPOFPARALINService,
+    RPOFLSTDEFService,
+    RPOFOPETIQUETAService,
+    AppGlobals
   ],
   bootstrap: [AppComponent]
 })

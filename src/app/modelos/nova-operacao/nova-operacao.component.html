@@ -1,5 +1,5 @@
 <div class="row wrapper">
-  <div class="col-md-6 col-md-offset-6" style="float:left;">
+  <div class="col-md-5 col-md-offset-5" style="float:left;">
     <form>
       <div class="form-group">
         <!-- Name field -->
@@ -41,7 +41,7 @@
   </div>
 
 
-  <div class="col-md-6 col-md-offset-8" style="float:left;">
+  <div class="col-md-7 col-md-offset-7" style="float:left;">
 
 
     <p-dataTable [value]="referencias" [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}}" (onRowUnselect)="onRowUnselect($event)"
@@ -54,7 +54,7 @@
   </div>
   <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
     <button class="bt-cancelar ui-button-danger" pButton type="button" routerLink="/home" label="CANCELAR/SAIR" style="float:none;"></button>
-    <button class=" bt-cancelar  ui-button-secondary" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO"
+    <button class=" bt-cancelar ui-button-success" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO"
       style="float:none;"></button>
     <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"
       style="float:none;"></button>
@@ -140,4 +140,19 @@
       <button type="button" pButton routerLink="/home" label="OK" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
+</p-dialog>
+
+<!--POPUP- Caso a OF escolhida está Fechada ou Suspensa” -->
+<p-dialog [(visible)]="display_of_estado" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+[draggable]="false">
+<div style="text-align:center;">
+  <p>
+      A OF escolhida está {{estado_of}}
+  </p>
+</div>
+<p-footer>
+  <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+     <button type="button" pButton (click)="cancelar_displayof()" label="OK" style="float: none; width: auto;"></button>
+  </div>
+</p-footer>
 </p-dialog>

@@ -16,7 +16,15 @@
 }
 
 .divtable tr:last-child {
-    border-bottom: none ;
+    border-bottom: none;
+}
+
+.divtable2 tr {
+    border-bottom: 1px solid #9b9797;
+}
+
+.divtable2 tr:last-child {
+    border-bottom: none;
 }
 
 .red {
@@ -28,7 +36,7 @@
 .green {
     background: green;
     height: 100%;
-   /* border-bottom: 2px solid #6e6e6e;*/
+    /* border-bottom: 2px solid #6e6e6e;*/
 }
 
 .yellow {
@@ -36,18 +44,22 @@
     height: 100%;
     /*border-bottom: 2px solid #6e6e6e;*/
     border-color: black;
+    color: black;
 }
 
 .redicon {
     color: red;
+    font-size: 18px;
 }
 
 .greenicon {
     color: green;
+    font-size: 18px;
 }
 
 .yellowicon {
     color: yellow;
+    font-size: 18px;
 }
 
 .adicionaop {

@@ -28,6 +28,13 @@ export class RPOFCABService {
       .catch(this.handleError);
   }
 
+  pesquisa_avancada(data) {
+    return this.http
+      .post(webUrl.host + '/rest/siip/pesquisa_avancada', JSON.stringify(data), { headers: this.headers })
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
 
   getAll(): Observable<RP_OF_CAB[]> {
     const url = webUrl.host + '/rest/siip/getRP_OF_CAB';

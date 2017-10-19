@@ -352,9 +352,9 @@ export class GestaoUsersComponent implements OnInit {
   //ao clicar na tabela Responsáveis abre popup para editar
   onRowSelect6(event) {
     this.novochefe = false;
-    this.selected1 = event.data.no;
+    this.selected1 = this.brand1.find(item => item.value.no == event.data.no).value;
     this.selected2 = event.data.seccao_no;
-    this.chefe_seccao = event.data.name;
+    this.chefe_seccao = event.data.namevalue;
     this.chefe_seccao_no = event.data.no;
     this.seccao = event.data.seccao;
     this.seccao_no = event.data.seccao_no;
@@ -373,6 +373,7 @@ export class GestaoUsersComponent implements OnInit {
     this.seleopp = this.fam.find(item => item.value.code === event.data.op).value;
     this.listidfam = event.data.id;
     this.displayfamdialog = true;
+    this.encontrou = false;
   }
 
   //carregar dados do chefe 
@@ -402,8 +403,8 @@ export class GestaoUsersComponent implements OnInit {
   //carregar dados do chefe 
   carregachefe(event, label, value) {
     if (value != "0") {
-      this.chefe_seccao = label;
-      this.chefe_seccao_no = value;
+      this.chefe_seccao = value.nome;
+      this.chefe_seccao_no = value.no;
     } else {
       this.chefe_seccao = "";
       this.chefe_seccao_no = "";
@@ -476,7 +477,7 @@ export class GestaoUsersComponent implements OnInit {
               break;
             case "G":
               this.list4.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
-              this.brand1.push({ label: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ, value: response[x].id_UTZ.trim() });
+              this.brand1.push({ label: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ, value:{ no: response[x].id_UTZ.trim(),nome: response[x].nome_UTZ }});
               break;
             case "A":
               this.list5.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
@@ -499,7 +500,7 @@ export class GestaoUsersComponent implements OnInit {
     this.chef_service.getAll().subscribe(
       response => {
         for (var x in response) {
-          this.list6.push({ name: response[x].id_UTZ + " - " + response[x].nome_UTZ, seccao: response[x].nome_SEC, seccao_no: response[x].sec_NUM.trim(), id: response[x].id_CONF_CHEF_SEC, no: response[x].id_UTZ.trim() });
+          this.list6.push({ name: response[x].id_UTZ + " - " + response[x].nome_UTZ, namevalue: response[x].nome_UTZ, seccao: response[x].nome_SEC, seccao_no: response[x].sec_NUM.trim(), id: response[x].id_CONF_CHEF_SEC, no: response[x].id_UTZ.trim() });
         }
         this.list6 = this.list6.slice();
       },

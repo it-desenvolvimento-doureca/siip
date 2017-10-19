@@ -19,6 +19,8 @@ import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
 import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.service";
 import { RP_OF_OUTRODEF_LIN } from "app/modelos/entidades/RP_OF_OUTRODEF_LIN";
+import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
+import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
 
 @Component({
     selector: 'app-nova-operacao',
@@ -83,9 +85,12 @@ export class NovaOperacaoComponent implements OnInit {
     single = "";
     color = "disabletable";
     displayvermais = false;
+    display_of_estado = false;
+    estado_of = "";
+    operacao_temp = [];
     @ViewChild('inputFocous') inputFocous: any;
 
-    constructor(private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
+    constructor(private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
         this.operacao = [];
 
     }
@@ -132,32 +137,47 @@ export class NovaOperacaoComponent implements OnInit {
                     var count = Object.keys(response).length;
                     //se existir uma of vai preencher combobox operações e tabela referencias
                     if (count > 0) {
-                        this.observacoes = response[0].ofref;
-                        //preenche tabela referencias
-                        this.service.getRef(response[0].ofanumenr).subscribe(
-                            response2 => {
-                                for (var x in response2) {
-                                    this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
-                                    //verifica familia
-                                    this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF);
-                                }
-                                this.referencias = this.referencias.slice();
-                            },
-                            error => console.log(error));
+                        if (response[0].OFETAT != 3 || response[0].OFETAT != 4) {
+                            this.observacoes = response[0].ofref;
+                            //preenche tabela referencias
+                            this.service.getRef(response[0].ofanumenr).subscribe(
+                                response2 => {
+                                    for (var x in response2) {
+                                        this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
+                                        //verifica familia
+                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF);
+                                    }
+                                    this.referencias = this.referencias.slice();
+                                },
+                                error => console.log(error));
 
-                        //preenche comobobox operações
-                        this.service.getOP(response[0].ofanumenr).subscribe(
-                            response1 => {
-                                for (var x in response1) {
-                                    if (first) this.operacao.push({ label: "Seleccione a Operação", value: 0 });
-                                    first = false;
-                                    this.operacao.push({ label: response1[x].OPENUM + "/" + response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
-                                    this.max_num = response1[x].OPENUM;
-                                }
-                                this.readonly_op = false;
-                                this.selected = "";
-                            },
-                            error => console.log(error));
+                            //preenche comobobox operações
+                            this.service.getOP(response[0].ofanumenr).subscribe(
+                                response1 => {
+                                    for (var x in response1) {
+                                        if (first) this.operacao.push({ label: "Seleccione a Operação", value: 0 });
+                                        first = false;
+                                        this.operacao.push({ label: response1[x].OPENUM + "/" + response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
+                                        this.max_num = response1[x].OPENUM;
+                                    }
+                                    this.readonly_op = false;
+                                    this.selected = "";
+                                },
+                                error => {
+                                    console.log(error)
+                                    if (error.status == 0) {
+                                        alert("Conexão com o Servidor Perdida!");
+                                    }
+                                });;
+                        } else {
+                            this.display_of_estado = true;
+                            this.estado_of = "";
+                            if (response[0].OFETAT == 3) {
+                                this.estado_of = "Suspensa!";
+                            } else {
+                                this.estado_of = "Fechada!";
+                            }
+                        }
                     } else {
                         this.bt_class = "btn-danger";
                     }
@@ -173,6 +193,11 @@ export class NovaOperacaoComponent implements OnInit {
             this.spinner = false;
         }
 
+    }
+
+    //fechar popup estado of
+    cancelar_displayof() {
+        this.display_of_estado = false;
     }
 
     //verifica FAM
@@ -245,7 +270,7 @@ export class NovaOperacaoComponent implements OnInit {
                 ope_num = event.OPENUM;
             }
             for (var x in this.operacao) {
-                if (this.operacao[x].value.OPENUM <= ope_num) {
+                if (this.operacao[x].value.OPENUM <= ope_num && this.operacao[x].value.OPECOD != "") {
                     if (this.op_cod.indexOf(this.operacao[x].value.OPECOD) == -1) {
                         this.op_cod.push(this.operacao[x].value.OPECOD);
                     }
@@ -382,6 +407,7 @@ export class NovaOperacaoComponent implements OnInit {
 
     //criar cabeçalho OF
     criar(estado, ref_select) {
+        this.router.navigate(['./home']);
         var rpof = new RP_OF_CAB;
         rpof.data_HORA_CRIA = new Date();
         rpof.estado = estado;
@@ -428,7 +454,7 @@ export class NovaOperacaoComponent implements OnInit {
 
                 this.createRPOFCABComp(rpof, estado, this.referencias[x].codigo)
 
-                opnum = opnum + 10;
+                //opnum = opnum + 10;
             }
         }
     }
@@ -499,6 +525,7 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.ref_VAR2 = ref.var2;
             rpofoplin.quant_BOAS_TOTAL = 0;
             rpofoplin.quant_DEF_TOTAL = 0;
+            rpofoplin.quant_OF = parseInt(this.referencias[0].OFBQTEINI);
             rpofoplin.perc_OBJETIV = parseFloat(ref.perc_obj);
             rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
             rpofoplin.quant_OF = parseInt(ref.OFBQTEINI);
@@ -523,7 +550,6 @@ export class NovaOperacaoComponent implements OnInit {
             }
         }
 
-        this.router.navigate(['./home']);
     }
 
     insereref(rpofoplin, comp) {
@@ -617,25 +643,32 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     getdefeitosop(res, x, id_OP_LIN) {
-        this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
-            result => {
-                var count = Object.keys(result).length;
-                if (count > 0) {
-                    //inserir em RP_OF_DEF_LIN
-                    for (var y in result) {
-                        var def = new RP_OF_DEF_LIN();
-                        def.cod_DEF = result[y].QUACOD;
-                        def.desc_DEF = result[y].QUALIB;
-                        def.id_OP_LIN = id_OP_LIN;
-                        def.id_UTZ_CRIA = this.username
-                        def.quant_DEF = 0;
-                        def.data_HORA_REG = new Date();
-                        this.RPOFDEFLINService.create(def).subscribe(resp => {
-                        });
+        if (this.operacao_temp.indexOf(res[x].id_OP_SEC) == -1) {
+            this.operacao_temp.push(res[x].id_OP_SEC);
+            this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
+                result => {
+                    var count = Object.keys(result).length;
+                    if (count > 0) {
+                        //inserir em RP_OF_LST_DEF
+                        for (var y in result) {
+                            var def = new RP_OF_LST_DEF();
+                            def.cod_DEF = result[y].QUACOD;
+                            def.desc_DEF = result[y].QUALIB;
+                            def.id_OP_LIN = id_OP_LIN;
+                            def.id_UTZ_CRIA = this.username
+                            def.data_HORA_MODIF = new Date();
+                            this.RPOFLSTDEFService.create(def).subscribe(resp => {
+                            });
+                        }
                     }
-                }
-            },
-            error => console.log(error));
+                },
+                error => {
+                    console.log(error)
+                    /* if (error.status == 0) {
+                         this.getdefeitosop(res, x, id_OP_LIN);
+                     }*/
+                });
+        }
     }
 
 }

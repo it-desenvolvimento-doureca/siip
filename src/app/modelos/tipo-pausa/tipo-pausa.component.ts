@@ -11,6 +11,7 @@ import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 import { Router } from "@angular/router";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
+import { AppGlobals } from 'webUrl';
 
 @Component({
   selector: 'app-tipo-pausa',
@@ -19,7 +20,7 @@ import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 })
 export class TipoPausaComponent implements OnInit {
   pausas: any[];
-  constructor(private RPOPFUNCService :RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
+  constructor(private AppGlobals: AppGlobals, private RPOPFUNCService: RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
 
   ngOnInit() {
     this.pausas = [];
@@ -38,13 +39,15 @@ export class TipoPausaComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Confirma a entrada em pausa devido a ' + design + '?',
       accept: () => {
+
+        this.AppGlobals.setlogin_pausa(false);
         var date = new Date();
         var user = JSON.parse(localStorage.getItem('user'))["username"];
         var nome = JSON.parse(localStorage.getItem('user'))["name"];
         var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
-        this.RPOFOPCABService.getdataof(id_of, user,"T").subscribe(result => {
+        this.RPOFOPCABService.getdataof(id_of, user, "T").subscribe(result => {
           var id_op_cab = result[0][0].id_OP_CAB;
           var rp_of_para_lin = new RP_OF_PARA_LIN();
           rp_of_para_lin.data_INI = date;
@@ -75,7 +78,7 @@ export class TipoPausaComponent implements OnInit {
 
   estados(id_op_cab, user, nome, date) {
 
-    this.RPOPFUNCService.getbyid(id_op_cab,user).subscribe(result => {
+    this.RPOPFUNCService.getbyid(id_op_cab, user).subscribe(result => {
       //estado rp_of_cab
       var rp_of_cab = new RP_OF_CAB();
       rp_of_cab = result[0][1];

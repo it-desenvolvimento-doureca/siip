@@ -13,7 +13,7 @@ input:read-only {
 }
 
 .nopadding {
-    padding-left: 0 !important;
+    padding: 0 !important;
 }
 
 .fundoverde {
@@ -76,3 +76,15 @@ input:read-only {
     display: table;
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+
+.divider_row{border-bottom:1px solid #aaa; margin-bottom:5px;}
+
+.even_tab .divider_row:last-child{border-bottom:none;}

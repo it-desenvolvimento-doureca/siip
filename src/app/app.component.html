@@ -2,19 +2,20 @@
     <nav class="navbar navbar-transparent navbar-absolute gradient" style="padding-top: 3px;">
         <div class="container-fluid" style="position: relative; width: 100%; padding: 0;">
             <div class="col-md-12" style="padding: 0;">
-                <div class="col-md-7" style="max-height:37px; padding: 0; float: left;">
+                <div class="col-md-12 col-lg-8 col-sm-4" style="max-height:37px; padding: 0; float: left;">
                     <div style="float: left;">
                         <img src="assets/logo_load.png" style="max-height:42px;" />
                     </div>
                     <div class="versao" style="display: -webkit-inline-box; margin-left: 5px; margin-top: 8px; color: black;">
-                        <span> <b style="font-size: 12pt;">SIIP - Sistema Integrado de Informação de Produção</b></span>
-                        <!--  <span style="font-size: 7pt; margin-top: -3px;position: absolute;">
+                        <span> <b style="font-size: 12pt;">Sistema de Gestão Integrado de Informação da Doureca</b></span>
+                        <br>
+                        <span style="font-size: 7pt; margin-top: -3px;position: absolute; left: 201px;">
                     ({{modulo}} - {{versao}})
-                    </span>-->
+                    </span>
                     </div>
                 </div>
-                <div class="col-md-5 utz" style="float: left; text-align:center; padding: 0;">
-                    <div style="font-size: 11pt; display: -webkit-inline-box; margin-left: 5px; margin-top: 11px; color: black;">
+                <div class="col-md-12 col-lg-4 utz" style="float: left; text-align:center; padding: 0;">
+                    <div style="font-size: 11pt; display: -webkit-inline-box; margin-left: 5px; margin-top: 7px; color: black;">
                         <b style="vertical-align: middle;">Utilizador:</b><span style="vertical-align: middle;"> {{isnome()}}</span>
                         <a title="Sair" *ngIf="!ishome('controlo') || !ishome('config')" (click)="logout()" style=" margin-left: 10px; float: right; cursor: pointer; ">
                             <i class="fa fa-window-close-o" style="font-size: 25px;" aria-hidden="true"></i>

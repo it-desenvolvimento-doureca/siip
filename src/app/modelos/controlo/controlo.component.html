@@ -14,7 +14,7 @@
 
     <a style="cursor: pointer; margin-left: 50px;" (click)="togglestates()">
       <i class="fa fa-search" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
-     <span style="color: white;"> Pesquisa Avançada</span>
+      <span style="color: white;"> Pesquisa Avançada</span>
     </a>
     <a (click)="atualiza()" style="cursor: pointer; float: right;">
       <i class="fa fa-refresh" style="margin:4px 4px 0 25px; font-size: 25px; color: white;"></i>
@@ -22,12 +22,14 @@
     <p-checkbox style="float: right; color:white;" [(ngModel)]="checked" label="Automatismo" binary="true"></p-checkbox>
   </div>
   <p-dataTable (onRowDblclick)="onRowDblclick($event)" [value]="tabela" [rows]="1" class="tabelacontrolo" [globalFilter]="gb"
-    selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-    dataKey="pos" scrollable="true" [rows]="1">
+    selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" dataKey="pos" scrollable="true"
+    [rows]="1">
     <p-column field="pos" header="" [style]="{'background':'black','width':'3%'}">
       <ng-template let-col let-row="rowData" pTemplate="body">
         <div class="divtable">
-          <span><i class="fa fa-circle  {{row['cor_of']}}icon" aria-hidden="true"></i></span>
+          <span>
+            <i class="fa fa-circle  {{row['cor_of']}}icon" aria-hidden="true"></i>
+          </span>
         </div>
       </ng-template>
     </p-column>
@@ -61,16 +63,14 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="qtd_func" header="Qtd. Func." [sortable]="true" [style]="{'width':'4%'}">
-      <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
-          <tr *ngFor="let col2 of row[col.field]">
-            <td>{{col2}}</td>
-          </tr>
+    <p-column field="qtd_func" header="Qtd. Func." [sortable]="true" [style]="{'width':'3%'}">
+      <ng-template pTemplate="body" *ngFor="let col of rowData">
+        <div class="divtable" style="font-size: 10px;">
+          {{row[col.field]}}
         </div>
       </ng-template>
     </p-column>
-    <p-column field="ref" header="Ref." [sortable]="true" [style]="{'width':'5%'}">
+    <p-column field="ref" header="Ref." [sortable]="true" [style]="{'width':'6%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable" style="padding:0;">
           <tr *ngFor="let col2 of row[col.field]">
@@ -82,7 +82,7 @@
     <p-column field="artigo" header="Artigo" [sortable]="true" [style]="{'width':'12%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable" style="padding: 0px">
-          <tr style=" font-size: 10px;" *ngFor="let col2 of row[col.field]">
+          <tr style=" font-size: 0.71vw;" *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
         </div>
@@ -124,7 +124,7 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="tempo_prod" header="Tempo Prod." [sortable]="true" [style]="{'width':'4%','position':'relative'}">
+    <p-column field="tempo_prod" header="Tempo Prod." [sortable]="true" [style]="{'width':'4%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable" style="padding: 0px">
           <tr *ngFor="let col2 of row[col.field]">
@@ -180,8 +180,10 @@
     </p-column>
     <p-column field="estado" header="Estado" [sortable]="true" [style]="{'width':'4%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable divtablecor {{row['cor_estado']}} ">
-          <span class="divspan"> {{row[col.field]}} </span>
+        <div class="divtable2" style="padding: 0px">
+          <tr *ngFor="let col2 of row[col.field]">
+            <td class="{{row['cor_estado']}}">{{col2}}</td>
+          </tr>
         </div>
       </ng-template>
     </p-column>
@@ -195,7 +197,7 @@
   </div>
   <div class="col-md-6 col-md-offset-6" style="float:left; text-align: center;">
     <h3>
-      <a style="cursor: pointer; margin-left: 50px;" (click)="vermais()">
+      <a [hidden]="hiddenvermais" style="cursor: pointer; margin-left: 50px;" (click)="vermais()">
         <u> VER MAIS </u>
       </a>
     </h3>
@@ -205,111 +207,123 @@
   </div>
 </div>
 
-
+<div [hidden]="atualizacao" style="height: 100%; width: 100%; background: rgba(0, 0, 0, 0.33); position: fixed; text-align: -webkit-center; padding-top: 10%;">
+  <i class="fa fa-spinner fa-spin" style="font-size:70px"></i>
+</div>
 
 
 <div id="adicionaop">
-  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates($event)">
     <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color: black; flex: 0 0 9%;">
       <h3>
         PESQUISA AVANÇADA
       </h3>
     </div>
     <div class="col-md-12 col-md-offset-12" style="float:left; color: black; flex: 0 0 9%;">
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Data Início >=</label>
-          <p-calendar [(ngModel)]="date1"></p-calendar>
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Data Fim >=</label>
-          <p-calendar [(ngModel)]="date2"></p-calendar>
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Tempo Prod. >=</label>
-          <input class="form-control" type="time" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Ordem Fabrico</label>
-          <input class="form-control" type="text" />
-        </div>
+      <form id="formArranque">
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Data Início >=</label>
+            <p-calendar [(ngModel)]="pesquisa.date1" [ngModelOptions]="{standalone: true}"></p-calendar>
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Data Fim >=</label>
+            <p-calendar [(ngModel)]="pesquisa.date2" [ngModelOptions]="{standalone: true}"></p-calendar>
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Tempo Prod. >=</label>
+            <input class="form-control" [(ngModel)]="pesquisa.tempo_prod_maior" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Ordem Fabrico</label>
+            <input class="form-control" [(ngModel)]="pesquisa.ordem" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
 
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><= Data Início</label>
-          <p-calendar [(ngModel)]="date3"></p-calendar>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><= Data Fim</label>
-          <p-calendar [(ngModel)]="date4"></p-calendar>
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Data Início</label>
+                <p-calendar [(ngModel)]="pesquisa.date3" [ngModelOptions]="{standalone: true}"></p-calendar>
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Data Fim</label>
+                <p-calendar [(ngModel)]="pesquisa.date4" [ngModelOptions]="{standalone: true}"></p-calendar>
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Tempo Prod.</label>
+                <input class="form-control" [(ngModel)]="pesquisa.tempo_prod_menor" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Operação</label>
+            <input class="form-control" [(ngModel)]="pesquisa.operacao"  [ngModelOptions]="{standalone: true}"type="text" />
+          </div>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><=Tempo Prod.</label>
-          <input class="form-control" type="time" />
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Hora Início >=</label>
+            <input class="form-control" [(ngModel)]="pesquisa.hora1" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Hora Fim >=</label>
+            <input class="form-control" [(ngModel)]="pesquisa.hora2" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Quant. >=</label>
+            <input class="form-control" [(ngModel)]="pesquisa.qtt" [ngModelOptions]="{standalone: true}" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Máquina</label>
+            <input class="form-control" [(ngModel)]="pesquisa.maquina" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Operação</label>
-          <input class="form-control" type="text" />
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Hora Início</label>
+                <input class="form-control" [(ngModel)]="pesquisa.hora3" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Hora Fim</label>
+                <input class="form-control" [(ngModel)]="pesquisa.hora4" [ngModelOptions]="{standalone: true}" type="time" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">
+              <= Quant.</label>
+                <input class="form-control" [(ngModel)]="pesquisa.qttmenor" [ngModelOptions]="{standalone: true}" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Funcionário</label>
+            <input class="form-control" [(ngModel)]="pesquisa.func" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
         </div>
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Hora Início >=</label>
-          <input class="form-control" type="time" />
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Referência</label>
+            <input class="form-control" [(ngModel)]="pesquisa.ref" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Hora Fim >=</label>
-          <input class="form-control" type="time" />
+        <div class="col-md-9 col-md-offset-9 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Designação da Referência</label>
+            <input class="form-control" [(ngModel)]="pesquisa.design_ref" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Quant. >=</label>
-          <input class="form-control" type="number" />
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Estado</label>
+            <p-dropdown [(ngModel)]="pesquisa.estado" class="comboestado" [ngModelOptions]="{standalone: true}" [options]="estados" [style]="{'width':'80%'}"></p-dropdown>
+           <!-- <input class="form-control" [(ngModel)]="pesquisa.estado" [ngModelOptions]="{standalone: true}" type="text" />-->
+          </div>
         </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Máquina</label>
-          <input class="form-control" type="text" />
+        <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
+          <button pButton type="button" (click)="aplicar()" label="APLICAR" style="float:right;"></button>
+          <button pButton type="button" (click)="limpar()" label="LIMPAR" style="float:right;"></button>
         </div>
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><= Hora Início</label>
-          <input class="form-control" type="time" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><= Hora Fim</label>
-          <input class="form-control" type="time" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; "><= Quant.</label>
-          <input class="form-control" type="number" />
-        </div>
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Funcionário</label>
-          <input class="form-control" type="text" />
-        </div>
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Referência</label>
-          <input class="form-control" type="text" />
-        </div>
-      </div>
-      <div class="col-md-9 col-md-offset-9 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Designação da Referência</label>
-          <input class="form-control" type="text" />
-        </div>
-      </div>
-      <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-        <div class="form-group">
-          <label class="control-label requiredField" style="width: 100%; ">Estado</label>
-          <input class="form-control" type="text" />
-        </div>
-      </div>
-      <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
-        <button pButton type="button" (click)="aplicar()" label="APLICAR" style="float:right;"></button>
-      </div>
+      </form>
     </div>
   </div>
 </div>

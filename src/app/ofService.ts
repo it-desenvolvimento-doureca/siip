@@ -25,7 +25,7 @@ export class ofService {
         return this.http
             .get(url)
             .map((res: Response) => res.json())
-            .catch((error: any) => Observable.throw('Server error'));
+            .catch(this.handleError2);
     }
 
     getOPTop1(ofanumenr) {
@@ -90,7 +90,10 @@ export class ofService {
         return this.http
             .get(url)
             .map((res: Response) => res.json())
-            .catch((error: any) => Observable.throw('Server error'));
+            .catch(this.handleError2);
+    }
+    private handleError2(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
     }
 
     getAllMaq(SECCOD) {

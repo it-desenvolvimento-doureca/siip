@@ -15,14 +15,14 @@ export class RPOFOPCABService {
 
   create(data: RP_OF_OP_CAB) {
     return this.http
-      .post(webUrl.host+'/rest/siip/createRP_OF_OP_CAB', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/createRP_OF_OP_CAB', JSON.stringify(data), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
   delete(id) {
     return this.http
-      .delete(webUrl.host+'/rest/siip/deleteRP_OF_OP_CAB/' + id + '')
+      .delete(webUrl.host + '/rest/siip/deleteRP_OF_OP_CAB/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -30,7 +30,7 @@ export class RPOFOPCABService {
 
 
   getAll(): Observable<RP_OF_OP_CAB[]> {
-    const url = webUrl.host+'/rest/siip/getRP_OF_OP_CAB';
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_CAB';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -38,7 +38,7 @@ export class RPOFOPCABService {
   }
 
   getMaxID() {
-    const url = webUrl.host+'/rest/siip/getMaxID';
+    const url = webUrl.host + '/rest/siip/getMaxID';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -47,22 +47,22 @@ export class RPOFOPCABService {
 
   update(data: RP_OF_OP_CAB) {
     return this.http
-      .put(webUrl.host+'/rest/siip/updateRP_OF_OP_CAB', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host + '/rest/siip/updateRP_OF_OP_CAB', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
-  getdataof(id, user,estado) {
-    const url = webUrl.host+'/rest/siip/getdataof/' + id + '/' + user + '/' + estado;
+  getdataof(id, user, estado) {
+    const url = webUrl.host + '/rest/siip/getdataof/' + id + '/' + user;
     return this.http
-      .get(url)
+      .post(url,JSON.stringify(estado), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
   getbyid(id) {
-    const url = webUrl.host+'/rest/siip/getRP_OF_OP_CABid/' + id + '';
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_CABid/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -70,13 +70,16 @@ export class RPOFOPCABService {
   }
 
   listofcurrentof(id) {
-    const url = webUrl.host+'/rest/siip/checkuser/' + id + '';
+    const url = webUrl.host + '/rest/siip/checkuser/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
-      .catch((error: any) => Observable.throw('Server error'));
+      .catch(this.handleError2);
   }
 
+  private handleError2(error: any): Promise<any> {
+    return Promise.reject(error.message || error);
+  }
   private extractData(res: Response) {
     let body = res.json();
     return body;

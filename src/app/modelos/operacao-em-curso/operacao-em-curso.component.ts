@@ -20,11 +20,13 @@ import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  displayDialogLider: boolean = false;
+  displayDialogutz_em_uso: boolean = false;
   disabledAdici: boolean;
   perfil: string;
   concluido: boolean = false;
   modoedicao: boolean = false;
-  estado;
+  estado = [];
   count_id: any = 0;
   disabledRegisto: boolean;
   count: number;
@@ -65,21 +67,16 @@ export class OperacaoEmCursoComponent implements OnInit {
           id = params['id'] || 0;
         });
 
-      var url = this.router.routerState.snapshot.url;
-      url = url.slice(1);
-      var urlarray = url.split("/");
-      if (urlarray.length > 1) {
-        if (urlarray[1].match("view")) {
-          this.modoedicao = true;
-        }
-      }
+
+
 
       if (id != 0) {
+        this.modoedicao = true;
         this.user = id;
-        this.estado = "T";
+        this.estado.push('T')
       } else {
         this.user = JSON.parse(localStorage.getItem('user'))["username"];
-        this.estado = "'C','A','M'";
+        this.estado.push('C', 'A', 'M');
       }
 
       this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), this.user, this.estado).subscribe(
@@ -93,7 +90,7 @@ export class OperacaoEmCursoComponent implements OnInit {
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][0].id_OP_CAB));
               this.of_num = response[x][1].of_NUM.trim()
-              this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD.trim() + " - " + response[x][1].op_DES.trim();
+              this.op_num = response[x][1].op_NUM.trim() + "/ " + response[x][1].op_DES.trim();
               this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
               this.data_ini = response[x][0].data_INI;
@@ -153,57 +150,67 @@ export class OperacaoEmCursoComponent implements OnInit {
   //adiciona  operador
   save(code_login, nome) {
 
-    if (this.utilizadores_adici.find(item => item.id == code_login) || code_login == this.user) {
-      this.displayDialogutz = true;
-      this.utilizador_insere = nome;
-    } else {
-      var user = JSON.parse(localStorage.getItem('user'))["username"];
-      this.displayDialog = false;
-      var rpofop = new RP_OF_OP_CAB;
-      var rpofopfunc = new RP_OF_OP_FUNC;
+    this.RPOFOPCABService.listofcurrentof(code_login).subscribe(
+      response => {
+        var count = Object.keys(response).length;
+        if (count == 0) {
+          if (this.utilizadores_adici.find(item => item.id == code_login) || code_login == this.user) {
+            this.displayDialogutz = true;
+            this.utilizador_insere = nome;
+          } else {
+            var user = JSON.parse(localStorage.getItem('user'))["username"];
+            this.displayDialog = false;
+            var rpofop = new RP_OF_OP_CAB;
+            var rpofopfunc = new RP_OF_OP_FUNC;
 
-      this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), user, this.estado).subscribe(
-        response => {
-          this.id_op_cab_lista = [];
-          for (var x in response) {
+            this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), user, this.estado).subscribe(
+              response => {
+                this.id_op_cab_lista = [];
+                for (var x in response) {
 
-            rpofop.id_OF_CAB = response[x][1].id_OF_CAB;
+                  rpofop.id_OF_CAB = response[x][1].id_OF_CAB;
 
-            this.RPOFOPCABService.create(rpofop).subscribe(
-              res => {
+                  this.RPOFOPCABService.create(rpofop).subscribe(
+                    res => {
 
-                rpofopfunc.id_OP_CAB = res.id_OP_CAB;
-                rpofopfunc.data_INI = new Date();
-                var date = new Date();
-                var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                rpofopfunc.hora_INI = time;
-                rpofopfunc.id_UTZ_CRIA = code_login;
-                rpofopfunc.nome_UTZ_CRIA = nome;
-                rpofopfunc.perfil_CRIA = "O";
-                rpofopfunc.estado = response[x][1].estado;
-                this.RPOPFUNCService.create(rpofopfunc).subscribe(
-                  res => {
-                  },
-                  error => console.log(error));
+                      rpofopfunc.id_OP_CAB = res.id_OP_CAB;
+                      rpofopfunc.data_INI = new Date();
+                      var date = new Date();
+                      var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                      rpofopfunc.hora_INI = time;
+                      rpofopfunc.id_UTZ_CRIA = code_login;
+                      rpofopfunc.nome_UTZ_CRIA = nome;
+                      rpofopfunc.perfil_CRIA = "O";
+                      rpofopfunc.estado = response[x][1].estado;
+                      this.RPOPFUNCService.create(rpofopfunc).subscribe(
+                        res => {
+                        },
+                        error => console.log(error));
+                    },
+                    error => console.log(error));
+
+
+                }
+                this.verificar_operadores(this.id_of_cab);
               },
               error => console.log(error));
 
-
+            this.confirmationService.confirm({
+              message: 'Pretende adicionar mais um Operador?',
+              accept: () => {
+                this.displayDialog = true;
+              }, reject: () => {
+                this.displayDialog = false;
+                this.router.navigate(['./home']);
+              }
+            });
           }
-          this.verificar_operadores(this.id_of_cab);
-        },
-        error => console.log(error));
-
-      this.confirmationService.confirm({
-        message: 'Pretende adicionar mais um Operador?',
-        accept: () => {
-          this.displayDialog = true;
-        }, reject: () => {
-          this.displayDialog = false;
-          this.router.navigate(['./home']);
+        } else {
+          this.displayDialogutz_em_uso = true;
+          this.utilizador_insere = nome;
         }
-      });
-    }
+      },
+      error => console.log(error));
   }
 
   //atualizar lista de defeitos
@@ -219,7 +226,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           if (total == res[x].quant_OF) cor = "#2be32b";
           if (total > res[x].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
 
-          this.defeitos.push({ id: count, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
+          this.defeitos.push({ id: id_op_cab, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
         this.ordernar();
@@ -244,17 +251,31 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   // ao clicar no botão concluir
   createfile() {
-    var date = new Date();
-    var user = JSON.parse(localStorage.getItem('user'))["username"];
-    var nome = JSON.parse(localStorage.getItem('user'))["name"];
-    var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    var lider = true
+    if (this.utilizadores_adici.length > 0) {
+      if (this.disabledAdici) {
+        lider = false;
+      }
+    } else {
+      lider = false;
+    }
+
+    if (lider) {
+      this.displayDialogLider = true;
+    } else {
+
+      var date = new Date();
+      var user = JSON.parse(localStorage.getItem('user'))["username"];
+      var nome = JSON.parse(localStorage.getItem('user'))["name"];
+      var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
 
-    for (var x in this.id_op_cab_lista) {
-      if (this.count > 1) {
-        this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false);
-      } else {
-        this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true);
+      for (var x in this.id_op_cab_lista) {
+        if (this.count > 1) {
+          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false);
+        } else {
+          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true);
+        }
       }
     }
   }

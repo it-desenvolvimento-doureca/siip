@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
-       
-         <div class="col-md-9 col-sm-12 col-lg-9 phone" style="padding: 0px; text-align: -webkit-center;">
+
+        <div class="col-md-9 col-sm-12 col-lg-6 phone loginadicional" style="padding: 0px; text-align: -webkit-center;">
             <div class="row1">
                 <div class="col-md-9 col-sm-9 col-xs-9 col-lg-10">
                     <div class="num-pad">
@@ -46,13 +46,13 @@
 
             <div class="clearfix">
             </div>
-            <input readonly type="text" name="name" id="telNumber" #box class="form-control tel"
-                value="{{ operation }}" maxlength="4" />
+            <input style="margin: 0;" readonly type="text" name="name" id="telNumber" #box class="form-control tel" value="{{ operation }}"
+                maxlength="4" />
         </div>
     </div>
 </div>
 
-<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center;">
+<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center; font-size: 1.9vw;">
     <strong>É O(A) OPERADOR(A): {{ name }}?</strong>
     <br>
     <br>

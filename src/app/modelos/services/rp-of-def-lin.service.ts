@@ -16,38 +16,61 @@ export class RPOFDEFLINService {
 
   create(data: RP_OF_DEF_LIN) {
     return this.http
-      .post(webUrl.host+'/rest/siip/createRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/createRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
   getAll(): Observable<RP_OF_DEF_LIN[]> {
-    const url = webUrl.host+'/rest/siip/getRP_OF_DEF_LIN';
+    const url = webUrl.host + '/rest/siip/getRP_OF_DEF_LIN';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-  getbyid(id,id2): Observable<RP_OF_DEF_LIN[]> {
-    const url = webUrl.host+'/rest/siip/getbyidRP_OF_DEF_LIN/' + id + '/' + id2 + '';
+  getbyid(id, id2, id_ref): Observable<RP_OF_DEF_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_DEF_LIN/' + id + '/' + id2 + '/' + id_ref;
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
-  
+
   getbyidDEF(id): Observable<RP_OF_DEF_LIN[]> {
-    const url = webUrl.host+'/rest/siip/getbyidDEF/' + id + '';
+    const url = webUrl.host + '/rest/siip/getbyidDEF/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-  delete(id) {
+  getbyid_op_lin_eti(id, id_ref): Observable<RP_OF_DEF_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_DEF_LINidoplin_etiq/' + id + '/' + id_ref;
     return this.http
-      .delete(webUrl.host+'/rest/siip/deleteRP_OF_DEF_LIN/' + id + '')
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+  getbyid_op_lin(id): Observable<RP_OF_DEF_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_DEF_LINidoplin/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  delete(id, etiqueta) {
+    return this.http
+      .delete(webUrl.host + '/rest/siip/deleteRP_OF_DEF_LIN/' + id + '/' + etiqueta)
+      .toPromise()
+      .then(res => res)
+      .catch(this.handleError);
+  }
+
+  delete_id_def(id) {
+    return this.http
+      .delete(webUrl.host + '/rest/siip/deleteRP_OF_DEF_LIN2/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -55,7 +78,7 @@ export class RPOFDEFLINService {
 
   update(data: RP_OF_DEF_LIN) {
     return this.http
-      .put(webUrl.host+'/rest/siip/updateRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host + '/rest/siip/updateRP_OF_DEF_LIN', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);

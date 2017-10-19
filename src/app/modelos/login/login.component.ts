@@ -12,6 +12,7 @@ import { RP_OF_PREP_LIN } from "app/modelos/entidades/RP_OF_PREP_LIN";
 import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service";
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
+import { AppGlobals } from 'webUrl';
 
 @Component({
   selector: 'app-login',
@@ -32,12 +33,19 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
   displayprep: boolean = false;
-  constructor(private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
-    //limpar a sessão
-    localStorage.clear();
+  constructor(private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
+
   }
 
   ngOnInit() {
+    //limpar a sessão
+    if (this.AppGlobals.getlogin_pausa()) {
+      this.displayprep = true;
+      this.AppGlobals.setlogin_pausa(false);
+    } else {
+      localStorage.clear();
+    }
+
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = "assets/demo.js";
@@ -76,8 +84,14 @@ export class LoginComponent implements OnInit {
           this.name = "";
         }
       },
-      error => console.log(error));
+      error => {
+        console.log(error)
+        if (error.status == 0) {
+          alert("Conexão com o Servidor Perdida!");
+        }
+      }
 
+    );
 
   }
 
@@ -187,7 +201,12 @@ export class LoginComponent implements OnInit {
             error => console.log(error));
         }
       },
-      error => console.log(error));
+      error => {
+        console.log(error)
+        if (error.status == 0) {
+          alert("Conexão com o Servidor Perdida!");
+        }
+      });
   }
 
   //popupadministratoa
@@ -403,13 +422,178 @@ export class LoginComponent implements OnInit {
 
   //FAZER PAUSA NA PREPARAÇÃO"
   pausa() {
+    this.AppGlobals.setlogin_pausa(true);
     this.router.navigate(['./pausa']);
   }
 
   //CONCLUIR TRABALHO
   concluir() {
-    this.router.navigate(['./operacao-em-curso']);
+    var user = JSON.parse(localStorage.getItem('user'))["username"];
+    var nome = JSON.parse(localStorage.getItem('user'))["name"];
+    var id_of_cab = JSON.parse(localStorage.getItem('id_of_cab'));
+    var date = new Date();
+    var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    this.RPOFOPCABService.getdataof(id_of_cab, user, "'C','A','M'").subscribe(
+      response => {
+        for (var x in response) {
+          var comp = true;
+
+          if (response[x][1].id_OF_CAB_ORIGEM == null) {
+            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, false);
+          } else {
+            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, true);
+          }
+        }
+      },
+      error => console.log(error));
+    //this.router.navigate(['./operacao-em-curso']);
   }
+
+  //alterar estados
+  estados(id_op_cab, user, nome, date, time_fim, comp) {
+
+    var pausa_inicio = new Date();
+    var total_pausa = 0;
+    var total_pausa_prep = 0;
+    var total_pausa_of = 0;
+    this.RPOFOPCABService.getbyid(id_op_cab).subscribe(result => {
+
+      var rp_of_op_cab = new RP_OF_OP_CAB();
+      var rp_of_op_func = new RP_OF_OP_FUNC();
+      rp_of_op_cab = result[0][0];
+      rp_of_op_func = result[0][2];
+      //estado rp_of_cab
+      var rp_of_cab = new RP_OF_CAB();
+      rp_of_cab = result[0][1];
+      rp_of_cab.id_UTZ_MODIF = user;
+      rp_of_cab.nome_UTZ_MODIF = nome;
+      rp_of_cab.data_HORA_MODIF = date;
+      rp_of_cab.estado = "C"
+
+      //tempo de Pausa
+      this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {
+        var count = Object.keys(result1).length;
+        var time_pausa = "0:0:0";
+        var time_pausa_prep = "0:0:0";
+        var time_pausa_of = "0:0:0";
+        var timedif3 = 0;
+        var timedif4 = 0;
+        var timedif5 = 0;
+        var soma_pausa = 0;
+
+
+        if (count > 0) {
+          for (var x in result1) {
+            if (result1[x].momento_PARAGEM == "E") {
+              var hora1 = new Date(result1[x].data_INI + " " + result1[x].hora_INI);
+              var hora2 = new Date(result1[x].data_FIM + " " + result1[x].hora_FIM);
+              var timedif = this.timediff(hora1.getTime(), hora2.getTime())
+              var splitted_pausa = timedif.split(":", 3);
+              total_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+            }
+            if (result1[x].momento_PARAGEM == "P") {
+              var hora1 = new Date(result1[x].data_INI + " " + result1[x].hora_INI);
+              var hora2 = new Date(result1[x].data_FIM + " " + result1[x].hora_FIM);
+              var timedif1 = this.timediff(hora1.getTime(), hora2.getTime())
+              var splitted_pausa = timedif1.split(":", 3);
+              total_pausa_prep += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+            }
+
+            var hora1 = new Date(result1[x].data_INI + " " + result1[x].hora_INI);
+            var hora2 = new Date(result1[x].data_FIM + " " + result1[x].hora_FIM);
+            var timep = this.timediff(hora1.getTime(), hora2.getTime())
+
+            var splitted_pausa = timep.split(":", 3);
+            soma_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+          }
+
+          time_pausa_of = this.gettime(soma_pausa);
+          time_pausa_prep = this.gettime(total_pausa_prep);
+          time_pausa = this.gettime(total_pausa);
+
+          var splitted_pausa = time_pausa_of.split(":", 3);
+          timedif4 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+        }
+        var hora1 = new Date(result[0][2].data_INI + " " + result[0][2].hora_INI);
+        var hora2 = new Date(date);
+        //tempo da total of
+        var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
+
+
+        if (result[0][0].tempo_PREP_TOTAL != null) {
+          var splitted_prep = result[0][0].tempo_PREP_TOTAL.split(":", 3);
+          timedif3 = parseInt(splitted_prep[0]) * 3600000 + parseInt(splitted_prep[1]) * 60000 + parseInt(splitted_prep[2]) * 1000;
+
+        } else if (result[0][0].tempo_PARA_TOTAL != null) {
+
+          var splitted_pausa_prep = time_pausa_prep.split(":", 3);
+          timedif5 = parseInt(splitted_pausa_prep[0]) * 3600000 + parseInt(splitted_pausa_prep[1]) * 60000 + parseInt(splitted_pausa_prep[2]) * 1000;
+        }
+
+        if (result[0][0].tempo_PARA_TOTAL != null) rp_of_op_cab.tempo_PARA_TOTAL = "0:0:0";
+
+
+        var splitted_pausa = time_pausa_prep.split(":", 3);
+        timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+        //estado rp_of_prep_lin
+        var rp_of_prep_lin = new RP_OF_PREP_LIN();
+        this.RPOFPREPLINService.getbyid(id_op_cab).subscribe(resu => {
+
+          var count = Object.keys(resu).length;
+          if (count > 0) {
+
+            var date1 = new Date(resu[0].data_INI + " " + resu[0].hora_INI);
+            var date2 = new Date(date);
+            var timedif1 = this.timediff(hora1.getTime(), hora2.getTime());
+            var splitted_pausa = timedif1.split(":", 3);
+            timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+            var time_prep = timedif3 - timedif5;
+
+            var tempo_prep = this.gettime(time_prep);
+
+            rp_of_prep_lin = resu[0];
+            rp_of_prep_lin.estado = "C";
+            rp_of_prep_lin.data_FIM = date;
+            rp_of_prep_lin.hora_FIM = time_fim;
+            rp_of_prep_lin.data_HORA_MODIF = date;
+            rp_of_prep_lin.id_UTZ_MODIF = user;
+
+            this.RPOFPREPLINService.update(rp_of_prep_lin);
+          }
+          var tempo_total_execucao = "0:0:0";
+
+          //estado rp_of_op_cab
+
+          rp_of_op_cab.tempo_PREP_TOTAL = tempo_prep;
+          rp_of_op_cab.tempo_PARA_TOTAL = time_pausa_prep;
+          rp_of_op_cab.tempo_EXEC_TOTAL = tempo_total_execucao;
+
+          rp_of_op_func.id_UTZ_MODIF = user;
+          rp_of_op_func.nome_UTZ_MODIF = nome;
+          rp_of_op_func.data_HORA_MODIF = date;
+          rp_of_op_func.perfil_MODIF = "O";
+          rp_of_op_func.estado = "C";
+          rp_of_op_func.data_FIM = date;
+          rp_of_op_func.hora_FIM = time_fim;
+
+
+          this.RPOFCABService.update(rp_of_cab);
+          this.RPOPFUNCService.update(rp_of_op_func);
+          if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
+
+          this.displayprep = false;
+          this.reset();
+
+        }, error => console.log(error));
+
+
+      }, error => console.log(error));
+    }, error => console.log(error));
+  }
+
 
 
   //ver diferenças entre datas
