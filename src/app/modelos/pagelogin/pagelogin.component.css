@@ -1,0 +1,164 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300);
+@import url(http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css);
+body
+{
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato' , sans-serif;
+    color: #333;
+    background-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: none;
+    background-color: #475264;
+}
+
+.ui-button{
+    color: black !important;
+}
+
+p
+{
+    margin: 0;
+    padding: 0 0 10px 0;
+    line-height: 20px;
+}
+.span4
+{
+    width: 80px;
+    float: left;
+    margin: 0 8px 10px 8px;
+}
+
+.phone
+{
+    margin-top: 15px;
+        margin: 0 auto;
+}
+.tel
+{
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: 1px solid #9e9e9e;
+    font-size: 25px;
+    text-align: center;
+}
+.num-pad
+{
+    padding-left: 9%;
+}
+
+.num1{
+    width: 173px !important;
+}
+.num
+{
+    border: 1px solid #9e9e9e;
+    -webkit-border-radius: 999px;
+    border-radius: 999px;
+    -moz-border-radius: 999px;
+    height: 60px;
+    background-color: #fff !important;
+    color: #333;
+    cursor: pointer;
+    width: 100%;
+
+    font-size: 30px;
+    
+        padding: 5px 0px;
+    font-family: 'Lato' , sans-serif;
+   
+    color: #333;
+}
+.num:hover
+{
+    background-color: #9e9e9e ;
+    color: black;
+    transition-property: background-color .2s linear 0s;
+    -moz-transition: background-color .2s linear 0s;
+    -webkit-transition: background-color .2s linear 0s;
+    -o-transition: background-color .2s linear 0s;
+}
+.txt
+{
+    font-size: 30px;
+    text-align: center;
+    margin-top: 23px;
+    font-family: 'Lato' , sans-serif;
+    line-height: 30px;
+    color: #333;
+}
+.small
+{
+    font-size: 15px;
+}
+
+.btn
+{
+    font-weight: bold;
+    -webkit-transition: .1s ease-in background-color;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 1px;
+}
+.btn:hover
+{
+    transition-property: background-color .2s linear 0s;
+    -moz-transition: background-color .2s linear 0s;
+    -webkit-transition: background-color .2s linear 0s;
+    -o-transition: background-color .2s linear 0s;
+}
+.spanicons
+{
+    width: 72px;
+    float: left;
+    text-align: center;
+    margin-top: 40px;
+    color: #9e9e9e;
+    font-size: 30px;
+    cursor: pointer;
+}
+.spanicons:hover
+{
+    /*color: #3498db;*/
+    transition-property: color .2s linear 0s;
+    -moz-transition: color .2s linear 0s;
+    -webkit-transition: color .2s linear 0s;
+    -o-transition: color .2s linear 0s;
+}
+.active
+{
+    color: #3498db;
+}
+
+
+.animate-show-hide.ng-hide {
+  opacity: 0;
+}
+
+.animate-show-hide.ng-hide-add,
+.animate-show-hide.ng-hide-remove {
+  transition: all linear 0.5s;
+}
+
+.check-element {
+  border: 1px solid black;
+  opacity: 1;
+  padding: 10px;
+}
+
+@media screen and (max-width: 575px) {
+  .phone {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 523px) {
+  .phone {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 463px) {
+  .phone {
+    width: 100%;
+  }
+}

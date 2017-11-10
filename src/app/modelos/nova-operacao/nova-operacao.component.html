@@ -1,109 +1,162 @@
-<div class="col-md-6 col-md-offset-6" style="float:left;">
-  <form>
-    <div class="form-group">
-      <!-- Name field -->
-      <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
-      <input class="form-control" id="name" name="name" type="text" />
-    </div>
+<div class="row wrapper">
+  <div class="col-md-5 col-md-offset-5" style="float:left;">
+    <form>
+      <div class="form-group">
+        <!-- Name field -->
+        <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
+        <div class="input-group">
+          <div class="icon-addon " style="width: 100%;">
+            <input type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}" [(ngModel)]="num_of"
+              #of (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
+          </div>
+          <span class="input-group-btn">
+            <button [disabled]="spinner" (click)="pesquisaof()" class="btn {{bt_class}}" type="button" style="line-height: 0;">
+              <i *ngIf="refresh" class="fa fa-refresh"></i>
+              <i *ngIf="spinner" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+            </button>
+          </span>
 
-    <div class="form-group">
-      <!-- Email field -->
-      <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-      <p-dropdown (onChange)="carregaoperacoes($event)" [options]="cities" [style]="{'width':'80%'}"></p-dropdown>
-      <button type="button" class="btn btn-success btn-number" style="margin-left:10px" (click)="showDialog()">
+          <button (click)="apagardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; margin-left: 10px;">
+            <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
+        <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)"
+          [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
+        <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
           <i class="icon-plus"></i>
-      </button>
-      <button type="button" class="btn btn-danger btn-number" style="margin-left:10px" (click)="togglestates()">
-          <i class="icon-plus"></i>
-      </button>
-    </div>
+        </button>
+      </div>
 
-    <div class="form-group">
-      <!-- Subject field -->
-      <label class="control-label " for="subject">Máquina</label>
-      <p-dropdown [options]="cities2" [style]="{'width':'100%'}"></p-dropdown>
-    </div>
+      <div class="form-group">
+        <label class="control-label " for="subject">Máquina</label>
+        <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
+          (onChange)="maquinadados($event)" [style]="{'width':'100%'}"></p-dropdown>
+      </div>
 
-    <div class="form-group">
-      <!-- Message field -->
-      <label class="control-label " for="message">Observações</label>
-      <textarea class="form-control" cols="40" id="message" name="message" rows="10"></textarea>
-    </div>
-  </form>
-</div>
-
-
-<div class="col-md-6 col-md-offset-8" style="float:left;">
-
-
-  <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-    dataKey="vin">
-    <p-header>REFERÊNCIA</p-header>
-    <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-    <p-column field="year" header="Year"></p-column>
-    <p-column field="brand" header="Brand"></p-column>
-    <p-column field="color" header="Color"></p-column>
-  </p-dataTable>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button" routerLink="/home" label="CANCELAR/SAIR"></button>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button" routerLink="/home" label="INICIAR TRABALHO"></button>
-  <button class="ui-button-secondary bt-cancelar" pButton type="button"  (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"></button>
-</div>
-
-<p-dialog header="Operações" [(visible)]="display" modal="modal" minHeight="500" minwidth="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
-  <p>
-    <p-dataTable [value]="cols2" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect2($event)" (onRowUnselect)="onRowUnselect2($event)"
-      dataKey="vin">
-      <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-      <p-column field="year" header="Year"></p-column>
-      <p-column field="brand" header="Brand"></p-column>
-      <p-column field="color" header="Color"></p-column>
-    </p-dataTable>
-  </p>
-  <p-footer>
-    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancelar()" label="Cancelar"></button>
-      <button type="button" pButton icon="fa-check" (click)="operacao()" label="Ok"></button>
-    </div>
-  </p-footer>
-</p-dialog>
-
-
-<!--Test -->
-<div id="test">
-  <div class="list-group test" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates()">
-
-    <p-dataTable [value]="cols" selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect3($event)" (onRowUnselect)="onRowUnselect($event)"
-      dataKey="vin">
-      <p-header>Operações</p-header>
-      <p-column field="vin" header="Vin" [sortable]="true"></p-column>
-      <p-column field="year" header="Year"></p-column>
-      <p-column field="brand" header="Brand"></p-column>
-      <p-column field="color" header="Color"></p-column>
-    </p-dataTable>
-
+      <div class="form-group">
+        <label class="control-label " for="message">Observações</label>
+        <textarea class="form-control" cols="20" id="message" name="message" rows="4" readonly>{{observacoes}}</textarea>
+      </div>
+    </form>
   </div>
 
+
+  <div class="col-md-7 col-md-offset-7" style="float:left;">
+
+
+    <p-dataTable [value]="referencias" [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}}" (onRowUnselect)="onRowUnselect($event)"
+      dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
+      <p-header>REFERÊNCIA(S)</p-header>
+      <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+      <p-column field="design" header="Designação" [style]="{'width':'50%'}"></p-column>
+      <p-column field="tipo" header="Tipo" [style]="{'width':'5%'}"></p-column>
+    </p-dataTable>
+  </div>
+  <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
+    <button class="bt-cancelar ui-button-danger" pButton type="button" routerLink="/home" label="CANCELAR/SAIR" style="float:none;min-width: 17%;"></button>
+    <button class=" bt-cancelar ui-button-success" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO" style="float:none;min-width: 17%; margin-left: 20px;"></button>
+    <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"
+      style="float:none;"></button>
+  </div>
+
+  <!-- Lista de operções não previstas -->
+  <div id="adicionaop">
+    <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow: scroll;" (clickOutside)="ontogglestates()">
+      <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+        <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
+        <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
+      </div>
+      <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb" #dt dataKey="OPECOD"
+        scrollable="true" scrollHeight="400px" [responsive]="true" [rows]="10">
+        <p-header>Operações</p-header>
+        <p-column field="OPECOD" header="Código" [sortable]="true"></p-column>
+        <p-column field="OPEDES" header="Designação"></p-column>
+      </p-dataTable>
+      <br>
+      <div [hidden]="displayvermais" class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
+        <a (click)="carregarmais()" style="cursor: pointer;">
+          <h3>
+            <u> VER MAIS </u>
+          </h3>
+        </a>
+      </div>
+    </div>
+
+  </div>
 </div>
-<!--/Test -->
 
+<!-- Popup caso o operador só escolhe-se um referencia (Não vai ser utilizada) -->
 
-
-<p-dialog header="Operações" [(visible)]="display2" modal="modal" width="500" [responsive]="true" [dismissableMask]="true"
+<p-dialog header="Operações" [(visible)]="display2" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
   [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       Escolheu a Referência:
-      <small>  {{message}} - Designação</small>. </p>
+      <small> {{ref_code}} - {{ref_name}}</small>. </p>
     <p>
       Qual o Serviço que vai iniciar?
     </p>
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="cancelar2()" label="PREPARAÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="EXECUÇÃO" style="float: none;"></button>
-      <button type="button" pButton (click)="cancelar2()" label="CANCELAR" style="float: none;"></button>
+      <button type="button" pButton (click)="criar('P',true)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',true)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!-- Popup para saber o serviço que o operador pretende para todas as ref's-->
+<p-dialog header="Operações" [(visible)]="display3" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      Qual o Serviço que vai iniciar?
+    </p>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!--POPUP- Caso o operador queira inciar o trabalho para uma of e operação em execução-->
+<p-dialog [(visible)]="display_op_em_curso" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+  [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      <b> OPERAÇÃO EM CURSO </b>
+    </p>
+    <p>
+      {{pessoa_op_em_curso}}
+    </p>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton routerLink="/home" label="OK" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!--POPUP- Caso a OF escolhida está Fechada ou Suspensa” -->
+<p-dialog [(visible)]="display_of_estado" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+  [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      A OF escolhida {{estado_of}}
+    </p>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton (click)="cancelar_displayof()" label="OK" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>

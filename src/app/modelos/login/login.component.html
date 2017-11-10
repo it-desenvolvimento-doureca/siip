@@ -1,40 +1,49 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-3 col-lg-4 phone">
+<div class="container" style="position: relative; z-index:1;">
+    <div class="row loginrow">
+        <div class="col-md-4 col-sm-8 col-lg-5 phone">
+            <div class="iconmelon">
+
+                <img style="width: 97%;" src="assets/logo_load.png" />
+                <br>
+                <span style="color:black; font-size: 0.9vw;">
+                    <b>SGIID</b> - Sistema de Gestão Integrado de Informação da Doureca
+                </span>
+
+            </div>
         </div>
-        <div class="col-md-7 col-lg-4 phone">
+        <div class="col-md-8 col-sm-10 col-lg-5 phone" style="padding: 0px;">
             <div class="row1">
-                <div class="col-md-12">
+                <div class="col-md-9 col-sm-10 col-xs-9 col-lg-10" style="padding: 0px;">
                     <div class="num-pad">
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(1)" label="1" pButton></button>
+                            <button type="button" class="num" (click)="append('1')" label="1" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(2)" label="2" pButton></button>
+                            <button type="button" class="num" (click)="append('2')" label="2" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(3)" label="3" pButton></button>
+                            <button type="button" class="num" (click)="append('3')" label="3" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(4)" label="4" pButton></button>
+                            <button type="button" class="num" (click)="append('4')" label="4" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(5)" label="5" pButton></button>
+                            <button type="button" class="num" (click)="append('5')" label="5" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(6)" label="6" pButton></button>
+                            <button type="button" class="num" (click)="append('6')" label="6" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(7)" label="7" pButton></button>
+                            <button type="button" class="num" (click)="append('7')" label="7" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(8)" label="8" pButton></button>
+                            <button type="button" class="num" (click)="append('8')" label="8" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(9)" label="9" pButton></button>
+                            <button type="button" class="num" (click)="append('9')" label="9" pButton></button>
                         </div>
                         <div class="span4">
-                            <button type="button" class="num" (click)="append(0)" label="0" pButton></button>
+                            <button type="button" class="num" (click)="append('0')" label="0" pButton></button>
                         </div>
                         <div class="span4">
                             <button type="button" class="num num1" (click)="undo()" label="APAGAR" pButton></button>
@@ -47,13 +56,13 @@
 
             <div class="clearfix">
             </div>
-            <input readonly type="text" name="name" id="telNumber" #box (keypress)="append1(box.value,$event)" class="form-control tel"
+            <input readonly type="password" name="name" id="telNumber" #box class="form-control tel " style="width: 75%; font-size: 27pt; padding: 0;"
                 value="{{ operation }}" maxlength="4" />
         </div>
     </div>
 </div>
-
-<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center;">
+<div id="particles"></div>
+<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center; position: relative; z-index:1;">
     <strong>É O(A) OPERADOR(A): {{ name }}?</strong>
     <br>
     <br>
@@ -71,14 +80,53 @@
 <p-dialog [(visible)]="display" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
     [draggable]="false">
     <div style="text-align:center;">
-        <p>
-            <h1> Qual o perfil de utilização pretendido? </h1>
+        <h1> Qual o perfil de utilização pretendido? </h1>
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-            <button type="button" [hidden]="isHidden1" pButton (click)="cancelar2()" label="OPERADOR" style="float: none;"></button>
-            <button type="button" [hidden]="isHidden2" pButton (click)="cancelar2()" label="ADMINISTRAÇÃO" style="float: none;"></button>
-            <button type="button" [hidden]="isHidden3" pButton (click)="cancelar2()" label="CONTROLO" style="float: none;"></button>
+            <button type="button" [hidden]="isHidden1" pButton (click)="novaoperacao()" label="OPERADOR" style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden2" pButton (click)="adminarea()" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden3" pButton (click)="controlo()" label="CONTROLO" style="float: none; width: auto;"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!-- POPUP LOGIN ADMIN -->
+<p-dialog [(visible)]="display2" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center; border: none;">
+        <button type="button" pButton routerLink="/config" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
+        <button type="button" pButton routerLink="/controlo" label="CONTROLO" style="float: none; width: auto;"></button>
+    </div>
+</p-dialog>
+
+<!-- Preparação em curso -->
+
+<p-dialog [(visible)]="displayprep" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div style="text-align:center;">
+        <h1>Que operação pretende fazer?</h1>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+            <button type="button" pButton (click)="finalizarprep()" label="FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO" style="float: none; width: auto;"></button>
+            <button type="button" pButton (click)="pausa()" label="FAZER PAUSA NA PREPARAÇÃO" style="float: none; width: auto;"></button>
+            <button type="button" pButton (click)="concluir()" label="CONCLUIR TRABALHO" style="float: none; width: auto;"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!-- Pausa em curso -->
+
+<p-dialog [(visible)]="displaypausa" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
+    [draggable]="false">
+    <div style="text-align:center;">
+        <h1>ESTÁ EM PAUSA. PRETENDE RETOMAR O TRABALHO?</h1>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+            <button type="button" pButton (click)="finalizarpausa()" label="SIM" style="float: none; width: auto;"></button>
+            <button type="button" pButton (click)="cancelar()" label="NÃO" style="float: none; width: auto;"></button>
         </div>
     </p-footer>
 </p-dialog>

@@ -1,68 +1,370 @@
-<div class="col-md-12 col-md-offset-12" style="height: 50px; text-align: center;">
-  <h2>
-    REGISTO DE QUANTIDADES - REFERÊNCIA: {{ref_name}}
-  </h2>
-</div>
-<div class="col-md-12 col-md-offset-12" style="height: 50px;">
-  <button type="button" class="form-control btn btn-primary" pButton (click)="prevItem()" style="width: 20%; float: left;"
-    label="Referência Anterior"></button>
-  <button type="button" class="form-control btn btn-primary" pButton (click)="nextItem()" style="width: 20%; float: right;"
-    label="Referência Seguinte"></button>
-</div>
-<div class="col-md-12 col-md-offset-12" style="height: 90px;">
-<div class="col-md-3 col-md-offset-3" style=" float: left;">
-</div>
-<div class="col-md-9 col-md-offset-9" style="float: left; ">
-  <div class="form-group">
-    <!-- Name field -->
-    <label class="control-label " for="name">Quant. Boas</label>
-    <input value="{{qttboas}}" class="form-control" id="name" name="name" type="text" #box (keypress)="append1(box.value,$event)"
-      (change)="updatetotal(box.value)" style="text-align: center;" style="text-align: center;" />
+<div class="row wrapper">
+  <div class="col-md-12 nopadding" style="display: initial; text-align: center;  padding-right:0;">
+    <div class="col-md-2 col-md-offset-2 nopadding col-sm-3" style="display: initial;  float: left;">
+      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()" [(disabled)]="disabledrefanterior"
+        style="width: auto; height: 60px; float: left;" label="Referência Anterior"></button>
+    </div>
+    <div class="col-md-8 nopadding col-sm-6" style="display: initial;  float: left;">
+      <h6 style="font-size: 1.2vw;">
+        REGISTO DE QUANTIDADES REFERÊNCIA
+        <span *ngIf="!comp">(PF)</span>
+        <span *ngIf="comp">(COMP)</span>:
+      </h6>
+      <h5 style="font-size: 1.3vw;">
+        <b>
+          {{ref_name}}
+        </b>
+      </h5>
+    </div>
+    <div class="col-md-2  nopadding col-sm-3" style="display: initial;  float: left;  padding-right:0;">
+      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton (click)="nextItem()"
+        [(disabled)]="disabledrefseguinte" style="width: auto; height: 60px; float: right;" label="Referência Seguinte"></button>
+    </div>
   </div>
-  <div class="form-group1">
-    <i style="font-size: 50px;">+</i>
-  </div>
-  <div class="form-group">
-    <!-- Name field -->
-    <label class="control-label " for="name">Total Defeitos</label>
-    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}"
-    />
-  </div>
-  <div class="form-group1">
-    <i style="font-size: 50px;">=</i>
-  </div>
-  <div class="form-group">
-    <!-- Name field -->
-    <label class="control-label " for="name">Total Control</label>
-    <input class="form-control" id="name" name="name" type="text" readonly style="text-align: center;" value="{{totalcontrol}}"
-    />
-  </div>
-  <div class="form-group" style="margin-left: 50px;">
-    <!-- Name field -->
-    <label class="control-label " for="name">Quant. OF</label>
-    <input class="form-control" id="name" name="name" type="text" style="text-align: center;" readonly />
-  </div>
-</div>
-</div>
+  <div class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 10px 0 0 0; text-align: center; float: left; padding: 0;">
+    <div *ngIf="comp" class="col-md-12 col-md-offset-12 nopadding" style="padding: 0;  display: initial; margin: 0px 0 0 0; text-align: center; ">
+      <div [class.invisible]="!comp" class="col-md-12 col-md-offset-12 nopadding" style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
+        <label class="control-label " for="name">
+          <h6>Nº Etiqueta:</h6>
+        </label>
+        <div class="icon-addon " style="width: 100%;">
+          <input [disabled]="num_lote!='' && num_lote != null" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()"
+            class="form-control" type="number" #num (ngModelChange)="num_etiqueta=num.value" style="text-align: center; width:19%; display: inline; margin-left: 10px;"
+            min="0" />
+        </div>
+        <span class="input-group-btn" style="width: 10%; display: inline;">
+          <button [disabled]="num_lote!='' && num_lote != null" (click)="pesquisaetiqueta()" class="btn {{bt_class}}" type="button"
+            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: -10px;">
+            <i *ngIf="refresh" class="fa fa-refresh"></i>
+            <i *ngIf="spinner" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+          </button>
+          <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+            <i class="fa fa-eraser"></i>
+          </button>
+          <button *ngIf="num_lote!='' && num_lote != null" (click)="novaetiqueta()" class="btn btn-primary" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+            <i class="fa fa-plus"></i>
+          </button>
+          <button *ngIf="num_lote!='' && num_lote != null" (click)="apagardados()" class="btn btn-danger" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+            <i class="fa fa-trash"></i>
+          </button>
+          <label *ngIf="num_lote!='' && num_lote != null" class="control-label " for="name">
+            <h6 style="top: 5px; left: 6px; position: relative;">Total Etiq.:</h6>
+          </label>
+          <div *ngIf="num_lote!='' && num_lote != null" class="icon-addon " style="width: 30%; margin-left: 4px; position: absolute;">
+            <input readonly [(ngModel)]="qtdetiquetas" [ngModelOptions]="{standalone: true}" class="form-control" type="text" style=" text-align: center; display: inline; margin-left: 4px; position: relative;"
+              min="0" />
+          </div>
+          <h6 style="display: initial; position: absolute; margin-top: 7px; margin-left: 97px;">Nº OF Componente/Lote:
+            <span style="font-weight: 300">{{num_lote}}</span>
+          </h6>
+          <!--<button *ngIf="num_lote!='' && num_lote != null" (click)="editaretiquetas()" class="btn btn-primary" type="button" style="padding: 4px; opacity: 1; line-height: 0; height: 58px; position: absolute; top: -18px; margin-left: 72px;">
+            Editar Etiquetas Lidas
+          </button>-->
+        </span>
+      </div>
+    </div>
 
-<form #valForm="ngForm" (ngSubmit)="submitFunc(valForm.value); ">
-  <p-tabView *ngIf="tabSets" orientation="left">
-    <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
+    <!-- SE FOR COMPONENTE -->
+    <div *ngIf="comp" class="col-md-9 col-md-offset-9 nopadding" style="display: table-cell; margin: 0px 0 0 0; text-align: center;">
+      <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
+        <label class="control-label " for="name">Quant. Boas Ref.</label>
+        <div class="input-group">
+          <input [(ngModel)]="qttboas_ref" readonly  class="form-control"  type="number" #box
+             style="text-align: center;" min="0" style="text-align: center;" />
+        </div>
+      </div>
+      <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style="float: left; max-width: 5%;">
+        <div class="form-group1">
+          <i style="font-size: 50px;">+</i>
+        </div>
+      </div>
+      <div class="col-md-2 col-md-offset-2 nopadding col-sm-3 nopadding" style="float: left;">
+        <label class="control-label " for="name">Total Def. Ref.</label>
+        <input class="form-control" type="text" style="text-align: center;" readonly value="{{totaldefeitos_ref}}" />
+      </div>
+      <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style=" float: left; max-width: 5%;">
+        <div class="form-group1">
+          <i style="font-size: 50px;">=</i>
+        </div>
+      </div>
+      <div class="col-md-2 col-md-offset-2 col-sm-2  nopadding nopadding" style="float: left;">
+        <label class="control-label " for="name">Total Cont. Ref.</label>
+        <input class="form-control {{corfundo_ref}}" type="text" readonly style="text-align: center;" value="{{totalcontrol_ref}}" />
+      </div>
+      <div class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+        <label class="control-label " for="name">Quant. OF</label>
+        <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
+      </div>
+    </div>
 
-      <div *ngFor="let item of isplayData2(tab.label) let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding"
-        style="float:left;">
-        <label class="control-label requiredField" style="width: 100%; " for="name">{{ item }}</label>
-        <input class="form-control" id="name" name="{{ item }}" #inputvalue ngModel type="number" min="0" (keypress)="append1(inputvalue.value,$event)"
-        />
+
+
+    <div [hidden]="(comp && qtdetiquetas == 0)" class="col-md-9 col-md-offset-9 nopadding" style="display: table-cell; margin: 0px 0 0 0; text-align: center;">
+      <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
+        <label class="control-label " for="name">Quant. Boas</label>
+        <div class="input-group">
+          <span class="input-group-btn" style="height: 40px; top: 1px;">
+            <button [disabled]="(comp && qtdetiquetas == 0)" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
+              (click)="menosqtdboas()" class="btn btn-default">-</button>
+          </span>
+          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0)" class="form-control" id="qtdboas" type="number" #box
+            (ngModelChange)="updatetotal(box.value)" style="text-align: center;" min="0" style="text-align: center;" />
+          <span class="input-group-btn" style="height: 40px; top: 1px;">
+            <button [disabled]="(comp && qtdetiquetas == 0)" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
+              (click)="maisqtdboas()" class="btn btn-default">+</button>
+          </span>
+        </div>
+      </div>
+      <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style="float: left; max-width: 5%;">
+        <div class="form-group1">
+          <i style="font-size: 50px;">+</i>
+        </div>
+      </div>
+      <div class="col-md-2 col-md-offset-2 nopadding col-sm-3 nopadding" style="float: left;">
+        <label class="control-label " for="name">Total Defeitos</label>
+        <input class="form-control" type="text" style="text-align: center;" readonly value="{{totaldefeitos}}" />
+      </div>
+      <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style=" float: left; max-width: 5%;">
+        <div class="form-group1">
+          <i style="font-size: 50px;">=</i>
+        </div>
+      </div>
+      <div class="col-md-2 col-md-offset-2 col-sm-2  nopadding nopadding" style="float: left;">
+        <label class="control-label " for="name">Total Control</label>
+        <input class="form-control {{corfundo}}" type="text" readonly style="text-align: center;" value="{{totalcontrol}}" />
+      </div>
+      <div *ngIf="!comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+        <label class="control-label " for="name">Quant. OF</label>
+        <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
       </div>
 
-    </p-tabPanel>
-  </p-tabView>
+      <div *ngIf="comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+        <label class="control-label " for="name">Quant. Etiq.</label>
+        <input class="form-control" type="text" style="text-align: center;" value="{{qtd_etiqueta}}" readonly />
+      </div>
 
-  <br>
+<!--
+      <div *ngIf="comp" class="col-md-3 col-md-offset-2 col-sm-3 nopadding" style=" float: left; margin-left: 10px;  max-width: 17%;">
+        <label class="control-label " for="name">Total Etiquetas</label>
+        <input class="form-control" type="text" style="text-align: center;" value="{{qtdetiquetas}}" readonly />
+      </div>-->
 
-  <input class="form-control btn btn-primary" type="submit" style="width: 20%; float: right;" [disabled]="!valForm.form.valid"
-    value="Concluir">
+
+    </div>
+  </div>
+  <div *ngIf="etiquetas.length > 0" class="col-md-3 col-md-offset-3 col-sm-3  nopadding" style="float: left; margin-top: 8px;">
+    <div class="container even_tab nopadding" style="text-align: center; max-width: 93%; float: right; ">
+      <div class="row divider_row" style="padding: 0;">
+        <div class="col-md-6 col-sm-6 col-xs-6">
+          <h6 class="text-center">Etiquetas Lidas</h6>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+          <h6 class="text-center">Quant</h6>
+        </div>
+      </div>
+      <div class="row divider_row " style="padding: 0;" *ngFor="let et of etiquetas">
+        <div class="col-md-6 col-sm-6 col-xs-6 text-center" style="padding: 0;">
+          <a [ngClass]="{'bold_num': num_etiqueta == et.num}" (click)="onRowSelect(et.num)" style="cursor: pointer"> {{et.num}}</a>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
+          <span [ngClass]="{'bold_num': num_etiqueta == et.num}"> {{et.qtt}} </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 col-md-offset-12 nopadding" style=" float: left; background: rgba(169, 162, 162, 0.92); padding: 0;">
+    <form #valForm="ngForm">
+      <p-tabView *ngIf="tabSets" orientation="left" class="tabcss" (onChange)="handleChange($event)">
+        <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
+          <div class="col-md-12 col-md-offset-12" style="height: auto; display: inline-block; margin-bottom: 5px;">
+            <div *ngFor="let item of items" class="col-md-4 col-sm-4 col-lg-3  col-md-offset-3 nopadding" style="float:left;">
+              <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 0.8vw; "
+                for="{{ item.cod }}">
+                <span [hidden]="item.obs == null || item.obs == ''">*</span>{{ item.cod }} - {{ item.des }}</label>
+              <!--<input class="form-control" 
+                type="number" min="0" style="height: 45px; font-size: 25px;" />-->
+              <div class="input-group" style="width: 92%;">
+                <span class="input-group-btn">
+                  <button type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;" (click)="menos(item.cod,item)"
+                    class="btn btn-default">-</button>
+                </span>
+                <input (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
+                  name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0"
+                  style="text-align: center;">
+                <span class="input-group-btn">
+                  <button type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;" (click)="mais(item.cod,item)" class="btn btn-default">+</button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-md-offset-12 nopadding" style="position: relative;bottom: 0; text-align: right;">
+            <a style="cursor: pointer" (click)="adicionarobs()">
+              <h5>
+                <span>*</span>Adicionar/Consultar Observações do Defeito Selecionado
+                <i class="fa fa-plus fa-1x fa-fw"></i>
+              </h5>
+            </a>
+          </div>
+        </p-tabPanel>
+        <button type="input" #fileInput class="form-control btn ui-button-secondary" icon="fa-refresh" [disabled]="!valForm.form.valid"
+          pButton style="width: auto; height: 60px; float: right; margin-right: 40px; margin-top: 12px; margin-bottom: 20px; display:none;"
+          label="Atualizar Valores"></button>
+
+      </p-tabView>
+      {{carregaraltura()}}
+      <br>
+      <div class="col-md-12 col-md-offset-12" style="float: right">
+        <div class="col-md-9 col-md-offset-9 col-sm-12 nopadding" style="float: left">
+          <h5> Verificações Adicionais </h5>
+          <div class="checkbox col-md-3 col-sm-6" style="float: left;">
+            <label style="font-size: 1.5em">
+              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
+              <span class="cr">
+                <i class="cr-icon fa fa-check"></i>
+              </span>
+              <span style="font-size: 1.2vw">Teste X-Ato</span>
+            </label>
+          </div>
+          <div class="checkbox col-md-3 col-sm-6" style="float: left;">
+            <label style="font-size: 1.5em">
+              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
+              <span class="cr">
+                <i class="cr-icon fa fa-check"></i>
+              </span>
+              <span style="font-size: 1.2vw">Teste Aderência</span>
+            </label>
+          </div>
+          <div class="checkbox col-md-3 col-sm-6" style="float: left;">
+            <label style="font-size: 1.5em">
+              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
+              <span class="cr">
+                <i class="cr-icon fa fa-check"></i>
+              </span>
+              <span style="font-size: 1.2vw">Teste Fita Adesiva</span>
+            </label>
+          </div>
+          <div class="checkbox col-md-3 col-sm-6" style="float: left;">
+            <label style="font-size: 1.5em">
+              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
+              <span class="cr">
+                <i class="cr-icon fa fa-check"></i>
+              </span>
+              <span style="font-size: 1.2vw">Teste Dimensional</span>
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding" style="float: right; text-align: center;">
+          <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton style="width: 70%; height: 60px;"
+            label="CONCLUIR / SAIR"></button>
+          <!--<button type="button" class="form-control btn btn-success ui-button-secondary" (click)="gravar()" pButton style="width: 48%; height: 60px; float: left;"
+          label="Gravar"></button>-->
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+<button #editarclick2 id="editarclick2" data-toggle="modal" [hidden]="true"></button>
+<button #carregaaltura id="carregaaltura" [hidden]="true"></button>
+<button type="button" [hidden]="true" #dialogwaiting class="btn btn-success" onclick="waitingDialog.show('A Pesquisar...', {dialogSize: 'sm'});">Show dialog</button>
+<button type="button" [hidden]="true" #closewaiting class="btn btn-success" onclick="setTimeout(function () { waitingDialog.hide(); }, 500);">Show dialog</button>
+
+<!-- POPUP OBS DEFEITOS-->
+<p-dialog header="Observações do Defeito: {{defeito_desg}}" [(visible)]="displayDialog" modal="modal" [responsive]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12">
+        <label for="vin">Observação</label>
+      </div>
+      <textarea pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obdsdef"></textarea>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
+      <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
 
 
-</form>
+<!-- POPUP ETIQUETA NÃO ENCONTRADA -->
+<p-dialog header="Etiqueta não encontrada!" [(visible)]="displayDialogetiqueta" modal="modal" width="700" [responsive]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="height: 100px; float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12" style="text-align: center;">
+        <label for="vin">A etiqueta nº {{display_etiqueta}} {{mensagemdialog}}</label>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="fechar()" label="Fechar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!-- POPUP Editar Etiquestas Lidas -->
+<p-dialog header="Editar Etiquestas Lidas" [(visible)]="displayetiquetaslidas" [modal]="true" [responsive]="true" [dismissableMask]="true"
+  [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12" style="text-align: center;">
+        <p-dataTable [value]="etiquetas" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="num" scrollable="true"
+          scrollHeight="200px" [rows]="10">
+          <p-header>ETIQUETA(S)</p-header>
+          <p-column field="num" header="Número" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+          <p-column field="qtt" header="Quantidade" [style]="{'width':'50%'}"></p-column>
+        </p-dataTable>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="canceleti()" label="Fechar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!-- POPUP Adicionar Etiquestas  -->
+<p-dialog header="Adicionar Novas Etiquetas" [(visible)]="displaynovaetiqueta" [modal]="true" [responsive]="true" [dismissableMask]="true"
+  [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12" style="text-align: center;">
+        <div #divinput class="divinput col-md-12 col-md-offset-12 nopadding" style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
+          <label class="control-label " for="name">
+            <h6>Nº Etiqueta:</h6>
+          </label>
+          <div class="icon-addon " style="width: 100%;">
+            <input id="inputFocous" [(ngModel)]="num_etiqueta_nova" [ngModelOptions]="{standalone: true}" #inputFocous (keyup.enter)="pesquisaetiqueta(true)"
+              class="form-control" type="number" (ngModelChange)="num_etiqueta_nova=inputFocous.value" style="text-align: center; width:48%; display: inline; margin-left: 10px;"
+              min="0" />
+          </div>
+          <span class="input-group-btn" style="width: 10%; display: inline;">
+            <button (click)="pesquisaetiqueta(true)" class="btn {{bt_class1}}" type="button" style=" width: 15%; opacity: 1; line-height: 0; height: 41.8px; margin-top: -5px; margin-left: -10px;">
+              <i style="font-size: 27px;" *ngIf="refresh_nova" class="fa fa-refresh"></i>
+              <i style="font-size: 20px;" *ngIf="spinner_nova" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+            </button>
+          </span>
+
+          <button (click)="limpardados2()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 43.8px; margin-top: -5px; margin-left: 10px;">
+            <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="cancelnova()" label="Fechar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-confirmDialog header="Apagar" icon="fa fa-trash" width="425"></p-confirmDialog>

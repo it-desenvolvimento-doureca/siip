@@ -1,0 +1,84 @@
+.divtable {
+    padding: .75em;
+    text-align: center;
+}
+
+.divtable > .divspan {
+    top: 45%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.divtable tr {
+    border-bottom: 1px solid #9b9797;
+}
+
+.divtable tr:last-child {
+    border-bottom: none;
+}
+
+.divtable2 tr {
+    border-bottom: 1px solid #9b9797;
+}
+
+.divtable2 tr:last-child {
+    border-bottom: none;
+}
+
+.red {
+    background: red;
+    height: 100%;
+    /* border-bottom: 2px solid #6e6e6e;*/
+}
+
+.green {
+    background: green;
+    height: 100%;
+    /* border-bottom: 2px solid #6e6e6e;*/
+}
+
+.yellow {
+    background: yellow;
+    height: 100%;
+    /*border-bottom: 2px solid #6e6e6e;*/
+    border-color: black;
+    color: black;
+}
+
+.redicon {
+    color: red;
+    font-size: 18px;
+}
+
+.greenicon {
+    color: green;
+    font-size: 18px;
+}
+
+.yellowicon {
+    color: yellow;
+    font-size: 18px;
+}
+
+.adicionaop {
+    position: fixed;
+    width: 50%;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: #f7f7f7;
+    padding-top: 5%;
+    z-index: 2;
+}
+
+.nopadding {
+    padding-left: 0 !important;
+    max-height: 264px;
+}
+
+tbody {
+    display: inline-grid !important;
+    width: 100%
+}

@@ -1,11 +1,27 @@
 .nopadding {
-   padding-left: 0 !important;
-}
-.ui-dialog-buttonpane{
-         border-top: none !important;
+    padding-left: 0 !important;
 }
 
-input:read-only { 
+.ui-dialog-buttonpane {
+    border-top: none !important;
+}
+
+input:read-only {
     background-color: #c0c0c0;
 }
 
+input:disabled {
+    background-color: #c0c0c0;
+}
+
+button {
+    height: 70px;
+}
+
+.pecafinal {
+    font-weight: 600;
+}
+
+.cor_trasparent {
+    color: transparent;
+}
