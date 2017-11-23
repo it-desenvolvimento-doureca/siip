@@ -88,6 +88,7 @@ export class NovaOperacaoComponent implements OnInit {
     display_of_estado = false;
     estado_of = "";
     operacao_temp = [];
+    op_PREVISTA = '1';
     @ViewChild('inputFocous') inputFocous: any;
 
     constructor(private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
@@ -158,7 +159,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     for (var x in response1) {
                                         if (first) this.operacao.push({ label: "Seleccione a Operação", value: 0 });
                                         first = false;
-                                        this.operacao.push({ label: response1[x].OPENUM + "/" + response1[x].OPECOD + "/" + response1[x].OPEDES, value: { OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
+                                        this.operacao.push({ label: response1[x].OPENUM + "/" + response1[x].OPECOD + "/" + response1[x].OPEDES, value: { op_PREVISTA: '1', OPENUM: response1[x].OPENUM, OPECOD: response1[x].OPECOD, OPEDES: response1[x].OPEDES, SECNUMENR1: response1[x].SECNUMENR1 } });
                                         this.max_num = response1[x].OPENUM;
                                     }
                                     this.readonly_op = false;
@@ -214,6 +215,8 @@ export class NovaOperacaoComponent implements OnInit {
         this.selected = "";
         this.selectedmaq = "";
         this.observacoes = "";
+
+        this.inputFocous.nativeElement.focus();
     }
     //fechar popup estado of
     cancelar_displayof() {
@@ -280,14 +283,17 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //ao alterar a operação preenche SelectItem das maquinas
-    carregamaquinas(event, openum = null) {
+    carregamaquinas(event, openum = null, op_prev = null) {
+
         this.op_cod = [];
         if (event != 0) {
             var ope_num;
             if (openum != null) {
                 ope_num = openum;
+                this.op_PREVISTA = op_prev;
             } else {
                 ope_num = event.OPENUM;
+                this.op_PREVISTA = event.op_PREVISTA;
             }
             for (var x in this.operacao) {
                 if (this.operacao[x].value.OPENUM <= ope_num && this.operacao[x].value.OPECOD != "") {
@@ -370,13 +376,13 @@ export class NovaOperacaoComponent implements OnInit {
         var OPENUM = this.max_num * 1 + 10 * 1;
         this.state = 'secondpos';
         if (!this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM)) {
-            this.operacao.push({ label: OPENUM + "/" + event.data.OPECOD + "/" + event.data.OPEDES, value: { OPEDES: event.data.OPEDES, OPENUM: OPENUM, OPECOD: event.data.OPECOD, SECNUMENR1: event.data.SECNUMENR1 } });
+            this.operacao.push({ label: OPENUM + "/" + event.data.OPECOD + "/" + event.data.OPEDES, value: { OPEDES: event.data.OPEDES, op_PREVISTA: '2', OPENUM: OPENUM, OPECOD: event.data.OPECOD, SECNUMENR1: event.data.SECNUMENR1 } });
             this.selected = this.operacao[this.operacao.length - 1].value;
         } else {
             this.selected = this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM).value;
         }
 
-        this.carregamaquinas(event.data, OPENUM);
+        this.carregamaquinas(event.data, OPENUM, '2');
     }
 
     //Quando o botão "Seleccionar só 1 referencia" pode seleccionar uma ref da tabela
@@ -408,6 +414,10 @@ export class NovaOperacaoComponent implements OnInit {
                 },
                 error => console.log(error));
         }
+    }
+
+    fechar() {
+        this.display_op_em_curso = false;
     }
 
     //carregar todas as operações não previstas
@@ -447,6 +457,7 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.of_OBS = this.observacoes;
         rpof.sec_DES = this.sec_des;
         rpof.sec_NUM = this.sec_num;
+        rpof.op_PREVISTA = this.op_PREVISTA;
         rpof.op_COD_ORIGEM = this.selected['OPECOD'];
 
         this.RPOFCABService.create(rpof).subscribe(

@@ -128,5 +128,13 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    criaficheiro(id){
+        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
 
 }

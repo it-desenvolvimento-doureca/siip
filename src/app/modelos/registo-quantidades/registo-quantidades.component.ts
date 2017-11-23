@@ -266,7 +266,7 @@ export class RegistoQuantidadesComponent implements OnInit {
             this.eliminadef(rp_lin.id_OP_LIN, id_eti);
 
           } else {
-            this.inserir_def(ofanumenr, of_NUM, qtd_eti, this.ref[this.i].id)
+            this.inserir_def(ofanumenr, of_NUM, qtd_eti, this.ref[this.i].id, of_OBS)
           }
         },
         error => {
@@ -280,7 +280,7 @@ export class RegistoQuantidadesComponent implements OnInit {
 
 
   //inserir os defeitos da ref apartir da etiqueta
-  inserir_def(ofanumenr, of_NUM, qtd_eti, id) {
+  inserir_def(ofanumenr, of_NUM, qtd_eti, id, ofref) {
     this.service.getOPTop1(ofanumenr).subscribe(
       response => {
         //atualiza OPECOD
@@ -289,7 +289,7 @@ export class RegistoQuantidadesComponent implements OnInit {
         rp_of_op_etiqueta.id_UTZ_CRIA = this.username;
         rp_of_op_etiqueta.data_HORA_MODIF = new Date();
         rp_of_op_etiqueta.of_NUM_ORIGEM = of_NUM;
-        rp_of_op_etiqueta.ref_LOTE = "lote";
+        rp_of_op_etiqueta.ref_LOTE = ofref;
         rp_of_op_etiqueta.ref_ETIQUETA = this.display_etiqueta;
         rp_of_op_etiqueta.ref_NUM = this.ref_num;
         rp_of_op_etiqueta.id_OP_LIN = this.ref[this.i].id;
@@ -368,14 +368,16 @@ export class RegistoQuantidadesComponent implements OnInit {
                 //inserir em RP_OF_DEF_LIN
                 var ult = false;
                 for (var y in result) {
-                  var def = new RP_OF_LST_DEF();
-                  def.cod_DEF = result[y].QUACOD;
-                  def.desc_DEF = result[y].QUALIB;
-                  def.id_OP_LIN = id;
-                  def.id_UTZ_CRIA = this.username
-                  def.data_HORA_MODIF = new Date();
-                  if (parseInt(y) + 1 == count && ultimo) ult = true;
-                  this.inserRPOFLSTDEF(def, ult);
+                  if (result[y].QUACOD.substring(2, 4) != '00') {
+                    var def = new RP_OF_LST_DEF();
+                    def.cod_DEF = result[y].QUACOD;
+                    def.desc_DEF = result[y].QUALIB;
+                    def.id_OP_LIN = id;
+                    def.id_UTZ_CRIA = this.username
+                    def.data_HORA_MODIF = new Date();
+                    if (parseInt(y) + 1 == count && ultimo) ult = true;
+                    this.inserRPOFLSTDEF(def, ult);
+                  }
                 }
 
               } else {
@@ -666,6 +668,10 @@ export class RegistoQuantidadesComponent implements OnInit {
     this.id_obdsdef = null;
     //this.getdefeitos(this.ref[this.i].id, this.comp);
     this.getetiquetas();
+
+    setTimeout(() => {
+      if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
+    }, 200);
   }
 
   //passa para a referência anterior
@@ -697,6 +703,10 @@ export class RegistoQuantidadesComponent implements OnInit {
     this.operacao_temp = [];
     //this.getdefeitos(this.ref[this.i].id, this.comp);
     this.getetiquetas();
+
+    setTimeout(() => {
+      if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
+    }, 200);
   }
 
   //faz o calculo do total de defeitos e insere na tabela "lista dos defeitos rejeitados"

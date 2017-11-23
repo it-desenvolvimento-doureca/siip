@@ -28,7 +28,7 @@ export class TipoPausaComponent implements OnInit {
     this.service.getTipoFalta().subscribe(
       response => {
         for (var x in response) {
-          this.pausas.push({ design: response[x].arrlib, id: response[x].numenr });
+          this.pausas.push({ design: response[x].arrlib, id: response[x].ARRCOD });
         }
         this.pausas = this.pausas.slice();
       },

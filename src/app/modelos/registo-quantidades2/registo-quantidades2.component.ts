@@ -263,7 +263,7 @@ export class RegistoQuantidades2Component implements OnInit {
             this.eliminadef(rp_lin.id_OP_LIN, id_eti);
 
           } else {
-            this.inserir_def(ofanumenr, of_NUM, qtd_eti, this.ref[this.i].id)
+            this.inserir_def(ofanumenr, of_NUM, qtd_eti, this.ref[this.i].id, of_OBS)
           }
         },
         error => {
@@ -277,7 +277,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
 
   //inserir os defeitos da ref apartir da etiqueta
-  inserir_def(ofanumenr, of_NUM, qtd_eti, id) {
+  inserir_def(ofanumenr, of_NUM, qtd_eti, id, ofref) {
     this.service.getOPTop1(ofanumenr).subscribe(
       response => {
         //atualiza OPECOD
@@ -286,7 +286,7 @@ export class RegistoQuantidades2Component implements OnInit {
         rp_of_op_etiqueta.id_UTZ_CRIA = this.username;
         rp_of_op_etiqueta.data_HORA_MODIF = new Date();
         rp_of_op_etiqueta.of_NUM_ORIGEM = of_NUM;
-        rp_of_op_etiqueta.ref_LOTE = "lote";
+        rp_of_op_etiqueta.ref_LOTE = ofref;
         rp_of_op_etiqueta.ref_ETIQUETA = this.display_etiqueta;
         rp_of_op_etiqueta.ref_NUM = this.ref_num;
         rp_of_op_etiqueta.id_OP_LIN = this.ref[this.i].id;
@@ -457,8 +457,10 @@ export class RegistoQuantidades2Component implements OnInit {
               this.tabSets_temp.find(item => item.id == id).defeitos.push({ cod: res[x][0], des: res[x][1].trim(), value: res[x][2], id_DEF_LIN: res[x][3], pos: pos, obs: res[x][4] });
             }
           }
+          this.tabSets = this.tabSets_temp;
+
           if (count3 == total) {
-            this.tabSets = this.tabSets_temp;
+            //this.tabSets = this.tabSets_temp;
             this.tabSets[0].ative = "active";
           }
         } else {
@@ -673,50 +675,46 @@ export class RegistoQuantidades2Component implements OnInit {
       rp_lin = resp[0];
 
       if (comp) {
-        //se for componente vai pesquisar a lista de defeitos com o id_op_lin e id_ref_etiqueta
-        this.RPOFDEFLINService.getbyid_op_lin_eti(id, id_ref_etiq).subscribe(res => {
-          var count = Object.keys(res).length;
-          var totaldefeitos = 0;
-          if (count > 0) {
-            for (var x in res) {
-              totaldefeitos += res[x].quant_DEF;
-            }
-            this.ref[i].totaldefeitos = totaldefeitos;
-            this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
-            this.totalcontrol = parseInt(this.ref[this.i].totaldefeitos) + parseInt(this.ref[this.i].qttboas);
-          } else {
-            this.totalcontrol = totaldefeitos + parseInt(this.ref[this.i].qttboas);
-            this.ref[i].totaldefeitos = totaldefeitos;
-            this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
-          }
-          this.controlaquantidade();
-          if (!apaga) {
-            this.RPOFOPETIQUETAService.getAllbyid_eti(id, id_ref_etiq).subscribe(res => {
-              var etiq = new RP_OF_OP_ETIQUETA();
-              etiq = res[0];
-              etiq.quant_BOAS = this.ref[i].qttboas;
-              etiq.quant_DEF = totaldefeitos;
-              this.RPOFOPETIQUETAService.update(etiq);
-            }, error => console.log(error));
-          }
-        }, error => console.log(error));
 
+        var totaldefeitos = 0;
+
+        for (var t in this.tabSets) {
+          for (var h in this.tabSets[t].defeitos) {
+            totaldefeitos += this.tabSets[t].defeitos[h].value;
+          }
+        }
+
+        this.ref[i].totaldefeitos = totaldefeitos;
+        this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
+        this.totalcontrol = parseInt(this.ref[this.i].totaldefeitos) + parseInt(this.ref[this.i].qttboas);
+
+        this.controlaquantidade();
+        if (!apaga) {
+          this.RPOFOPETIQUETAService.getAllbyid_eti(id, id_ref_etiq).subscribe(res => {
+            var etiq = new RP_OF_OP_ETIQUETA();
+            etiq = res[0];
+            etiq.quant_BOAS = this.ref[i].qttboas;
+            etiq.quant_DEF = totaldefeitos;
+            this.RPOFOPETIQUETAService.update(etiq);
+          }, error => console.log(error));
+        }
       }
+
 
       this.RPOFDEFLINService.getbyid_op_lin(this.ref[i].id).subscribe(res2 => {
         var count = Object.keys(res2).length;
         if (count > 0) {
 
           if (!this.ref[i].comp) {
-            var totaldefeitos = 0;
+            var totaldefeitos2 = 0;
             for (var x in res2) {
-              totaldefeitos += res2[x].quant_DEF;
+              totaldefeitos2 += res2[x].quant_DEF;
             }
-            this.ref[i].totaldefeitos = totaldefeitos;
+            this.ref[i].totaldefeitos = totaldefeitos2;
             this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
             this.totalcontrol = parseInt(this.ref[this.i].totaldefeitos) + parseInt(this.ref[this.i].qttboas);
             rp_lin.quant_BOAS_TOTAL = this.ref[i].qttboas;
-            rp_lin.quant_DEF_TOTAL = totaldefeitos;
+            rp_lin.quant_DEF_TOTAL = totaldefeitos2;
             this.controlaquantidade();
             this.RPOFOPLINService.update(rp_lin);
           } else {
@@ -777,7 +775,10 @@ export class RegistoQuantidades2Component implements OnInit {
        evt.initEvent('input', true, false);
        input.dispatchEvent(evt);*/
       item.value = item.value - 1;
-      this.alteraValor(item.value, item.id_DEF_LIN, item.pos, item.cod, item.des)
+      this.alteraValor(item.value, item.id_DEF_LIN, item.pos, item.cod, item.des);
+      this.totalcontrol_ref--;
+      this.totalcontrol--;
+      this.totaldefeitos--;
     }
   }
 
@@ -789,7 +790,10 @@ export class RegistoQuantidades2Component implements OnInit {
     evt.initEvent('input', true, false);
     input.dispatchEvent(evt);*/
     item.value = item.value + 1;
-    this.alteraValor(item.value, item.id_DEF_LIN, item.pos, item.cod, item.des)
+    this.alteraValor(item.value, item.id_DEF_LIN, item.pos, item.cod, item.des);
+    this.totalcontrol_ref++;
+    this.totalcontrol++;
+    this.totaldefeitos++;
 
   }
 

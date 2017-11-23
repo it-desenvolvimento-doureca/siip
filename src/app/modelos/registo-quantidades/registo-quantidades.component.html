@@ -28,7 +28,7 @@
           <h6>Nº Etiqueta:</h6>
         </label>
         <div class="icon-addon " style="width: 100%;">
-          <input [disabled]="num_lote!='' && num_lote != null" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()"
+          <input  id="inputFocous2" [disabled]="num_lote!='' && num_lote != null" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()"
             class="form-control" type="number" #num (ngModelChange)="num_etiqueta=num.value" style="text-align: center; width:19%; display: inline; margin-left: 10px;"
             min="0" />
         </div>
@@ -189,7 +189,7 @@
                   <button type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;" (click)="menos(item.cod,item)"
                     class="btn btn-default">-</button>
                 </span>
-                <input (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
+                <input tabindex="{{item.pos}}" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
                   name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0"
                   style="text-align: center;">
                 <span class="input-group-btn">

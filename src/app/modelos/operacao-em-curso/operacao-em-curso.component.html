@@ -20,28 +20,28 @@
             <label class="control-label ">Funcionário</label>
             <input class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
           </div>
-          <div class="col-md-12 col-md-offset-12 nopadding">
+          <div class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Início</label>
                 <input style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
-                  [disabled]="!modoedicao" />
+                  [disabled]="true" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
-                <input class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao" style="display: -webkit-box; height: 44.4px;"
+                <input class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="true" style="display: -webkit-box; height: 44.4px;"
                 />
               </div>
             </div>
           </div>
-          <div class="col-md-12 col-md-offset-12 nopadding">
+          <div class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Fim</label>
                 <input [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}" class="form-control" style="display: -webkit-box; height: 44.4px;"
-                  [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao"
+                  [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="true"
                 />
               </div>
             </div>
@@ -49,7 +49,7 @@
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
                 <input [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}" class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;"
-                  type="time" [ngModelOptions]="{standalone: true}" [disabled]="!modoedicao" />
+                  type="time" [ngModelOptions]="{standalone: true}" [disabled]="true" />
               </div>
             </div>
           </div>
@@ -111,6 +111,8 @@
     <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
       label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+  
+    <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 

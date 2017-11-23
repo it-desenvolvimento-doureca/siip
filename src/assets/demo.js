@@ -4,7 +4,7 @@
  * @author Eugene Maslovich <ehpc@em42.ru>
  */
 
-
+jQuery.ajaxSetup({ cache: false });
 
 $('#editarclick2').click(function () {
 

@@ -18,4 +18,5 @@ export class RP_OF_CAB {
     data_HORA_MODIF: Date;
     estado: string;
     op_COD_ORIGEM: string;
+    op_PREVISTA : string;
 }

@@ -13,6 +13,7 @@ import { RP_OF_PREP_LIN } from "app/modelos/entidades/RP_OF_PREP_LIN";
 import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service";
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
+import { ofService } from 'app/ofService';
 
 @Component({
   selector: 'app-operacao-em-curso',
@@ -51,7 +52,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   estado_val = "";
   utilizadores_adici: any[] = [];
 
-  constructor(private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
+  constructor(private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
@@ -471,6 +472,16 @@ export class OperacaoEmCursoComponent implements OnInit {
     } else {
       this.router.navigate(['./home']);
     }
+  }
+
+
+  ficheiroteste() {
+    this.ofService.criaficheiro(this.id_of_cab).subscribe(resu => {
+      alert("FICHEIRO CRIADO")
+    }, error =>{
+      alert("ERRO CRIAR FICHEIRO");
+      console.log(error)
+    } );
   }
 
 }
