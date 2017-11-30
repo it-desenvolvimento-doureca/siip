@@ -144,18 +144,20 @@ export class NovaOperacaoComponent implements OnInit {
                             this.service.getRef(response[0].ofanumenr).subscribe(
                                 response2 => {
                                     this.referencias = [];
+                                    var referencias = [];
                                     for (var x in response2) {
-                                        this.referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
+                                        referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
                                         //verifica familia
-                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF);
+                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF,null,referencias);
                                     }
-                                    this.referencias = this.referencias.slice();
+                                    this.referencias = referencias.slice();
                                 },
                                 error => console.log(error));
 
                             //preenche comobobox operações
                             this.service.getOP(response[0].ofanumenr).subscribe(
                                 response1 => {
+                                    this.operacao = [];
                                     for (var x in response1) {
                                         if (first) this.operacao.push({ label: "Seleccione a Operação", value: 0 });
                                         first = false;
@@ -224,17 +226,17 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //verifica FAM
-    veirificafam(codfam, ref, response = null) {
+    veirificafam(codfam, ref, response = null,referencias) {
         if (codfam != "") {
             this.RPCONFFAMILIACOMPService.getcodfam(codfam).subscribe(
                 response1 => {
                     var count1 = Object.keys(response1).length;
                     if (count1 > 0) {
                         if (response != null) {
-                            this.referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
-                            this.referencias = this.referencias.slice();
+                            referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
+                            this.referencias = referencias.slice();
                         }
-                        this.get_filhos(ref);
+                        this.get_filhos(ref,referencias);
                     }
                 },
                 error => console.log(error));
@@ -243,13 +245,13 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //pesquisar componentes
-    get_filhos(ref) {
+    get_filhos(ref,referencias) {
         this.service.getfilhos(ref).subscribe(
             response1 => {
                 var count1 = Object.keys(response1).length;
                 if (count1 > 0) {
                     for (var x in response1) {
-                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x]);
+                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x],referencias);
                     }
                 }
             },

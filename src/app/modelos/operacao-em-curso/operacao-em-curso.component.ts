@@ -478,10 +478,14 @@ export class OperacaoEmCursoComponent implements OnInit {
   ficheiroteste() {
     this.ofService.criaficheiro(this.id_of_cab).subscribe(resu => {
       alert("FICHEIRO CRIADO")
-    }, error =>{
+    }, error => {
       alert("ERRO CRIAR FICHEIRO");
       console.log(error)
-    } );
+    });
   }
 
+
+  lookupRowStyleClass(rowData) {
+    return !rowData.comp ? 'disabled-account-row' : '';
+  }
 }

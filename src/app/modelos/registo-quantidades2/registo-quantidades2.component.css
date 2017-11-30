@@ -28,6 +28,10 @@ input:read-only {
     background: rgb(246, 115, 115) !important;
 }
 
+.fundo_style{
+    background-clip: content-box !important;
+}
+
 .checkbox label input[type="checkbox"]:checked + .cr > .cr-icon, .radio label input[type="radio"]:checked + .cr > .cr-icon {
     transform: scale(1) rotateZ(0deg);
     opacity: 1;

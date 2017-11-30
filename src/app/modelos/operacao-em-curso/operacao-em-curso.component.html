@@ -84,9 +84,9 @@
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
-      <p-dataTable [value]="defeitos" class="tabelaref_of" dataKey="ref_num">
+      <p-dataTable [rowStyleClass]="lookupRowStyleClass" [value]="defeitos" class="tabelaref_of" dataKey="ref_num">
         <!--<p-header></p-header>-->
-        <p-column [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
+        <p-column  [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
