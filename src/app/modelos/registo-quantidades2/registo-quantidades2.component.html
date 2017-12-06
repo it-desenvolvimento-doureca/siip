@@ -98,9 +98,6 @@
         <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
       </div>
     </div>
-
-
-
     <div [hidden]="(comp && qtdetiquetas == 0)" class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 0px 0 0 0; text-align: center;">
       <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
         <label class="control-label " for="name">Quant. Boas</label>
@@ -150,8 +147,11 @@
         <label class="control-label " for="name">Total Etiquetas</label>
         <input class="form-control" type="text" style="text-align: center;" value="{{qtdetiquetas}}" readonly />
       </div>-->
+    </div>
 
-
+    <div class="col-md-3 col-md-offset-3 nopadding" style="display: table-cell; margin: 0px 0 0 0; text-align: center;">
+      <button type="button" class="form-control btn ui-button-success" (click)="abrirobsref()" pButton style="height: 60px;"
+        label="Observações Referência"></button>
     </div>
   </div>
   <div *ngIf="etiquetas.length > 0" class="col-md-3 col-md-offset-3 col-sm-3  nopadding" style="float: left; margin-top: 8px;">
@@ -336,6 +336,25 @@
   </p-footer>
 </p-dialog>
 
+
+<!-- POPUP OBS REFE-->
+<p-dialog header="Observações da Referência: {{ref_desg}}" [(visible)]="displayDialog2" modal="modal" [responsive]="true"
+[dismissableMask]="true" [draggable]="false">
+<div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+  <div class="ui-grid-row">
+    <div class="ui-grid-col-12">
+      <label for="vin">Observação</label>
+    </div>
+    <textarea pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obs_ref"></textarea>
+  </div>
+</div>
+<p-footer>
+  <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+    <button type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
+    <button type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
+  </div>
+</p-footer>
+</p-dialog>
 
 <!-- POPUP ETIQUETA NÃO ENCONTRADA -->
 <p-dialog header="Etiqueta não encontrada!" [(visible)]="displayDialogetiqueta" modal="modal" width="700" [responsive]="true"

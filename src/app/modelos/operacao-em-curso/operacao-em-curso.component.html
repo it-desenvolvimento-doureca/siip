@@ -75,12 +75,12 @@
   </div>
 
   <div class="col-md-8 col-md-offset-8 nopadding" style="float:left;">
-    <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
+    <!--<div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
       <button [disabled]="disabledAdici" type="button" class="ui-button-success" pButton routerLink="/registo-quantidades" label="REGISTO DE QUANTIDADES E DEFEITOS"
         style=" float:left; width: 100%; height: 70px;"></button>
-    </div>
+    </div>-->
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
-      <button [disabled]="disabledAdici" type="button" class="ui-button-default" pButton routerLink="/registo-quantidades2" label="REGISTO DE QUANTIDADES E DEFEITOS TESTE"
+      <button [disabled]="disabledAdici" type="button" class="ui-button-success" pButton routerLink="/registo-quantidades2" label="REGISTO DE QUANTIDADES E DEFEITOS TESTE"
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
@@ -91,6 +91,7 @@
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
         </p-column>
+        <p-column [style]="{'width':'5%'}" field="tipo" header="Tipo"></p-column>
         <p-column field="ref_des" header="Designação"></p-column>
         <p-column [style]="{'width':'7%'}" field="quant_of" header="Qtd. OF"></p-column>
         <p-column [style]="{'width':'8%'}" field="quant_boas" header="Qtd. Boas"></p-column>
@@ -112,7 +113,7 @@
       label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   
-    <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+   <!-- <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
   </div>
 </div>
 

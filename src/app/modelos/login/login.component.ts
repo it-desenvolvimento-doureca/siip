@@ -13,6 +13,7 @@ import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service"
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { AppGlobals } from 'webUrl';
+import { ofService } from 'app/ofService';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +35,7 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
   displayprep: boolean = false;
-  constructor(private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
+  constructor(private ofService: ofService, private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
 
   }
 
@@ -440,13 +441,15 @@ export class LoginComponent implements OnInit {
     this.estado.push('C', 'A', 'M');
     this.RPOFOPCABService.getdataof(id_of_cab, user, this.estado).subscribe(
       response => {
+        var count = 0;
+        var total = Object.keys(response).length;
         for (var x in response) {
           var comp = true;
-
+          count++;
           if (response[x][1].id_OF_CAB_ORIGEM == null) {
-            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, false);
+            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, false, count, total);
           } else {
-            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, true);
+            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, true, count, total);
           }
         }
       },
@@ -455,8 +458,8 @@ export class LoginComponent implements OnInit {
   }
 
   //alterar estados
-  estados(id_op_cab, user, nome, date, time_fim, comp) {
-
+  estados(id_op_cab, user, nome, date, time_fim, comp, count2, total) {
+    var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
     var pausa_inicio = new Date();
     var total_pausa = 0;
     var total_pausa_prep = 0;
@@ -545,8 +548,8 @@ export class LoginComponent implements OnInit {
         var rp_of_prep_lin = new RP_OF_PREP_LIN();
         this.RPOFPREPLINService.getbyid(id_op_cab).subscribe(resu => {
 
-          var count = Object.keys(resu).length;
-          if (count > 0) {
+          var count3 = Object.keys(resu).length;
+          if (count3 > 0) {
 
             var date1 = new Date(resu[0].data_INI + " " + resu[0].hora_INI);
             var date2 = new Date(date);
@@ -587,18 +590,21 @@ export class LoginComponent implements OnInit {
           this.RPOFCABService.update(rp_of_cab);
           this.RPOPFUNCService.update(rp_of_op_func);
           if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
-
+          if (count2 == total) this.ficheiroteste(id_of);
           this.displayprep = false;
           this.reset();
-
         }, error => console.log(error));
-
-
       }, error => console.log(error));
     }, error => console.log(error));
   }
 
 
+  ficheiroteste(id) {
+    this.ofService.criaficheiro(id).subscribe(resu => {
+    }, error => {
+      console.log(error)
+    });
+  }
 
   //ver diferenças entre datas
   timediff(timeStart, timeEnd) {

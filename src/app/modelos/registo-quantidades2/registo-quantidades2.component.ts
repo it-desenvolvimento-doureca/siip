@@ -25,6 +25,9 @@ import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
 })
 
 export class RegistoQuantidades2Component implements OnInit {
+  ref_desg;
+  displayDialog2: boolean;
+  obs_ref;
   corfundo_ref: string;
   totaldefeitos_ref: number = 0;
   totalcontrol_ref: number = 0;
@@ -128,7 +131,7 @@ export class RegistoQuantidades2Component implements OnInit {
           this.ref.push({
             qtd_etiqueta: null, id_ref_etiq: null, etiqueta: null, comp: comp, of_num: response[x][1].of_NUM, ref_NUM: response[x][0].ref_NUM, design: response[x][0].ref_NUM + " - " + response[x][0].ref_DES, id: response[x][0].id_OP_LIN, op: response[x][0].id_OP_CAB,
             qttboas: response[x][0].quant_BOAS_TOTAL, totaldefeitos: response[x][0].quant_DEF_TOTAL, qtdof: response[x][0].quant_OF, cor_fundo: cor_fundo,
-            qttboas_ref: response[x][0].quant_BOAS_TOTAL, totaldefeitos_ref: response[x][0].quant_DEF_TOTAL, qtdof_ref: response[x][0].quant_OF
+            qttboas_ref: response[x][0].quant_BOAS_TOTAL, totaldefeitos_ref: response[x][0].quant_DEF_TOTAL, qtdof_ref: response[x][0].quant_OF, obs_ref: response[x][0].obs_REF
           });
         }
 
@@ -402,7 +405,7 @@ export class RegistoQuantidades2Component implements OnInit {
                 }
               });
 
-           
+
           }
         } else {
           if (!this.fechou) {
@@ -461,14 +464,17 @@ export class RegistoQuantidades2Component implements OnInit {
           for (var x in res) {
             if (res[x][0].substring(2, 4) != '00') {
               pos++;
-              this.tabSets_temp.find(item => item.id == id).defeitos.push({ cod: res[x][0], des: res[x][1].trim(), value: res[x][2], id_DEF_LIN: res[x][3], pos: pos, obs: res[x][4] });
+              if (this.tabSets_temp.find(item => item.id == id)) {
+                this.tabSets_temp.find(item => item.id == id).defeitos.push({ cod: res[x][0], des: res[x][1].trim(), value: res[x][2], id_DEF_LIN: res[x][3], pos: pos, obs: res[x][4] });
+              }
             }
           }
           this.tabSets = this.tabSets_temp;
 
           if (count3 == total) {
             //this.tabSets = this.tabSets_temp;
-            this.tabSets[0].ative = "active";
+            
+            if(this.tabSets.length > 0)this.tabSets[0].ative = "active";
           }
         } else {
           var index = (this.tabSets_temp.findIndex(item => item.id == id));
@@ -548,12 +554,12 @@ export class RegistoQuantidades2Component implements OnInit {
 
   //preenchar tabela etiquetas
   getetiquetas(apagar = false) {
-    this.etiquetas = [];
     this.qtdetiquetas = 0;
 
     this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[this.i].id).subscribe(resp => {
       var count = Object.keys(resp).length;
       var index = count - 1;
+      this.etiquetas = [];
       for (var x in resp) {
         this.qtdetiquetas++;
         this.etiquetas.push({ num: resp[x].ref_ETIQUETA, qtt: resp[x].quant_ETIQUETA });
@@ -583,7 +589,7 @@ export class RegistoQuantidades2Component implements OnInit {
       this.num_etiqueta = this.ref[this.i].etiqueta;
       this.ref_num = this.ref[this.i].ref_NUM;
       this.cor_fundo = this.ref[this.i].cor_fundo;
-
+      this.obs_ref = this.ref[this.i].obs_ref;
 
       this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
       this.getdefeitos(this.ref[this.i].id, this.comp);
@@ -632,6 +638,7 @@ export class RegistoQuantidades2Component implements OnInit {
     this.qtd_etiqueta = this.ref[this.i].qtd_etiqueta;
 
     this.operacao_temp = [];
+    this.etiquetas = [];
     this.id_obdsdef = null;
     //this.getdefeitos(this.ref[this.i].id, this.comp);
     this.getetiquetas();
@@ -666,6 +673,7 @@ export class RegistoQuantidades2Component implements OnInit {
     this.bt_class = "btn-primary";
     this.num_etiqueta = this.ref[this.i].etiqueta;
 
+    this.etiquetas = [];
     this.operacao_temp = [];
     //this.getdefeitos(this.ref[this.i].id, this.comp);
     this.getetiquetas();
@@ -1161,6 +1169,30 @@ export class RegistoQuantidades2Component implements OnInit {
       }
     }
     return totaldefeitos;
+  }
+
+  abrirobsref(){
+    this.ref_desg = this.ref_name;
+    this.displayDialog2 = true;
+  }
+
+  
+  cancel_obs(){
+    this.displayDialog2 = false;
+  }
+
+  //guardar observação defeito
+  save_obs() { 
+    this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(res => {
+      for (var x in res) {
+        var rpdef = new RP_OF_OP_LIN;
+        rpdef = res[x];
+        rpdef.obs_REF = this.obs_ref;
+        this.ref[this.i].obs_ref = this.obs_ref;
+        this.RPOFOPLINService.update(rpdef)
+        this.displayDialog2 = false;
+      }
+    }, error => console.log(error));
   }
 
 }

@@ -227,8 +227,9 @@ export class OperacaoEmCursoComponent implements OnInit {
           var cor = "rgba(255, 255, 0, 0.78)";
           if (total == res[x].quant_OF) cor = "#2be32b";
           if (total > res[x].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
-
-          this.defeitos.push({ id: count, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
+          var tipo = "PF";
+          if (comp) tipo = "C";
+          this.defeitos.push({ tipo: tipo, id: count, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL, quant_def_total: res[x].quant_DEF_TOTAL, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
         this.ordernar();
@@ -271,19 +272,21 @@ export class OperacaoEmCursoComponent implements OnInit {
       var nome = JSON.parse(localStorage.getItem('user'))["name"];
       var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
-
+      var num_count = 0;
+      var total = this.id_op_cab_lista.length;
       for (var x in this.id_op_cab_lista) {
+        num_count++;
         if (this.count > 1) {
-          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false);
+          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false, num_count, total);
         } else {
-          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true);
+          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true, num_count, total);
         }
       }
     }
   }
 
   //alterar estados
-  estados(id_op_cab, user, nome, date, time_fim, comp, utz_count) {
+  estados(id_op_cab, user, nome, date, time_fim, comp, utz_count, num_count, total) {
 
     var pausa_inicio = new Date();
     var total_pausa = 0;
@@ -413,8 +416,8 @@ export class OperacaoEmCursoComponent implements OnInit {
 
             if (utz_count) this.RPOFCABService.update(rp_of_cab);
             this.RPOPFUNCService.update(rp_of_op_func);
-            if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
 
+            if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
           }, error => console.log(error));
         } else {
 
@@ -440,8 +443,9 @@ export class OperacaoEmCursoComponent implements OnInit {
           if (utz_count) this.RPOFCABService.update(rp_of_cab);
           if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
           this.RPOPFUNCService.update(rp_of_op_func);
-        }
 
+        }
+        if (num_count == total) this.ficheiroteste();
         this.router.navigate(['./home']);
       }, error => console.log(error));
     }, error => console.log(error));
@@ -477,9 +481,9 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   ficheiroteste() {
     this.ofService.criaficheiro(this.id_of_cab).subscribe(resu => {
-      alert("FICHEIRO CRIADO")
+      //alert("FICHEIRO CRIADO")
     }, error => {
-      alert("ERRO CRIAR FICHEIRO");
+      //alert("ERRO CRIAR FICHEIRO");
       console.log(error)
     });
   }
