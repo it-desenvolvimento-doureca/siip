@@ -137,7 +137,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
         this.ref = this.ref.slice();
         this.ref_old = this.ref;
-        this.getetiquetas(apagar);
+        this.getetiquetas(this.i, apagar);
 
         if (this.ref.length > 1) {
           this.disabledrefanterior = false;
@@ -461,6 +461,9 @@ export class RegistoQuantidades2Component implements OnInit {
 
           this.ordernar();
           var count = 1;
+          if (this.tabSets_temp.find(item => item.id == id)) {
+            this.tabSets_temp.find(item => item.id == id).defeitos= [];
+          }
           for (var x in res) {
             if (res[x][0].substring(2, 4) != '00') {
               pos++;
@@ -473,8 +476,8 @@ export class RegistoQuantidades2Component implements OnInit {
 
           if (count3 == total) {
             //this.tabSets = this.tabSets_temp;
-            
-            if(this.tabSets.length > 0)this.tabSets[0].ative = "active";
+
+            if (this.tabSets.length > 0) this.tabSets[0].ative = "active";
           }
         } else {
           var index = (this.tabSets_temp.findIndex(item => item.id == id));
@@ -553,10 +556,11 @@ export class RegistoQuantidades2Component implements OnInit {
   }
 
   //preenchar tabela etiquetas
-  getetiquetas(apagar = false) {
-    this.qtdetiquetas = 0;
-
-    this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[this.i].id).subscribe(resp => {
+  getetiquetas(i, apagar = false) {
+    this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[i].id).subscribe(resp => {
+      var ind = i;
+      this.i = ind;
+      this.qtdetiquetas = 0;
       var count = Object.keys(resp).length;
       var index = count - 1;
       this.etiquetas = [];
@@ -567,32 +571,53 @@ export class RegistoQuantidades2Component implements OnInit {
         if (this.ref_etiqueta == resp[x].ref_ETIQUETA) index = parseInt(x);
       }
       if (count > 0) {
-        this.ref[this.i].id_ref_etiq = resp[index].id_REF_ETIQUETA;
-        this.ref[this.i].of_num = resp[index].of_NUM_ORIGEM;
-        this.ref[this.i].qtd_etiqueta = resp[index].quant_ETIQUETA;
-        this.ref[this.i].etiqueta = resp[index].ref_ETIQUETA;
-        this.ref[this.i].totaldefeitos = resp[index].quant_DEF;
-        this.ref[this.i].qttboas = resp[index].quant_BOAS;
+        this.ref[ind].id_ref_etiq = resp[index].id_REF_ETIQUETA;
+        this.ref[ind].of_num = resp[index].of_NUM_ORIGEM;
+        this.ref[ind].qtd_etiqueta = resp[index].quant_ETIQUETA;
+        this.ref[ind].etiqueta = resp[index].ref_ETIQUETA;
+        this.ref[ind].totaldefeitos = resp[index].quant_DEF;
+        this.ref[ind].qttboas = resp[index].quant_BOAS;
 
         if (apagar) {
-          this.submitFunc(true, this.ref[this.i].id, this.ref[this.i].id_ref_etiq, this.ref[this.i].comp, this.i);
+          this.submitFunc(true, this.ref[ind].id, this.ref[ind].id_ref_etiq, this.ref[ind].comp, ind);
         }
       }
 
-      this.ref_name = this.ref[this.i].design;
-      this.totaldefeitos = this.ref[this.i].totaldefeitos;
-      this.qttboas = this.ref[this.i].qttboas;
-      this.qtdof = this.ref[this.i].qtdof;
-      this.comp = this.ref[this.i].comp;
-      this.num_lote = this.ref[this.i].of_num;
-      this.qtd_etiqueta = this.ref[this.i].qtd_etiqueta;
-      this.num_etiqueta = this.ref[this.i].etiqueta;
-      this.ref_num = this.ref[this.i].ref_NUM;
-      this.cor_fundo = this.ref[this.i].cor_fundo;
-      this.obs_ref = this.ref[this.i].obs_ref;
+      this.ref_name = this.ref[ind].design;
+      this.totaldefeitos = this.ref[ind].totaldefeitos;
+      this.qttboas = this.ref[ind].qttboas;
+      this.qtdof = this.ref[ind].qtdof;
+      this.comp = this.ref[ind].comp;
+      this.num_lote = this.ref[ind].of_num;
+      this.qtd_etiqueta = this.ref[ind].qtd_etiqueta;
+      this.num_etiqueta = this.ref[ind].etiqueta;
+      this.ref_num = this.ref[ind].ref_NUM;
+      this.cor_fundo = this.ref[ind].cor_fundo;
+      this.obs_ref = this.ref[ind].obs_ref;
+      this.ref_name = this.ref[ind].design;
+      this.id_ref_etiq = this.ref[ind].id_ref_etiq;
+      this.qttboas = parseInt(this.ref[ind].qttboas);
+      this.totaldefeitos = parseInt(this.ref[ind].totaldefeitos);
+      this.qtdof = this.ref[ind].qtdof;
+      this.totalcontrol = this.totaldefeitos + this.qttboas;
+
+      this.totaldefeitos_ref = parseInt(this.ref[ind].totaldefeitos_ref);
+      this.qttboas_ref = parseInt(this.ref[ind].qttboas_ref);
+      this.totalcontrol_ref = this.totaldefeitos_ref + this.qttboas_ref;
+
+      this.comp = this.ref[ind].comp;
+      this.num_lote = this.ref[ind].of_num;
+      this.spinner = false;
+      this.refresh = true;
+      this.bt_class = "btn-primary";
+      this.num_etiqueta = this.ref[ind].etiqueta;
+      this.qtd_etiqueta = this.ref[ind].qtd_etiqueta;
+
+      this.operacao_temp = [];
+      this.id_obdsdef = null;
 
       this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
-      this.getdefeitos(this.ref[this.i].id, this.comp);
+      this.getdefeitos(this.ref[ind].id, this.comp);
 
 
     }, error => console.log(error));
@@ -618,30 +643,9 @@ export class RegistoQuantidades2Component implements OnInit {
   nextItem() {
     this.i = this.i + 1;
     this.i = this.i % this.ref.length;
-    this.ref_name = this.ref[this.i].design;
-    this.id_ref_etiq = this.ref[this.i].id_ref_etiq;
-    this.qttboas = parseInt(this.ref[this.i].qttboas);
-    this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
-    this.qtdof = this.ref[this.i].qtdof;
-    this.totalcontrol = this.totaldefeitos + this.qttboas;
 
-    this.totaldefeitos_ref = parseInt(this.ref[this.i].totaldefeitos_ref);
-    this.qttboas_ref = parseInt(this.ref[this.i].qttboas_ref);
-    this.totalcontrol_ref = this.totaldefeitos_ref + this.qttboas_ref;
-
-    this.comp = this.ref[this.i].comp;
-    this.num_lote = this.ref[this.i].of_num;
-    this.spinner = false;
-    this.refresh = true;
-    this.bt_class = "btn-primary";
-    this.num_etiqueta = this.ref[this.i].etiqueta;
-    this.qtd_etiqueta = this.ref[this.i].qtd_etiqueta;
-
-    this.operacao_temp = [];
-    this.etiquetas = [];
-    this.id_obdsdef = null;
     //this.getdefeitos(this.ref[this.i].id, this.comp);
-    this.getetiquetas();
+    this.getetiquetas(this.i);
     setTimeout(() => {
       if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
     }, 200);
@@ -652,31 +656,10 @@ export class RegistoQuantidades2Component implements OnInit {
     if (this.i === 0) {
       this.i = this.ref.length;
     }
-    this.id_obdsdef = null;
     this.i = this.i - 1;
-    this.ref_name = this.ref[this.i].design;
-    this.id_ref_etiq = this.ref[this.i].id_ref_etiq;
-    this.totaldefeitos = parseInt(this.ref[this.i].totaldefeitos);
-    this.qttboas = parseInt(this.ref[this.i].qttboas);
-    this.qtdof = this.ref[this.i].qtdof;
-    this.totalcontrol = this.totaldefeitos + this.qttboas;
 
-    this.totaldefeitos_ref = parseInt(this.ref[this.i].totaldefeitos_ref);
-    this.qttboas_ref = parseInt(this.ref[this.i].qttboas_ref);
-    this.totalcontrol_ref = this.totaldefeitos_ref + this.qttboas_ref;
-
-    this.comp = this.ref[this.i].comp;
-    this.num_lote = this.ref[this.i].of_num;
-    this.qtd_etiqueta = this.ref[this.i].qtd_etiqueta;
-    this.spinner = false;
-    this.refresh = true;
-    this.bt_class = "btn-primary";
-    this.num_etiqueta = this.ref[this.i].etiqueta;
-
-    this.etiquetas = [];
-    this.operacao_temp = [];
     //this.getdefeitos(this.ref[this.i].id, this.comp);
-    this.getetiquetas();
+    this.getetiquetas(this.i);
     setTimeout(() => {
       if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
     }, 200);
@@ -880,13 +863,13 @@ export class RegistoQuantidades2Component implements OnInit {
   //pesquisa as familias ligadas à operação
   famassociadas(cod, id) {
     if (cod != "") {
+      
       this.RPCONFOPService.getAllbyid(cod).subscribe(res2 => {
         var total = Object.keys(res2).length;
         var count = 0;
         //se existir operações
         if (total > 0) {
           for (var x in res2) {
-
             count++;
             var ative = "";
             if (parseInt(x) == 0) ative = "active";
@@ -1171,18 +1154,18 @@ export class RegistoQuantidades2Component implements OnInit {
     return totaldefeitos;
   }
 
-  abrirobsref(){
+  abrirobsref() {
     this.ref_desg = this.ref_name;
     this.displayDialog2 = true;
   }
 
-  
-  cancel_obs(){
+
+  cancel_obs() {
     this.displayDialog2 = false;
   }
 
   //guardar observação defeito
-  save_obs() { 
+  save_obs() {
     this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(res => {
       for (var x in res) {
         var rpdef = new RP_OF_OP_LIN;

@@ -9,6 +9,7 @@ export class RP_OF_CAB {
     sec_NUM: string;
     sec_DES: string;
     maq_NUM: string;
+    maq_NUM_ORIG: string;
     maq_DES: string;
     id_UTZ_CRIA: string;
     nome_UTZ_CRIA: string;
@@ -18,5 +19,5 @@ export class RP_OF_CAB {
     data_HORA_MODIF: Date;
     estado: string;
     op_COD_ORIGEM: string;
-    op_PREVISTA : string;
+    op_PREVISTA: string;
 }

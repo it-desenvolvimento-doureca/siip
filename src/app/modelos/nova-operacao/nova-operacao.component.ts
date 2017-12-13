@@ -89,6 +89,9 @@ export class NovaOperacaoComponent implements OnInit {
     estado_of = "";
     operacao_temp = [];
     op_PREVISTA = '1';
+    MAQ_NUM_ORIG;
+    display_campos_obrigatorios = false;
+    campo = "";
     @ViewChild('inputFocous') inputFocous: any;
 
     constructor(private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
@@ -148,7 +151,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     for (var x in response2) {
                                         referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
                                         //verifica familia
-                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF,null,referencias);
+                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias);
                                     }
                                     this.referencias = referencias.slice();
                                 },
@@ -226,7 +229,7 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //verifica FAM
-    veirificafam(codfam, ref, response = null,referencias) {
+    veirificafam(codfam, ref, response = null, referencias) {
         if (codfam != "") {
             this.RPCONFFAMILIACOMPService.getcodfam(codfam).subscribe(
                 response1 => {
@@ -236,7 +239,7 @@ export class NovaOperacaoComponent implements OnInit {
                             referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
                             this.referencias = referencias.slice();
                         }
-                        this.get_filhos(ref,referencias);
+                        this.get_filhos(ref, referencias);
                     }
                 },
                 error => console.log(error));
@@ -245,13 +248,13 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //pesquisar componentes
-    get_filhos(ref,referencias) {
+    get_filhos(ref, referencias) {
         this.service.getfilhos(ref).subscribe(
             response1 => {
                 var count1 = Object.keys(response1).length;
                 if (count1 > 0) {
                     for (var x in response1) {
-                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x],referencias);
+                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x], referencias);
                     }
                 }
             },
@@ -317,6 +320,7 @@ export class NovaOperacaoComponent implements OnInit {
                             find = true;
                             this.maq_DES = response[x].SSEDES;
                             this.maq_NUM = response[x].ssecod;
+                            this.MAQ_NUM_ORIG = response[x].ssecod;
                             this.selectedmaq = response[x].ssecod;
                             this.sec_des = response[x].SECLIB;
                             this.sec_num = response[x].SECCOD;
@@ -324,6 +328,7 @@ export class NovaOperacaoComponent implements OnInit {
                             this.selectedmaq = response[x].ssecod;
                             this.maq_DES = response[x].SSEDES;
                             this.maq_NUM = response[x].ssecod;
+                            this.MAQ_NUM_ORIG = response[x].ssecod;
                             this.sec_des = response[x].SECLIB;
                             this.sec_num = response[x].SECCOD;
 
@@ -415,6 +420,9 @@ export class NovaOperacaoComponent implements OnInit {
                     }
                 },
                 error => console.log(error));
+        } else {
+            this.campo = "Operação";
+            this.display_campos_obrigatorios = true;
         }
     }
 
@@ -453,6 +461,7 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.op_NUM = this.op_NUM;
         rpof.op_DES = this.op_desc;
         rpof.maq_NUM = this.maq_NUM;
+        rpof.maq_NUM_ORIG = this.MAQ_NUM_ORIG;
         rpof.maq_DES = this.maq_DES;;
         rpof.id_UTZ_CRIA = this.username
         rpof.nome_UTZ_CRIA = this.nome_utz;
@@ -484,6 +493,7 @@ export class NovaOperacaoComponent implements OnInit {
                 rpof.op_NUM = '' + opnum;
                 rpof.op_DES = null;
                 rpof.maq_NUM = '000';
+                rpof.maq_NUM_ORIG = '000';
                 rpof.maq_DES = 'MÃO DE OBRA';
                 rpof.id_UTZ_CRIA = this.username
                 rpof.nome_UTZ_CRIA = this.nome_utz;

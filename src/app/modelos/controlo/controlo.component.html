@@ -54,35 +54,17 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="func" header="Func." [sortable]="true" [style]="{'width':'7%'}">
-      <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
-          <tr *ngFor="let col2 of row[col.field]">
-            <td>{{col2}}</td>
-          </tr>
-        </div>
-      </ng-template>
-    </p-column>
-    <p-column field="qtd_func" header="Qtd. Func." [sortable]="true" [style]="{'width':'3%'}">
+    <p-column field="qtd_func" header="Func. Ativos" [sortable]="true" [style]="{'width':'3%','font-size': '12px'}">
       <ng-template pTemplate="body" *ngFor="let col of rowData">
         <div class="divtable" style="font-size: 10px;">
           {{row[col.field]}}
         </div>
       </ng-template>
     </p-column>
-    <p-column field="ref" header="Ref." [sortable]="true" [style]="{'width':'6%'}">
-      <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding:0;">
-          <tr *ngFor="let col2 of row[col.field]">
-            <td>{{col2}}</td>
-          </tr>
-        </div>
-      </ng-template>
-    </p-column>
-    <p-column field="artigo" header="Artigo" [sortable]="true" [style]="{'width':'12%'}">
+    <p-column field="func" header="Func." [sortable]="true" [style]="{'width':'7%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable" style="padding: 0px">
-          <tr style=" font-size: 0.71vw;" *ngFor="let col2 of row[col.field]">
+          <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
         </div>
@@ -128,6 +110,24 @@
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable" style="padding: 0px">
           <tr *ngFor="let col2 of row[col.field]">
+            <td>{{col2}}</td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="ref" header="Ref." [sortable]="true" [style]="{'width':'6%'}">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable" style="padding:0;">
+          <tr *ngFor="let col2 of row[col.field]">
+            <td>{{col2}}</td>
+          </tr>
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="artigo" header="Artigo" [sortable]="true" [style]="{'width':'12%'}">
+      <ng-template pTemplate="body" let-col let-row="rowData ">
+        <div class="divtable" style="padding: 0px">
+          <tr style=" font-size: 0.71vw;" *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
         </div>

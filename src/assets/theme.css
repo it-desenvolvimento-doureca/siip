@@ -2731,8 +2731,14 @@ p-togglebutton.ng-dirty.ng-invalid .ui-button {
     border-bottom-color: #e13131;
 }
 
+
+
+
 body .ui-datatable .ui-cell-data {
-    font-size: 12px !important;
+    font-size: 12px;
+}
+.disabled-account-row .ui-cell-data {
+    font-size: 14px !important;
 }
 
 .tabelacontrolo .ui-datatable .ui-cell-data {
@@ -3170,6 +3176,7 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-even{
     background: white !important;
     font-weight: 600;
 }
+
 
 body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd{
     background-color: #e5dede ;
