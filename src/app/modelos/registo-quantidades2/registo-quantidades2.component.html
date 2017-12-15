@@ -28,7 +28,7 @@
           <h6>Nº Etiqueta:</h6>
         </label>
         <div class="icon-addon " style="width: 100%;">
-          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}"
+          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null || !modoedicao" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}"
             (keyup.enter)="pesquisaetiqueta()" class="form-control" type="number" #num (ngModelChange)="num_etiqueta=num.value"
             style="text-align: center; width:19%; display: inline; margin-left: 10px;" min="0" />
         </div>
@@ -42,10 +42,10 @@
           <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" (click)="novaetiqueta()" class="btn btn-primary" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()" class="btn btn-primary" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-plus"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" (click)="apagardados()" class="btn btn-danger" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="apagardados()" class="btn btn-danger" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-trash"></i>
           </button>
           <label *ngIf="num_lote!='' && num_lote != null" class="control-label " for="name">
@@ -103,13 +103,13 @@
         <label class="control-label " for="name">Quant. Boas</label>
         <div class="input-group">
           <span class="input-group-btn" style="height: 40px; top: 1px;">
-            <button [disabled]="(comp && qtdetiquetas == 0)" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
+            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
               (click)="menosqtdboas()" class="btn btn-default">-</button>
           </span>
-          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0)" class="form-control" id="qtdboas" type="number" #box
+          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number" #box
             (ngModelChange)="updatetotal(box.value)" style="text-align: center;" min="0" style="text-align: center;" />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
-            <button [disabled]="(comp && qtdetiquetas == 0)" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
+            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
               (click)="maisqtdboas()" class="btn btn-default">+</button>
           </span>
         </div>
@@ -228,14 +228,14 @@
                 <span [hidden]="item.obs == null || item.obs == ''">*</span>{{ item.cod }} - {{ item.des }}</label>
               <div class="input-group" style="width: 92%;">
                 <span class="input-group-btn">
-                  <button type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
+                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
                     class="btn btn-default">-</button>
                 </span>
                 <input tabindex="{{item.pos}}" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}"
                   (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)" name="{{ item.cod }}"
-                  #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0" style="text-align: center;">
+                  #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0" style="text-align: center;" [disabled]="!modoedicao">
                 <span class="input-group-btn">
-                  <button type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)" class="btn btn-default">+</button>
+                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)" class="btn btn-default">+</button>
                 </span>
               </div>
             </div>
@@ -260,7 +260,7 @@
           <h5> Verificações Adicionais </h5>
           <div class="checkbox col-md-6 col-sm-6" style="float: left;">
             <label style="font-size: 1.5em">
-              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -269,7 +269,7 @@
           </div>
           <div class="checkbox col-md-6 col-sm-6" style="float: left;">
             <label style="font-size: 1.5em">
-              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -278,7 +278,7 @@
           </div>
           <div class="checkbox col-md-6 col-sm-6" style="float: left;">
             <label style="font-size: 1.5em">
-              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -287,7 +287,7 @@
           </div>
           <div class="checkbox col-md-6 col-sm-6" style="float: left; ">
             <label style="font-size: 1.5em">
-              <input type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -343,13 +343,13 @@
       <div class="ui-grid-col-12">
         <label for="vin">Observação</label>
       </div>
-      <textarea pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obs_ref"></textarea>
+      <textarea [disabled]="!modoedicao" pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obs_ref"></textarea>
     </div>
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
-      <button type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
+      <button  type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
+      <button [disabled]="!modoedicao" type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
     </div>
   </p-footer>
 </p-dialog>

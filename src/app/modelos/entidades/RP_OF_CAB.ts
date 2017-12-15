@@ -20,4 +20,5 @@ export class RP_OF_CAB {
     estado: string;
     op_COD_ORIGEM: string;
     op_PREVISTA: string;
+    versao_MODIF : number;
 }

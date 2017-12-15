@@ -13,4 +13,9 @@ export class RP_OF_OP_LIN {
     perc_OBJETIV: number;
     perc_DEF: number;
     obs_REF : string;
+    quant_BOAS_TOTAL_M1: number;
+    quant_DEF_TOTAL_M1: number;
+    quant_BOAS_TOTAL_M2: number;
+    quant_DEF_TOTAL_M2: number;    
+    versao_MODIF : number;
 }

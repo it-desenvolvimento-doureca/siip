@@ -9,5 +9,8 @@ export class RP_OF_DEF_LIN {
     quant_DEF: number;
     data_HORA_REG: Date;
     obs_DEF: string;
+    quant_DEF_M1: number;
+    quant_DEF_M2: number;
+    versao_MODIF : number;
 
 }

@@ -12,4 +12,9 @@ export class RP_OF_OP_ETIQUETA {
     id_UTZ_CRIA: string;
     id_UTZ_MODIF: string;
     data_HORA_MODIF: Date;
+    quant_BOAS_M1: number;
+    quant_BOAS_M2: number;
+    quant_DEF_M1: number;
+    quant_DEF_M2: number;
+    versao_MODIF : number;
 }

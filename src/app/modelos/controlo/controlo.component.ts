@@ -135,7 +135,7 @@ export class ControloComponent implements OnInit {
 
           }
 
-          var hora1 = new Date(res[y][2].data_INI + "," + res[y][2].hora_INI.slice(0, 5))
+          var hora1 = new Date(res[y][2].data_INI_M2 + "," + res[y][2].hora_INI_M2.slice(0, 5))
           var hora2 = new Date();
 
           var timedif1 = hora2.getTime() - hora1.getTime();
@@ -194,17 +194,17 @@ export class ControloComponent implements OnInit {
 
     for (var n in res5) {
 
-      if (res5[n][1].data_FIM != null) var dtfim2 = this.formatDate(res5[n][1].data_FIM);
-      if (res5[n][1].hora_FIM != null) var hfim2 = res5[n][1].hora_FIM.slice(0, 5);
+      if (res5[n][1].data_FIM_M2 != null) var dtfim2 = this.formatDate(res5[n][1].data_FIM_M2);
+      if (res5[n][1].hora_FIM_M2 != null) var hfim2 = res5[n][1].hora_FIM_M2.slice(0, 5);
 
       dtfim.push(dtfim2);
       hfim.push(hfim2);
-      dt_inicio.push(this.formatDate(res5[n][1].data_INI));
-      hora_inicio.push(res5[n][1].hora_INI.slice(0, 5));
+      dt_inicio.push(this.formatDate(res5[n][1].data_INI_M2));
+      hora_inicio.push(res5[n][1].hora_INI_M2.slice(0, 5));
       func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 14));
 
-      if (res5[n][1].data_FIM == null) qtd_func++;
-      tempo_prod.push(res5[n][0].tempo_EXEC_TOTAL);
+      if (res5[n][1].data_FIM_M2 == null) qtd_func++;
+      tempo_prod.push(res5[n][0].tempo_EXEC_TOTAL_M2);
 
       if (res5[n][1].estado == 'C') estado.push("Concluido");
       if (res5[n][1].estado == 'I') estado.push("Iniciado");
@@ -212,6 +212,7 @@ export class ControloComponent implements OnInit {
       if (res5[n][1].estado == 'S') estado.push("Pausa");
       if (res5[n][1].estado == 'E') estado.push("Execução");
       if (res5[n][1].estado == 'P') estado.push("Preparação");
+      if (res5[n][1].estado == 'A') estado.push("Anulado");
     }
 
     this.dados.push({

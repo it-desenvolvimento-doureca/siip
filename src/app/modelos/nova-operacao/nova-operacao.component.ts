@@ -468,6 +468,7 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.of_OBS = this.observacoes;
         rpof.sec_DES = this.sec_des;
         rpof.sec_NUM = this.sec_num;
+        rpof.versao_MODIF = 0;
         rpof.op_PREVISTA = this.op_PREVISTA;
         rpof.op_COD_ORIGEM = this.selected['OPECOD'];
 
@@ -498,6 +499,7 @@ export class NovaOperacaoComponent implements OnInit {
                 rpof.id_UTZ_CRIA = this.username
                 rpof.nome_UTZ_CRIA = this.nome_utz;
                 rpof.of_OBS = null;
+                rpof.versao_MODIF = 0;
                 rpof.sec_DES = this.sec_des;
                 rpof.sec_NUM = this.sec_num;
 
@@ -541,10 +543,16 @@ export class NovaOperacaoComponent implements OnInit {
         var rpofop = new RP_OF_OP_FUNC;
 
         rpofop.id_OP_CAB = id_OP_CAB;
-        rpofop.data_INI = new Date();
         var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        rpofop.data_INI = new Date();
         rpofop.hora_INI = time;
+
+        rpofop.data_INI_M1 = new Date();
+        rpofop.hora_INI_M1 = time;
+        rpofop.data_INI_M2 = new Date();
+        rpofop.hora_INI_M2 = time;
+
         rpofop.id_UTZ_CRIA = this.username
         rpofop.nome_UTZ_CRIA = this.nome_utz;
         rpofop.perfil_CRIA = this.perfil_utz;
@@ -574,6 +582,10 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.ref_VAR2 = ref.var2;
             rpofoplin.quant_BOAS_TOTAL = 0;
             rpofoplin.quant_DEF_TOTAL = 0;
+            rpofoplin.quant_BOAS_TOTAL_M1 = 0;
+            rpofoplin.quant_DEF_TOTAL_M1 = 0;
+            rpofoplin.quant_BOAS_TOTAL_M2 = 0;
+            rpofoplin.quant_DEF_TOTAL_M2 = 0;
             rpofoplin.quant_OF = parseInt(this.referencias[0].OFBQTEINI);
             rpofoplin.perc_OBJETIV = parseFloat(ref.perc_obj);
             rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
@@ -590,6 +602,11 @@ export class NovaOperacaoComponent implements OnInit {
                     rpofoplin.ref_VAR2 = this.referencias[x].var2;
                     rpofoplin.quant_BOAS_TOTAL = 0;
                     rpofoplin.quant_DEF_TOTAL = 0;
+
+                    rpofoplin.quant_BOAS_TOTAL_M1 = 0;
+                    rpofoplin.quant_DEF_TOTAL_M1 = 0;
+                    rpofoplin.quant_BOAS_TOTAL_M2 = 0;
+                    rpofoplin.quant_DEF_TOTAL_M2 = 0;
                     rpofoplin.perc_OBJETIV = parseFloat(this.referencias[x].perc_obj);
                     rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
                     rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);

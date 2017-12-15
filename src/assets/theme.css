@@ -1090,6 +1090,7 @@ body .ui-tabview.ui-tabview-bottom,
 body .ui-tabview.ui-tabview-left,
 body .ui-tabview.ui-tabview-right {
     border: 0 none;
+    height: 100%;
 }
 
 body .ui-tabview.ui-tabview-top .ui-tabview-nav,

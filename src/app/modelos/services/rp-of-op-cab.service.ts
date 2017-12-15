@@ -61,8 +61,8 @@ export class RPOFOPCABService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-  getbyid(id) {
-    const url = webUrl.host + '/rest/siip/getRP_OF_OP_CABid/' + id + '';
+  getbyid(id,id2) {
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_CABid/' + id + '/'+id2;
     return this.http
       .get(url)
       .map(this.extractData)

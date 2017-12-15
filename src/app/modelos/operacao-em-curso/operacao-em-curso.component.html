@@ -18,21 +18,23 @@
           </div>
           <div class="form-group">
             <label class="control-label ">Funcionário</label>
-            <input style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
+            <input [hidden]="!disableEditar" style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
+            <p-dropdown [hidden]="disableEditar" [options]="utilizadores" [(ngModel)]="utz_lider" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
+            (onChange)="atualizaDados($event)" [style]="{'width':'100%'}"></p-dropdown>
           </div>
           <div class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Início</label>
-                <input style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
-                  [disabled]="true" />
+                <input (change)="atualizartempofunc('data_ini')" style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
+                  [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
-                <input class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="true" style="display: -webkit-box; height: 44.4px;"
-                />
+                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
+                  style="display: -webkit-box; height: 44.4px;" />
               </div>
             </div>
           </div>
@@ -40,16 +42,17 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Fim</label>
-                <input [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}" class="form-control" style="display: -webkit-box; height: 44.4px;"
-                  [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="true"
+                <input (change)="atualizartempofunc('data_fim')" [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}" class="form-control" style="display: -webkit-box; height: 44.4px;"
+                  [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
                 />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
-                <input [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}" class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;"
-                  type="time" [ngModelOptions]="{standalone: true}" [disabled]="true" />
+                <input (change)="atualizartempofunc('hora_fim')" [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}" class="form-control" [(ngModel)]="hora_fim"
+                  style="display: -webkit-box; height: 44.4px;" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
+                />
               </div>
             </div>
           </div>
@@ -80,13 +83,13 @@
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>-->
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-bottom: 20px;">
-      <button [disabled]="disabledAdici" type="button" class="ui-button-success" pButton routerLink="/registo-quantidades2" label="REGISTO DE QUANTIDADES E DEFEITOS"
+      <button [disabled]="disabledAdici" type="button" class="ui-button-success" pButton (click)="editarquantidades()" label="REGISTO DE QUANTIDADES E DEFEITOS"
         style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
       <p-dataTable [rowStyleClass]="lookupRowStyleClass" [value]="defeitos" class="tabelaref_of" dataKey="ref_num">
         <!--<p-header></p-header>-->
-        <p-column  [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
+        <p-column [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
           <ng-template let-col let-x="rowData" pTemplate="body">
             <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
           </ng-template>
@@ -106,14 +109,24 @@
       </p-dataTable>
     </div>
   </div>
-  <div class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
+  <div [hidden]="modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
     <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
       label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile()" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-  
-   <!-- <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
+    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile('C','O')" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+
+    <!-- <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
+  </div>
+  <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
+    <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="VOLTAR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="!permissao_editar" type="button" class="ui-button-warning" pButton (click)="editar()" label="EDITAR"
+      style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="!permissao_editar" type="button" class="ui-button-danger" pButton (click)="eliminar()" label="ELIMINAR"
+      style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+
+   <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('M')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 

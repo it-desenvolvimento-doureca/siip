@@ -56,6 +56,11 @@ const routes: Routes = [
     canActivate: [LoginService]
   },
   {
+    path: 'operacao-em-curso/edicao',
+    component: OperacaoEmCursoComponent,
+    canActivate: [LoginService]
+  },
+  {
     path: 'config',
     component: GestaoUsersComponent,
     canActivate: [LoginService]
@@ -64,13 +69,12 @@ const routes: Routes = [
     path: 'pausa',
     component: TipoPausaComponent,
     canActivate: [LoginService]
-  },
-  {
+  },{
     path: 'registo-quantidades',
-    component: RegistoQuantidadesComponent,
+    component: RegistoQuantidades2Component,
     canActivate: [LoginService]
-  }, {
-    path: 'registo-quantidades2',
+  },{
+    path: 'registo-quantidades/edicao',
     component: RegistoQuantidades2Component,
     canActivate: [LoginService]
   },

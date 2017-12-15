@@ -45,6 +45,7 @@ export class GestaoUsersComponent implements OnInit {
   no3: any;
   no4: any;
   no5: any;
+  no7: any;
   fam: SelectItem[];
   list1: any[];
   list2: any[];
@@ -52,6 +53,7 @@ export class GestaoUsersComponent implements OnInit {
   list4: any[];
   list5: any[];
   list6: any[];
+  list7: any[];
   nome = "";
   chefe_seccao = "";
   displayDialog: boolean;
@@ -154,6 +156,19 @@ export class GestaoUsersComponent implements OnInit {
           }
         }
         break;
+      //Editor
+      case "list7":
+        if (this.no != "" && this.nome != "") {
+          if (!this.list5.find(item => item.no === this.no)) {
+            conf_utiliz.id_UTZ = this.no;
+            conf_utiliz.perfil = "E";
+            conf_utiliz.nome_UTZ = this.nome;
+            this.conf_service.create(conf_utiliz).then(() => {
+              this.preenchetabelas();
+            });
+          }
+        }
+        break;
       //Lista das Operações
       case "listop":
         if (this.selectedallop != "") {
@@ -205,6 +220,14 @@ export class GestaoUsersComponent implements OnInit {
           this.no5 = "";
         }
         break;
+      case "list7":
+        if (this.no7 != "") {
+          this.conf_service.delete(this.no7).then(() => {
+            this.preenchetabelas();
+          });
+          this.no7 = "";
+        }
+        break;
       //Lista das Operações
       case "listop":
         if (this.selectedop != "") {
@@ -238,6 +261,9 @@ export class GestaoUsersComponent implements OnInit {
   }
   onRowSelect5(event) {
     this.no5 = event.data.id;
+  }
+  onRowSelect7(event) {
+    this.no7 = event.data.id;
   }
   onRowSelectallop(event) {
     this.selectedallop = event.data.codigoop;
@@ -466,6 +492,7 @@ export class GestaoUsersComponent implements OnInit {
     this.list3 = [];
     this.list4 = [];
     this.list5 = [];
+    this.list7 = [];
     this.brand1 = [{ label: 'Seleccione Chefe', value: "0" }];
 
     this.conf_service.getAll().subscribe(
@@ -477,10 +504,13 @@ export class GestaoUsersComponent implements OnInit {
               break;
             case "G":
               this.list4.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
-              this.brand1.push({ label: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ, value:{ no: response[x].id_UTZ.trim(),nome: response[x].nome_UTZ }});
+              this.brand1.push({ label: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ, value: { no: response[x].id_UTZ.trim(), nome: response[x].nome_UTZ } });
               break;
             case "A":
               this.list5.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
+              break;
+            case "E":
+              this.list7.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
               break;
           }
 
@@ -489,6 +519,7 @@ export class GestaoUsersComponent implements OnInit {
         this.list3 = this.list3.slice();
         this.list4 = this.list4.slice();
         this.list5 = this.list5.slice();
+        this.list7 = this.list7.slice();
         this.brand1 = this.brand1.slice();
       },
       error => console.log(error));

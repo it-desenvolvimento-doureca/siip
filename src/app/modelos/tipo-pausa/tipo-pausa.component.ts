@@ -49,7 +49,7 @@ export class TipoPausaComponent implements OnInit {
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         this.estado.push('T');
         this.RPOFOPCABService.getdataof(id_of, user, this.estado).subscribe(result => {
-          var id_op_cab = result[0][0].id_OP_CAB;
+          var id_op_cab = result[0][2].id_OP_CAB;
           var rp_of_para_lin = new RP_OF_PARA_LIN();
           rp_of_para_lin.data_INI = date;
           rp_of_para_lin.hora_INI = time;
@@ -62,7 +62,12 @@ export class TipoPausaComponent implements OnInit {
           this.RPOFPARALINService.create(rp_of_para_lin).subscribe(
             res => {
               for (var x in result) {
-                this.estados(result[x][0].id_OP_CAB, user, nome, date);
+                this.estados(result[x][1], user, nome, date);
+
+                if (result[x][1].id_OF_CAB_ORIGEM == null) {
+                  this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date);
+                }
+
               }
 
             },
@@ -79,19 +84,9 @@ export class TipoPausaComponent implements OnInit {
 
   }
 
-
-  estados(id_op_cab, user, nome, date) {
-
+  estadofuncionario(id_op_cab, user, nome, date) {
+    //estado rp_of_op_func
     this.RPOPFUNCService.getbyid(id_op_cab, user).subscribe(result => {
-      //estado rp_of_cab
-      var rp_of_cab = new RP_OF_CAB();
-      rp_of_cab = result[0][1];
-      rp_of_cab.id_UTZ_MODIF = user;
-      rp_of_cab.nome_UTZ_MODIF = nome;
-      rp_of_cab.data_HORA_MODIF = date;
-      rp_of_cab.estado = "S"
-
-      //estado rp_of_op_func
       var rpfunc = new RP_OF_OP_FUNC();
       rpfunc = result[0][0];
       rpfunc.id_UTZ_MODIF = user;
@@ -100,9 +95,23 @@ export class TipoPausaComponent implements OnInit {
       rpfunc.perfil_MODIF = "O";
       rpfunc.estado = "S";
 
-      this.RPOFCABService.update(rp_of_cab);
       this.RPOPFUNCService.update(rpfunc);
-      this.router.navigate(['./home']);
     }, error => console.log(error));
+  }
+
+  estados(result, user, nome, date) {
+
+    //estado rp_of_cab
+    var rp_of_cab = new RP_OF_CAB();
+    rp_of_cab = result;
+    rp_of_cab.id_UTZ_MODIF = user;
+    rp_of_cab.nome_UTZ_MODIF = nome;
+    rp_of_cab.data_HORA_MODIF = date;
+    rp_of_cab.estado = "S"
+
+    this.RPOFCABService.update(rp_of_cab);
+
+    this.router.navigate(['./home']);
+
   }
 }

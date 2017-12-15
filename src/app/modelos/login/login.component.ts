@@ -21,6 +21,7 @@ import { ofService } from 'app/ofService';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  id_OP_CAB: void;
   estado: any = [];
   displaypausa: boolean = false;
   current_of: any;
@@ -73,7 +74,7 @@ export class LoginComponent implements OnInit {
     this.service.searchuser(this.operation).subscribe(
       response => {
         var count = Object.keys(response).length;
-        //se existir uma of vai preencher combobox operações
+
         if (count > 0) {
           localStorage.setItem('user', JSON.stringify({ username: response[0].RESCOD, name: response[0].RESDES }));
           localStorage.setItem('time_siip', JSON.stringify({ data: new Date() }));
@@ -131,6 +132,7 @@ export class LoginComponent implements OnInit {
         var count = Object.keys(response).length;
         if (count > 0) {
           for (var x in response) {
+            this.id_OP_CAB = response[x][1].id_OP_CAB;
             localStorage.setItem('id_of_cab', JSON.stringify(response[x][1].id_OF_CAB));
             dataacess = ["O"];
             localStorage.setItem('access', JSON.stringify(dataacess));
@@ -287,7 +289,14 @@ export class LoginComponent implements OnInit {
           this.RPOFPARALINService.update(rp_of_para_lin);
 
           for (var x in result) {
-            this.estados_pausa_fim(result[x][0].id_OP_CAB, user, nome, date, result2[0].momento_PARAGEM);
+
+            this.estados_pausa_fim(result[x][1], user, nome, date, result2[0].momento_PARAGEM);
+
+            if (result[x][1].id_OF_CAB_ORIGEM == null) {
+              this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date, result2[0].momento_PARAGEM);
+            }
+
+
           }
 
 
@@ -411,6 +420,10 @@ export class LoginComponent implements OnInit {
             var tempo_prep = this.gettime(time_prep);
             rp_of_op_cab.tempo_PREP_TOTAL = tempo_prep;
 
+            rp_of_op_cab.tempo_PREP_TOTAL_M1 = tempo_prep;
+            rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
+
+
             this.RPOPFUNCService.update(rpfunc);
             this.RPOFOPCABService.update(rp_of_op_cab);
           }, error => console.log(error));
@@ -447,9 +460,9 @@ export class LoginComponent implements OnInit {
           var comp = true;
           count++;
           if (response[x][1].id_OF_CAB_ORIGEM == null) {
-            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, false, count, total);
+            this.estados(response[x][2].id_OP_CAB, user, nome, date, time, false, count, total);
           } else {
-            this.estados(response[x][0].id_OP_CAB, user, nome, date, time, true, count, total);
+            this.estados(response[x][2].id_OP_CAB, user, nome, date, time, true, count, total);
           }
         }
       },
@@ -464,7 +477,7 @@ export class LoginComponent implements OnInit {
     var total_pausa = 0;
     var total_pausa_prep = 0;
     var total_pausa_of = 0;
-    this.RPOFOPCABService.getbyid(id_op_cab).subscribe(result => {
+    this.RPOFOPCABService.getbyid(id_op_cab, this.id_OP_CAB).subscribe(result => {
 
       var rp_of_op_cab = new RP_OF_OP_CAB();
       var rp_of_op_func = new RP_OF_OP_FUNC();
@@ -538,7 +551,12 @@ export class LoginComponent implements OnInit {
           timedif5 = parseInt(splitted_pausa_prep[0]) * 3600000 + parseInt(splitted_pausa_prep[1]) * 60000 + parseInt(splitted_pausa_prep[2]) * 1000;
         }
 
-        if (result[0][0].tempo_PARA_TOTAL != null) rp_of_op_cab.tempo_PARA_TOTAL = "0:0:0";
+        if (result[0][0].tempo_PARA_TOTAL != null) {
+          rp_of_op_cab.tempo_PARA_TOTAL = "0:0:0";
+          rp_of_op_cab.tempo_PARA_TOTAL_M1 = "0:0:0";
+          rp_of_op_cab.tempo_PARA_TOTAL_M2 = "0:0:0";
+
+        }
 
 
         var splitted_pausa = time_pausa_prep.split(":", 3);
@@ -577,6 +595,12 @@ export class LoginComponent implements OnInit {
           rp_of_op_cab.tempo_PREP_TOTAL = tempo_prep;
           rp_of_op_cab.tempo_PARA_TOTAL = time_pausa_prep;
           rp_of_op_cab.tempo_EXEC_TOTAL = tempo_total_execucao;
+          rp_of_op_cab.tempo_PREP_TOTAL_M1 = tempo_prep;
+          rp_of_op_cab.tempo_PARA_TOTAL_M1 = time_pausa_prep;
+          rp_of_op_cab.tempo_EXEC_TOTAL_M1 = tempo_total_execucao;
+          rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
+          rp_of_op_cab.tempo_PARA_TOTAL_M2 = time_pausa_prep;
+          rp_of_op_cab.tempo_EXEC_TOTAL_M2 = tempo_total_execucao;
 
           rp_of_op_func.id_UTZ_MODIF = user;
           rp_of_op_func.nome_UTZ_MODIF = nome;
@@ -585,6 +609,11 @@ export class LoginComponent implements OnInit {
           rp_of_op_func.estado = "C";
           rp_of_op_func.data_FIM = date;
           rp_of_op_func.hora_FIM = time_fim;
+
+          rp_of_op_func.data_FIM_M1 = date;
+          rp_of_op_func.hora_FIM_M1 = time_fim;
+          rp_of_op_func.data_FIM_M2 = date;
+          rp_of_op_func.hora_FIM_M2 = time_fim;
 
 
           this.RPOFCABService.update(rp_of_cab);
@@ -600,7 +629,7 @@ export class LoginComponent implements OnInit {
 
 
   ficheiroteste(id) {
-    this.ofService.criaficheiro(id).subscribe(resu => {
+    this.ofService.criaficheiro(id, "O").subscribe(resu => {
     }, error => {
       console.log(error)
     });
@@ -621,22 +650,34 @@ export class LoginComponent implements OnInit {
     var hours = Math.floor(hourDiff / 3.6e6);
     var minutes = Math.floor((hourDiff % 3.6e6) / 6e4);
     var seconds = Math.floor((hourDiff % 6e4) / 1000);
-    return hours + ":" + minutes + ":" + seconds;
+    return this.pad(hours, 2) + ":" + this.pad(minutes, 2) + ":" + this.pad(seconds, 2);
+  }
+
+  pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length - size);
+  }
+
+  estados_pausa_fim(result, user, nome, date, estado) {
+
+    //estado rp_of_cab
+    var rp_of_cab = new RP_OF_CAB();
+    rp_of_cab = result;
+    rp_of_cab.id_UTZ_MODIF = user;
+    rp_of_cab.nome_UTZ_MODIF = nome;
+    rp_of_cab.data_HORA_MODIF = date;
+    rp_of_cab.estado = estado;
+
+
+
+    this.RPOFCABService.update(rp_of_cab);
+    this.router.navigate(['./home']);
   }
 
 
-  estados_pausa_fim(id_op_cab, user, nome, date, estado) {
-
+  estadofuncionario(id_op_cab, user, nome, date, estado) {
+    //estado rp_of_op_func
     this.RPOPFUNCService.getbyid(id_op_cab, user).subscribe(result => {
-      //estado rp_of_cab
-      var rp_of_cab = new RP_OF_CAB();
-      rp_of_cab = result[0][1];
-      rp_of_cab.id_UTZ_MODIF = user;
-      rp_of_cab.nome_UTZ_MODIF = nome;
-      rp_of_cab.data_HORA_MODIF = date;
-      rp_of_cab.estado = estado;
-
-      //estado rp_of_op_func
       var rpfunc = new RP_OF_OP_FUNC();
       rpfunc = result[0][0];
       rpfunc.id_UTZ_MODIF = user;
@@ -645,11 +686,8 @@ export class LoginComponent implements OnInit {
       rpfunc.perfil_MODIF = "O";
       rpfunc.estado = estado;
 
-      this.RPOFCABService.update(rp_of_cab);
       this.RPOPFUNCService.update(rpfunc);
-      this.router.navigate(['./home']);
     }, error => console.log(error));
   }
-
 
 }

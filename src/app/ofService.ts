@@ -128,8 +128,8 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    criaficheiro(id){
-        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '';
+    criaficheiro(id, estado) {
+        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado;
         return this.http
             .get(url)
             .map((res: Response) => res.json())

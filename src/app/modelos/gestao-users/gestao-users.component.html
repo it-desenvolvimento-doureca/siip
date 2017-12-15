@@ -22,14 +22,14 @@
     </p-tabPanel>
 
     <p-tabPanel header="Acessos">
-      <div class="col-md-12 col-md-offset-12" style="height: 750px;">
+      <div class="col-md-12 col-md-offset-12" style="">
         <div class="col-md-5 col-md-offset-5" style="float:left;">
           <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
             <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
             <input #gba type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
           </div>
           <p-dataTable [globalFilter]="gba" #dt1 [value]="list2" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="no"
-            scrollable="true" scrollHeight="600px" [responsive]="true" [rows]="10">
+            scrollable="true" scrollHeight="750px" [responsive]="true" [rows]="10">
             <p-column field="field" header="Utilizadores" [sortable]="true"></p-column>
           </p-dataTable>
         </div>
@@ -52,6 +52,12 @@
             <button (click)="apagar('list5')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
               class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
           </div>
+          <div style="height: 250px;     padding-top: 30%;">
+              <button (click)="insere('list7')" icon="fa-angle-double-right" pbutton="" type="button" ng-reflect-icon="fa-angle-double-right"
+                class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-right"></span><span class="ui-button-text ui-c">ui-button</span></button>
+              <button (click)="apagar('list7')" icon="fa-angle-double-left" pbutton="" type="button" ng-reflect-icon="fa-angle-double-left"
+                class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"><span class="ui-button-icon-left ui-c fa fa-fw fa-angle-double-left"></span><span class="ui-button-text ui-c">ui-button</span></button>
+            </div>
         </div>
         <div class="col-md-5 col-md-offset-5" style="float:left;">
           <div style="height: 250px;">
@@ -72,6 +78,12 @@
               <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
             </p-dataTable>
           </div>
+          <div style="height: 250px;">
+              <p-dataTable scrollable="true" scrollHeight="200px" [value]="list7" selectionMode="single" (onRowSelect)="onRowSelect7($event)"
+                dataKey="no">
+                <p-column field="field" header="Perfil Edição" [sortable]="true"></p-column>
+              </p-dataTable>
+            </div>
         </div>
       </div>
     </p-tabPanel>

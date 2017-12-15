@@ -7,4 +7,5 @@ export class RP_OF_OUTRODEF_LIN {
     quant_OUTRODEF: number;
     res_OUTRODEF: string;
     obs_OUTRODEF: string;
+    quant_OUTRODEF_M1: number;
 }

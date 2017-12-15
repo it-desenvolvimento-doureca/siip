@@ -35,6 +35,13 @@ export class RPOFCABService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  updateEstados(data) {
+    return this.http
+      .post(webUrl.host + '/rest/siip/createupdateESTADOS', JSON.stringify(data), { headers: this.headers })
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
 
   getAll(): Observable<RP_OF_CAB[]> {
     const url = webUrl.host + '/rest/siip/getRP_OF_CAB';

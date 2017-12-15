@@ -74,4 +74,20 @@ export class RPOPFUNCService {
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
+
+  getUser(id) {
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_FUNCuser/' + id
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  getallUsersbyid_of_cab(id) {
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_FUNCallusers/' + id
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 }
