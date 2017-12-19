@@ -39,6 +39,7 @@ import { AppGlobals } from 'webUrl';
 import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
 import { RPOFOPETIQUETAService } from 'app/modelos/services/rp-of-op-etiqueta.service';
 import { RegistoQuantidades2Component } from './modelos/registo-quantidades2/registo-quantidades2.component';
+import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 
 const routes: Routes = [
   {
@@ -147,6 +148,7 @@ const routes: Routes = [
     RPOFPARALINService,
     RPOFLSTDEFService,
     RPOFOPETIQUETAService,
+    GEREVENTOService,
     AppGlobals
   ],
   bootstrap: [AppComponent]

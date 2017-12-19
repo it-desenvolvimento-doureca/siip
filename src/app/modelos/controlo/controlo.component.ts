@@ -4,6 +4,8 @@ import { CalendarModule } from 'primeng/primeng';
 import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
 import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 import { Router } from '@angular/router';
+import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
+import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 
 @Component({
   selector: 'app-controlo',
@@ -23,6 +25,8 @@ import { Router } from '@angular/router';
   ]
 })
 export class ControloComponent implements OnInit {
+  mensagens: any[];
+  displaymensagem: boolean;
   count3 = 0;
   hiddenvermais: boolean;
   count2: any;
@@ -48,7 +52,7 @@ export class ControloComponent implements OnInit {
   checked: boolean = false;
   estados = [{ label: "--", value: null }, { label: "Concluido", value: "C" }, { label: "Execução", value: "E" }]
 
-  constructor(private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
+  constructor(private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
   ngOnInit() {
     this.count2 = 0;
@@ -91,6 +95,7 @@ export class ControloComponent implements OnInit {
 
     }
   }
+
 
   preenchetabela(count2, total, res, y, count) {
 
@@ -215,11 +220,14 @@ export class ControloComponent implements OnInit {
       if (res5[n][1].estado == 'A') estado.push("Anulado");
     }
 
+    var total_lidas = false;
+    if (res[y][3] == res[y][4]) total_lidas = true;
+
     this.dados.push({
       pos: count2,
       id_of_cab: res[y][0].id_OF_CAB,
       of: res[y][0].of_NUM,
-      operacao:  res[y][0].op_COD_ORIGEM + " - " +  res[y][0].op_DES.trim(),
+      operacao: res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim(),
       maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
       func: func,
       id_func: res[y][2].id_UTZ_CRIA,
@@ -239,7 +247,9 @@ export class ControloComponent implements OnInit {
       estado: estado,
       cor_of: cor_of,
       cor_tempo_prod: cor_tempo_prod,
-      cor_estado: cor_estado
+      cor_estado: cor_estado,
+      total_lidas: total_lidas,
+      mensagens: res[y][3]
     });
     this.count3++;
     if (this.count3 == this.num_rows) {
@@ -418,4 +428,45 @@ export class ControloComponent implements OnInit {
     this.router.navigate(['./operacao-em-curso'], { queryParams: { id: event.data.id_func } });
   }
 
+
+  //abrir popup de mensagens
+  ver_mensagens(id, pos) {
+    this.displaymensagem = true;
+    document.getElementById("page_html").style.overflow = 'hidden';
+    this.mensagens = [];
+    this.GEREVENTOService.getbyidorigem(id, "ID_OF_CAB").subscribe(result => {
+      for (var x in result) {
+        var data = new Date(result[x].data_HORA_CRIA).toLocaleString();
+        this.mensagens.push({ nome: result[x].nome_UTZ_CRIA, data: data, mensagem: result[x].mensagem, assunto: result[x].assunto });
+        if (result[x].estado == "C") {
+          this.marcarMensagemLida(result[x]);
+        }
+      }
+
+      this.dados.find(item => item.pos == pos).total_lidas = true;
+    },
+      error => {
+        console.log(error);
+      });
+  }
+
+
+  //marcar mensagens por ler como lidas
+  marcarMensagemLida(mensagem) {
+    var mensag = new GER_EVENTO;
+    var userid = JSON.parse(localStorage.getItem('user'))["username"];
+    var nome = JSON.parse(localStorage.getItem('user'))["name"];
+    mensag = mensagem;
+    mensag.estado = "L";
+    mensag.id_UTZ_LEITURA = userid;
+    mensag.nome_UTZ_LEITURA = nome;
+    mensag.data_HORA_LEITURA = new Date();
+    this.GEREVENTOService.update(mensag);
+  }
+
+
+  //ao fecahr popup
+  fechar() {
+    document.getElementById("page_html").style.overflow = 'auto';
+  }
 }

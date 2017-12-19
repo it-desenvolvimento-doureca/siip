@@ -3183,4 +3183,7 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd{
     background-color: #e5dede ;
 }
 
+.mensagem_dialog .ui-dialog {
+    top: 20px !important;
+}
 

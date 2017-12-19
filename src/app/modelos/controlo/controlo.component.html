@@ -27,6 +27,10 @@
     <p-column field="pos" header="" [style]="{'background':'black','width':'3%'}">
       <ng-template let-col let-row="rowData" pTemplate="body">
         <div class="divtable">
+          <span *ngIf="row['mensagens'] > 0" style="font-size: 20px; display: block; margin-top: -5px; margin-bottom: 16px;">
+            <a (click)="ver_mensagens(row['id_of_cab'],row['pos'])"> <i *ngIf="!row['total_lidas']" class="fa fa-envelope-o " style="color: white" aria-hidden="true"></i></a>
+            <a (click)="ver_mensagens(row['id_of_cab'],row['pos'])"> <i *ngIf="row['total_lidas']" class="fa fa-envelope-open-o " style="color: white" aria-hidden="true"></i></a>
+          </span>
           <span>
             <i class="fa fa-circle  {{row['cor_of']}}icon" aria-hidden="true"></i>
           </span>
@@ -63,7 +67,7 @@
     </p-column>
     <p-column field="func" header="Func." [sortable]="true" [style]="{'width':'7%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -72,7 +76,7 @@
     </p-column>
     <p-column field="dt_inicio" header="Dt. Início" [sortable]="true" [style]="{'width':'4%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -81,7 +85,7 @@
     </p-column>
     <p-column field="hora_inicio" header="Hora Início" [sortable]="true" [style]="{'width':'3%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px;">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -90,7 +94,7 @@
     </p-column>
     <p-column field="dt_fim" header="Dt. Fim" [sortable]="true" [style]="{'width':'4%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -99,7 +103,7 @@
     </p-column>
     <p-column field="hora_fim" header="Hora Fim" [sortable]="true" [style]="{'width':'3%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -108,7 +112,7 @@
     </p-column>
     <p-column field="tempo_prod" header="Tempo Prod." [sortable]="true" [style]="{'width':'4%'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable" style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>
@@ -151,18 +155,18 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="total_def" header="Total Def." [sortable]="true" [style]="{'width':'4%'}">
+    <p-column field="total_def" header="Total Def." [sortable]="true" [style]="{'width':'4%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable " style="padding: 0px">
+        <div class="divtable2 " style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
             <td class=" {{col2.cor}}">{{col2.value}}</td>
           </tr>
         </div>
       </ng-template>
     </p-column>
-    <p-column field="perc_def" header="% Defeitos" [sortable]="true" [style]="{'width':'5%'}">
+    <p-column field="perc_def" header="% Defeitos" [sortable]="true" [style]="{'width':'5%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable" style="padding: 0px">
+        <div class="divtable2" style="padding: 0px;">
           <tr *ngFor="let col2 of row[col.field]">
             <td class=" {{col2.cor}}">{{col2.value}}</td>
           </tr>
@@ -243,22 +247,22 @@
         <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Data Início</label>
+              <=D ata Início</label>
                 <p-calendar [(ngModel)]="pesquisa.date3" [ngModelOptions]="{standalone: true}"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Data Fim</label>
+              <=D ata Fim</label>
                 <p-calendar [(ngModel)]="pesquisa.date4" [ngModelOptions]="{standalone: true}"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Tempo Prod.</label>
+              <=T empo Prod.</label>
                 <input class="form-control" [(ngModel)]="pesquisa.tempo_prod_menor" [ngModelOptions]="{standalone: true}" type="time" />
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Operação</label>
-            <input class="form-control" [(ngModel)]="pesquisa.operacao"  [ngModelOptions]="{standalone: true}"type="text" />
+            <input class="form-control" [(ngModel)]="pesquisa.operacao" [ngModelOptions]="{standalone: true}" type="text" />
           </div>
         </div>
         <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
@@ -282,17 +286,17 @@
         <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Hora Início</label>
+              <=H ora Início</label>
                 <input class="form-control" [(ngModel)]="pesquisa.hora3" [ngModelOptions]="{standalone: true}" type="time" />
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Hora Fim</label>
+              <=H ora Fim</label>
                 <input class="form-control" [(ngModel)]="pesquisa.hora4" [ngModelOptions]="{standalone: true}" type="time" />
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
-              <= Quant.</label>
+              <=Q uant.</label>
                 <input class="form-control" [(ngModel)]="pesquisa.qttmenor" [ngModelOptions]="{standalone: true}" type="number" />
           </div>
           <div class="form-group">
@@ -316,7 +320,7 @@
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Estado</label>
             <p-dropdown [(ngModel)]="pesquisa.estado" class="comboestado" [ngModelOptions]="{standalone: true}" [options]="estados" [style]="{'width':'80%'}"></p-dropdown>
-           <!-- <input class="form-control" [(ngModel)]="pesquisa.estado" [ngModelOptions]="{standalone: true}" type="text" />-->
+            <!-- <input class="form-control" [(ngModel)]="pesquisa.estado" [ngModelOptions]="{standalone: true}" type="text" />-->
           </div>
         </div>
         <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
@@ -327,3 +331,32 @@
     </div>
   </div>
 </div>
+
+<!-- POPUP MENSAGEM-->
+<p-dialog header="Mensagens" (onHide)="fechar()" class="mensagem_dialog" positionTop="2" [(visible)]="displaymensagem" modal="modal" [responsive]="true"  [dismissableMask]="true"
+[draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px; overflow: auto; max-height: 60vh;">
+    <div class="container" style="padding: 0;">
+      <div class="well" *ngFor="let col of mensagens">
+        <div class="media">
+          <div class="media-body" style="margin-bottom: 7px;">
+            <h6 class="media-heading" style="display: inline;">Assunto: </h6><span>{{col.assunto}}</span>
+            <br>
+            <h6 class="media-heading" style="display: inline;">Mensagem: </h6><span>{{col.mensagem}}</span>
+            <ul class="list-inline list-unstyled" style="margin-bottom: 0px; font-size: 12px; margin-top: 4px;">
+              <li><span><i class="fa fa-calendar" aria-hidden="true"></i> {{col.data}} </span></li>
+              <li>|</li> 
+              <li><span><i class="fa fa-user-o" aria-hidden="true"></i> {{col.nome}} </span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="displaymensagem = false" label="Fechar"></button>
+    </div>
+  </p-footer>
+</p-dialog>

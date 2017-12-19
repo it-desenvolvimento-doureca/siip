@@ -3,7 +3,7 @@
     text-align: center;
 }
 
-.divtable > .divspan {
+.divtable>.divspan {
     top: 45%;
     position: absolute;
     left: 0;
@@ -82,3 +82,22 @@ tbody {
     display: inline-grid !important;
     width: 100%
 }
+
+.well {
+    min-height: 20px;
+    padding: 10px;
+    padding-bottom: 0;
+    margin-bottom: 9px;
+    font-size: 14px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.list-inline>li {
+    display: inline-block;
+    padding-right: 5px;
+}
+

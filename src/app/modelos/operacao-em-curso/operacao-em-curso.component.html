@@ -18,23 +18,24 @@
           </div>
           <div class="form-group">
             <label class="control-label ">Funcionário</label>
-            <input [hidden]="!disableEditar" style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true" />
-            <p-dropdown [hidden]="disableEditar" [options]="utilizadores" [(ngModel)]="utz_lider" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
-            (onChange)="atualizaDados($event)" [style]="{'width':'100%'}"></p-dropdown>
+            <input [hidden]="!disableEditar" style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true"
+            />
+            <p-dropdown [hidden]="disableEditar" [options]="utilizadores" [(ngModel)]="utz_lider" [ngModelOptions]="{standalone: true}"
+              (onChange)="atualizaDados($event)" [style]="{'width':'100%'}"></p-dropdown>
           </div>
           <div class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Início</label>
-                <input (change)="atualizartempofunc('data_ini')" style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
-                  [disabled]="disableEditar" />
+                <input (change)="atualizartempofunc('data_ini')" style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini"
+                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
-                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
-                  style="display: -webkit-box; height: 44.4px;" />
+                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" type="time" [ngModelOptions]="{standalone: true}"
+                  [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" />
               </div>
             </div>
           </div>
@@ -42,17 +43,17 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Fim</label>
-                <input (change)="atualizartempofunc('data_fim')" [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}" class="form-control" style="display: -webkit-box; height: 44.4px;"
-                  [(ngModel)]="data_fim" min="{{data_ini}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
-                />
+                <input (change)="atualizartempofunc('data_fim')" [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}"
+                  class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim" min="{{data_ini}}"
+                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
-                <input (change)="atualizartempofunc('hora_fim')" [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}" class="form-control" [(ngModel)]="hora_fim"
-                  style="display: -webkit-box; height: 44.4px;" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
-                />
+                <input (change)="atualizartempofunc('hora_fim')" [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}"
+                  class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;" type="time" [ngModelOptions]="{standalone: true}"
+                  [disabled]="disableEditar" />
               </div>
             </div>
           </div>
@@ -111,10 +112,12 @@
   </div>
   <div [hidden]="modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
     <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
+    <button type="button" icon="fa-envelope-o" class="ui-button-info" pButton (click)="mensagem()" label="MENSAGEM" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
       label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile('C','O')" label="CONCLUIR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile('C','O')" label="CONCLUIR"
+      style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
     <!-- <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
   </div>
@@ -126,7 +129,7 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
-   <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('M')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <!--<button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('M')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
   </div>
 </div>
 
@@ -187,5 +190,30 @@
   </div>
 </p-dialog>
 
+<!-- POPUP MENSAGEM-->
+<p-dialog header="Mensagem" [(visible)]="displaymensagem" modal="modal" [responsive]="true" width="700" [dismissableMask]="true"
+  [draggable]="false">
+  <form (ngSubmit)="gravarmensagem()" ngNativeValidate>
+    <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12">
+          <label for="vin">Assunto</label>
+        </div>
+        <input type="text" pInputText size="100" placeholder="Assunto" class="form-control" [(ngModel)]="texto_assunto" [ngModelOptions]="{standalone: true}">
+        <div class="ui-grid-col-12">
+          <label for="vin">Texto Mensagem</label>
+        </div>
+        <textarea [required]="true" pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="texto_mensagem"
+          [ngModelOptions]="{standalone: true}"></textarea>
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+        <button type="button" pButton icon="fa-close" (click)="displaymensagem = false" label="Cancelar"></button>
+        <button type="submit" pButton icon="fa-check" label="Gravar"></button>
+      </div>
+    </p-footer>
+  </form>
+</p-dialog>
 
 <p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>

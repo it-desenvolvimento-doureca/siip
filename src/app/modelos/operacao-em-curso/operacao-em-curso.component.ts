@@ -14,6 +14,8 @@ import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service"
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { ofService } from 'app/ofService';
+import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
+import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 
 @Component({
   selector: 'app-operacao-em-curso',
@@ -21,6 +23,9 @@ import { ofService } from 'app/ofService';
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  texto_assunto: string;
+  texto_mensagem: string;
+  displaymensagem: boolean;
   versao_modif: any;
   id_utz_lider: string;
   utz_lider: any;
@@ -58,7 +63,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   estado_val = "";
   utilizadores_adici: any[] = [];
 
-  constructor(private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
+  constructor(private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
@@ -516,11 +521,6 @@ export class OperacaoEmCursoComponent implements OnInit {
           }
 
 
-          console.log(time_pausa_of)
-          console.log(tempo_total_execucao)
-          console.log(tempo_total_execucao)
-
-
           rp_of_op_func.id_UTZ_MODIF = user;
           rp_of_op_func.nome_UTZ_MODIF = nome;
           rp_of_op_func.data_HORA_MODIF = date;
@@ -567,7 +567,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     var hours = Math.floor(hourDiff / 3.6e6);
     var minutes = Math.floor((hourDiff % 3.6e6) / 6e4);
     var seconds = Math.floor((hourDiff % 6e4) / 1000);
-    return this.pad(hours,2) + ":" + this.pad(minutes,2) + ":" + this.pad(seconds,2);
+    return this.pad(hours, 2) + ":" + this.pad(minutes, 2) + ":" + this.pad(seconds, 2);
   }
 
   pad(num, size) {
@@ -584,6 +584,32 @@ export class OperacaoEmCursoComponent implements OnInit {
     }
   }
 
+  mensagem() {
+    this.texto_mensagem = "";
+    this.texto_assunto = "";
+    this.displaymensagem = true;
+  }
+
+
+  gravarmensagem() {
+    var userid = JSON.parse(localStorage.getItem('user'))["username"];
+    var nome = JSON.parse(localStorage.getItem('user'))["name"];
+    var evento = new GER_EVENTO;
+
+    evento.campo_ORIGEM = "ID_OF_CAB";
+    evento.mensagem = this.texto_mensagem;
+    evento.assunto = this.texto_assunto;
+    evento.id_UTZ_CRIA = userid;
+    evento.nome_UTZ_CRIA = nome;
+    evento.data_HORA_CRIA = new Date();
+    evento.modulo = 2;
+    evento.id_ORIGEM = this.id_of_cab;
+    evento.estado = "C";
+    this.GEREVENTOService.create(evento).subscribe(result => {
+      this.displaymensagem = false;
+    }, error => console.log(error));
+
+  }
 
   ficheiroteste(estado) {
     this.ofService.criaficheiro(this.id_of_cab, estado).subscribe(resu => {
