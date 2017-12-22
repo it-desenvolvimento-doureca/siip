@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 
 @Injectable()
@@ -14,7 +14,7 @@ export class LoginService implements CanActivate {
 
     private userIsAuthenticated: boolean;
 
-    canActivate() {
+    canActivate(route: ActivatedRouteSnapshot,) {
        
         if (localStorage.getItem('time_siip')) {
             var data_storage = new Date(JSON.parse(localStorage.getItem('time_siip'))["data"]).getTime();
@@ -36,22 +36,23 @@ export class LoginService implements CanActivate {
             this.router.navigate(['./home']);
             return false;
         } else {
+            var url = route.url[0].path;
 
-            if (location.pathname == "/nova-operacao" || location.pathname == "/registo-quantidades" || location.pathname == "/operacao-em-curso") {
-                if (!access.find(item => item === "O") && !access.find(item => item === "A")) {
+            if (url == "nova-operacao" || url == "registo-quantidades" || url == "operacao-em-curso") {
+                if (!access.find(item => item === "O") && !access.find(item => item === "A") && !access.find(item => item === "G")) {
                     alert('Acesso Negado!');
                     this.router.navigate(['./home']);
                     return false;
                 }
             }
-            else if (location.pathname == "/controlo") {
+            else if (url == "controlo") {
                 if (!access.find(item => item === "G") && !access.find(item => item === "A")) {
                     alert('Acesso Negado!');
                     this.router.navigate(['./home']);
                     return false;
                 }
             }
-            else if (location.pathname == "/gestao-users") {
+            else if (url == "gestao-users") {
                 if (!access.find(item => item === "A")) {
                     alert('Acesso Negado!');
                     this.router.navigate(['./home']);

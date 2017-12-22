@@ -161,6 +161,13 @@ export class LoginComponent implements OnInit {
           this.service__utz.getbyid(id).subscribe(
             response => {
               var count = Object.keys(response).length;
+              var total = 0;
+              if (count > 0) {
+                for (var x in response) {
+                  if (response[x].perfil != "E") total++;
+                }
+              }
+              count = total;
               if (count == 1) {
                 for (var x in response) {
                   dataacess.push(response[x].perfil);

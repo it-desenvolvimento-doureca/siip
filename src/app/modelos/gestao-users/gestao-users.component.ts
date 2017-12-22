@@ -159,7 +159,7 @@ export class GestaoUsersComponent implements OnInit {
       //Editor
       case "list7":
         if (this.no != "" && this.nome != "") {
-          if (!this.list5.find(item => item.no === this.no)) {
+          if (!this.list7.find(item => item.no === this.no)) {
             conf_utiliz.id_UTZ = this.no;
             conf_utiliz.perfil = "E";
             conf_utiliz.nome_UTZ = this.nome;

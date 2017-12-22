@@ -340,6 +340,10 @@ export class RegistoQuantidades2Component implements OnInit {
         rp_of_op_etiqueta.quant_ETIQUETA = parseInt(qtd_eti);
         rp_of_op_etiqueta.quant_BOAS = 0;
         rp_of_op_etiqueta.quant_DEF = 0;
+        rp_of_op_etiqueta.quant_BOAS_M1 = 0;
+        rp_of_op_etiqueta.quant_DEF_M1 = 0;
+        rp_of_op_etiqueta.quant_BOAS_M2 = 0;
+        rp_of_op_etiqueta.quant_DEF_M2 = 0;
         //create
         this.RPOFOPETIQUETAService.create(rp_of_op_etiqueta).then(
           res => {

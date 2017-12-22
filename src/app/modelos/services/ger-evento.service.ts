@@ -69,4 +69,10 @@ export class GEREVENTOService {
     return body;
   }
 
+  verficaEventos(data) {
+    return this.http
+      .post(webUrl.host + '/rest/siip/verficaEventos', JSON.stringify(data), { headers: this.headers })
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 }

@@ -699,24 +699,23 @@ export class OperacaoEmCursoComponent implements OnInit {
             rpfunc.hora_FIM_M1 = user.hora_FIM;
 
             rpfunc.data_FIM = user.data_FIM;
-            rpfunc.hora_FIM = user.hora_FIM;
+            rpfunc.hora_FIM = user.hora_FIM.substr(0, 8);
           } else {
-            rpfunc.data_INI_M1 = rpfunc.data_INI_M2
+            rpfunc.data_INI_M1 = rpfunc.data_INI_M2;
             rpfunc.hora_INI_M1 = rpfunc.hora_INI_M2;
-            rpfunc.data_FIM_M1 = rpfunc.data_FIM_M2
-            rpfunc.hora_FIM_M1 = rpfunc.hora_FIM_M2
+            rpfunc.data_FIM_M1 = rpfunc.data_FIM_M2;
+            rpfunc.hora_FIM_M1 = rpfunc.hora_FIM_M2;
           }
           rpfunc.data_INI_M2 = user.data_INI;
-          rpfunc.hora_INI_M2 = user.hora_INI;
+          rpfunc.hora_INI_M2 = user.hora_INI.substr(0, 8);
           rpfunc.data_FIM_M2 = user.data_FIM;
-          rpfunc.hora_FIM_M2 = user.hora_FIM;
+          rpfunc.hora_FIM_M2 = user.hora_FIM.substr(0, 8);
           rpfunc.id_UTZ_MODIF = userid;
           rpfunc.nome_UTZ_MODIF = nome;
           rpfunc.perfil_MODIF = "E";
           rpfunc.data_HORA_MODIF = new Date();
           rpfunc.estado = "M"
         }
-
         this.RPOPFUNCService.update(rpfunc).then(res => {
           if (total == count) {
             this.createfile("M", "E");

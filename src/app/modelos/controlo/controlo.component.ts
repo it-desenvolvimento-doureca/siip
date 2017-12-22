@@ -123,14 +123,14 @@ export class ControloComponent implements OnInit {
         for (var x in response) {
 
           //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
-          if ((response[x][0].quant_BOAS_TOTAL + response[x][0].quant_DEF_TOTAL) > response[x][0].quant_OF) {
+          if ((response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2) > response[x][0].quant_OF) {
             cor_qtd_of = "yellow";
             cor_estado = "yellow";
             cor_of = "yellow";
           }
 
           //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
-          val_perc_def = ((response[x][0].quant_DEF_TOTAL * 100) / response[x][0].quant_OF) || 0;
+          val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
 
           if (val_perc_def >= response[x][0].perc_OBJETIV) {
             cor_total_def = "yellow";
@@ -146,7 +146,7 @@ export class ControloComponent implements OnInit {
           var timedif1 = hora2.getTime() - hora1.getTime();
           //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
           //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
-          if (timedif1 > 57600000 && res[y][1].tempo_EXEC_TOTAL == null) {
+          if (timedif1 > 57600000 && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
             cor_tempo_prod = "red";
             cor_estado = "red";
             cor_of = "red";
@@ -158,7 +158,7 @@ export class ControloComponent implements OnInit {
           */
 
           //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
-          if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[y][1].tempo_EXEC_TOTAL == null) {
+          if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
             cor_tempo_prod = "yellow";
             cor_estado = "yellow";
             cor_of = "yellow";
@@ -167,8 +167,8 @@ export class ControloComponent implements OnInit {
           artigos.push(response[x][0].ref_DES.substring(0, 32));
           refs.push(response[x][0].ref_NUM);
           qtd_of.push({ value: response[x][0].quant_OF, cor: cor_qtd_of });
-          qtd_boas.push(response[x][0].quant_BOAS_TOTAL);
-          total_def.push({ value: response[x][0].quant_DEF_TOTAL, cor: cor_total_def });
+          qtd_boas.push(response[x][0].quant_BOAS_TOTAL_M2);
+          total_def.push({ value: response[x][0].quant_DEF_TOTAL_M2, cor: cor_total_def });
           perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString(), cor: cor_perc_def });
           perc_obj.push(response[x][0].perc_OBJETIV);
         }
@@ -448,8 +448,20 @@ export class ControloComponent implements OnInit {
       error => {
         console.log(error);
       });
+
+    //this.verifica();
   }
 
+
+  //verificar enventos
+  verifica() {
+    var data = [{ MODULO: 1, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true }];
+
+    this.GEREVENTOService.verficaEventos(data).subscribe(result => {
+    }, error => {
+      console.log(error);
+    });
+  }
 
   //marcar mensagens por ler como lidas
   marcarMensagemLida(mensagem) {
