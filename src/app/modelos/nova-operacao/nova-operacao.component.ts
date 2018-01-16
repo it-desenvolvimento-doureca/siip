@@ -83,7 +83,8 @@ export class NovaOperacaoComponent implements OnInit {
     selectedmaq = "";
     displaybtref = true;
     single = "";
-    color = "disabletable";
+    //color = "disabletable";
+    color = "";
     displayvermais = false;
     display_of_estado = false;
     estado_of = "";
@@ -149,7 +150,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     this.referencias = [];
                                     var referencias = [];
                                     for (var x in response2) {
-                                        referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF" });
+                                        referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
                                         //verifica familia
                                         this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias);
                                     }
@@ -236,7 +237,7 @@ export class NovaOperacaoComponent implements OnInit {
                     var count1 = Object.keys(response1).length;
                     if (count1 > 0) {
                         if (response != null) {
-                            referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP" });
+                            referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
                             this.referencias = referencias.slice();
                         }
                         this.get_filhos(ref, referencias);
@@ -407,7 +408,8 @@ export class NovaOperacaoComponent implements OnInit {
             this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM).subscribe(
                 response => {
                     var c = Object.keys(response).length;
-                    if (c > 0) {
+                    //se existir e não for mão de obra
+                    if (c > 0 && this.MAQ_NUM_ORIG != "000") {
                         if (response[0].estado == "P") {
                             this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque o utilizador " + response[0].nome_UTZ_CRIA + " está em Preparação desse trabalho.";
                         } else if (response[0].estado == "E") {
@@ -502,6 +504,8 @@ export class NovaOperacaoComponent implements OnInit {
                 rpof.versao_MODIF = 0;
                 rpof.sec_DES = this.sec_des;
                 rpof.sec_NUM = this.sec_num;
+                rpof.op_PREVISTA = "2";
+                rpof.op_COD_ORIGEM = '60';
 
                 this.createRPOFCABComp(rpof, estado, this.referencias[x].codigo)
 
@@ -526,10 +530,11 @@ export class NovaOperacaoComponent implements OnInit {
         rpofopcab.id_OF_CAB = id_OF_CAB;
         this.RPOFOPCABService.create(rpofopcab).subscribe(
             res => {
-                this.criartabelaRPOPFUNC(res.id_OP_CAB, estado, comp);
+
                 if (comp) {
                     this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);
                 } else {
+                    this.criartabelaRPOPFUNC(res.id_OP_CAB, estado, comp);
                     this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);
                 }
             },
@@ -539,7 +544,6 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     criartabelaRPOPFUNC(id_OP_CAB, estado, comp) {
-
         var rpofop = new RP_OF_OP_FUNC;
 
         rpofop.id_OP_CAB = id_OP_CAB;
@@ -736,6 +740,10 @@ export class NovaOperacaoComponent implements OnInit {
                      }*/
                 });
         }
+    }
+
+    lookupRowStyleClass(rowData) {
+        return !rowData.comp ? 'disabled-account-row' : '';
     }
 
 }

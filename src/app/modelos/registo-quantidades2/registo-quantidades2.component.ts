@@ -25,6 +25,7 @@ import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
 })
 
 export class RegistoQuantidades2Component implements OnInit {
+  utilizador: boolean = false;
   versao_modif: any;
   modoedicao: boolean;
   ref_desg;
@@ -133,6 +134,7 @@ export class RegistoQuantidades2Component implements OnInit {
       }
     } else {
       this.modoedicao = true;
+      this.utilizador = true;
     }
 
     this.inicia();
@@ -216,7 +218,7 @@ export class RegistoQuantidades2Component implements OnInit {
             //se existir etiquena com o numero
             if (count > 0) {
               if (response[0].PROREF == this.ref_num) {
-
+                localStorage.setItem('siip_edicao', 'true');
                 this.simular(this.editarclick2);
                 for (var x in response) {
                   this.num_lote = response[x].OFNUM;
@@ -552,6 +554,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
   //atualiza totalcontrol
   updatetotal(num: number) {
+    localStorage.setItem('siip_edicao', 'true');
     this.qttboas = num;
     this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
     //ao alterar valor qtd. boas atualiza na BD
@@ -798,6 +801,7 @@ export class RegistoQuantidades2Component implements OnInit {
             etiq = res[0];
             etiq.quant_BOAS = this.ref[i].qttboas;
             etiq.quant_DEF = totaldefeitos;
+            etiq.versao_MODIF = this.versao_modif;
 
             etiq.quant_BOAS_M1 = this.ref[i].qttboas;
             etiq.quant_DEF_M1 = totaldefeitos;
@@ -999,7 +1003,7 @@ export class RegistoQuantidades2Component implements OnInit {
           for (var x in res2) {
             count++;
             var ative = "";
-            if (parseInt(x) == 0) ative = "active";
+            //if (parseInt(x) == 0) ative = "active";
             var tab = { ative: ative, label: res2[x].id_OP_SEC + " - " + res2[x].nome_OP_SEC, id: res2[x].id_OP_SEC.trim(), id_op: id, defeitos: [] }
             this.verificadefeitos(res2[x].id_OP_SEC.trim(), tab, count, total);
           }
@@ -1010,6 +1014,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
   //alterar valor defeitos
   alteraValor(valor, id_DEF_LIN, pos, cod, desc) {
+    localStorage.setItem('siip_edicao', 'true');
     var i = this.i;
     var comp = this.ref[this.i].comp;
     var id_ref_etiq = this.ref[this.i].id_ref_etiq;
@@ -1018,10 +1023,10 @@ export class RegistoQuantidades2Component implements OnInit {
     if (id_DEF_LIN == 0 && (valor == 0 || valor == "")) {
       //não faz nada
 
-    } else if (valor > 0 || this.modoedicao) {
+    } else if (valor > 0 || (this.modoedicao && !this.utilizador)) {
       var rp = new RP_OF_DEF_LIN();
 
-      if (this.modoedicao) {
+      if (this.modoedicao && !this.utilizador) {
         rp.versao_MODIF = this.versao_modif;
         rp.quant_DEF_M1 = valor;
         rp.quant_DEF_M2 = valor;
@@ -1051,6 +1056,7 @@ export class RegistoQuantidades2Component implements OnInit {
       })
 
     } else if (id_DEF_LIN != 0 && (valor == 0 || valor == "")) {
+     
       this.RPOFDEFLINService.delete_id_def(id_DEF_LIN).then(rest => {
         this.tabSets.find(item => item.id == cod.substring(0, 2)).defeitos.find(item => item.pos == pos).id_DEF_LIN = 0;
         this.submitFunc(false, id, id_ref_etiq, comp, i);
@@ -1065,6 +1071,7 @@ export class RegistoQuantidades2Component implements OnInit {
       var rp_lin = new RP_OF_OP_LIN();
       rp_lin = resp[0];
 
+      
 
       var totaldefeitos = 0;
       var totaldefeitos2 = 0;
@@ -1085,6 +1092,7 @@ export class RegistoQuantidades2Component implements OnInit {
             rp_lin.quant_DEF_TOTAL_M1 = rp_lin.quant_DEF_TOTAL_M2;
             rp_lin.quant_BOAS_TOTAL_M2 = this.ref[i].qttboas_ref;
             rp_lin.quant_DEF_TOTAL_M2 = this.ref[i].totaldefeitos_ref;
+            rp_lin.versao_MODIF = this.versao_modif;
           }
         } else {
           rp_lin.quant_DEF_TOTAL = this.ref[i].totaldefeitos_ref;
@@ -1139,6 +1147,7 @@ export class RegistoQuantidades2Component implements OnInit {
           etiq.quant_DEF_M1 = totaldefeitos;
           etiq.quant_BOAS_M2 = this.ref[i].qttboas;
           etiq.quant_DEF_M2 = totaldefeitos;
+          etiq.versao_MODIF = this.versao_modif;
 
           this.RPOFOPETIQUETAService.update(etiq);
           this.controlaquantidade();
@@ -1234,6 +1243,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
   //guardar observação defeito
   save() {
+    localStorage.setItem('siip_edicao', 'true');
     this.RPOFDEFLINService.getbyidDEF(this.id_obdsdef).subscribe(res => {
       for (var x in res) {
         var rpdef = new RP_OF_DEF_LIN;
@@ -1346,13 +1356,14 @@ export class RegistoQuantidades2Component implements OnInit {
 
   //guardar observação defeito
   save_obs() {
+    localStorage.setItem('siip_edicao', 'true');
     this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(res => {
       for (var x in res) {
         var rpdef = new RP_OF_OP_LIN;
         rpdef = res[x];
         rpdef.obs_REF = this.obs_ref;
         this.ref[this.i].obs_ref = this.obs_ref;
-        this.RPOFOPLINService.update(rpdef)
+        this.RPOFOPLINService.update(rpdef);
         this.displayDialog2 = false;
       }
     }, error => console.log(error));

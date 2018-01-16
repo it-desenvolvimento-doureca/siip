@@ -23,6 +23,7 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  displayalter: boolean;
   texto_assunto: string;
   texto_mensagem: string;
   displaymensagem: boolean;
@@ -119,7 +120,7 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
               this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
-              this.id_utz_lider = response[x][0].id_UTZ_CRIA.trim();
+              this.id_utz_lider = response[x][1].id_UTZ_CRIA.trim();
               this.data_ini = response[x][0].data_INI_M2;
               this.hora_ini = response[x][0].hora_INI_M2;
               this.hora_fim = response[x][0].hora_FIM_M2;
@@ -273,13 +274,13 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.RPOFOPLINService.getRP_OF_OP_LINallid(id_op_cab).subscribe(
       res => {
         for (var x in res) {
-          var total = res[x].quant_BOAS_TOTAL_M2 + res[x].quant_DEF_TOTAL_M2;
+          var total = res[x][0].quant_BOAS_TOTAL_M2 + res[x][0].quant_DEF_TOTAL_M2;
           var cor = "rgba(255, 255, 0, 0.78)";
-          if (total == res[x].quant_OF) cor = "#2be32b";
-          if (total > res[x].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
+          if (total == res[x][0].quant_OF) cor = "#2be32b";
+          if (total > res[x][0].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
           var tipo = "PF";
-          if (comp) tipo = "C";
-          this.defeitos.push({ tipo: tipo, id: count, ref_num: res[x].ref_NUM, cor: cor, ref_des: res[x].ref_DES, quant_of: res[x].quant_OF, quant_boas: res[x].quant_BOAS_TOTAL_M2, quant_def_total: res[x].quant_DEF_TOTAL_M2, quant_control: total, comp: comp });
+          if (res[x][1].id_OF_CAB_ORIGEM){ tipo = "C"; comp = true;};
+          this.defeitos.push({ tipo: tipo, id: count, ref_num: res[x][0].ref_NUM, cor: cor, ref_des: res[x][0].ref_DES, quant_of: res[x][0].quant_OF, quant_boas: res[x][0].quant_BOAS_TOTAL_M2, quant_def_total: res[x][0].quant_DEF_TOTAL_M2, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
         this.ordernar();
@@ -626,7 +627,13 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   editar() {
+    localStorage.setItem('siip_edicao', 'false');
     if (this.disableEditar) {
+      this.ofService.atualizarcampos(this.id_of_cab).subscribe(resu => {
+        
+      }, error => {
+        console.log(error)
+      });
       this.router.navigate(['./operacao-em-curso/edicao'], { queryParams: { id: this.user, v: this.versao_modif } });
     } else {
       this.router.navigate(['./operacao-em-curso'], { queryParams: { id: this.user } });
@@ -655,6 +662,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
 
   atualizartempofunc(campo) {
+    localStorage.setItem('siip_edicao', 'true');
     var utz = this.utilizadores.find(item => item.value.id == this.utz_lider.id).value;
     switch (campo) {
       case "data_ini":
@@ -673,17 +681,21 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   gravar() {
-    this.confirmationService.confirm({
-      message: 'Tem a Certeza que pretende Gravar?',
-      accept: () => {
-        var total = this.utilizadores.length;
-        var count = 0;
-        for (var x in this.utilizadores) {
-          count++;
-          this.atualizarFUNC(this.utilizadores[x].value, total, count);
+    if (localStorage.getItem('siip_edicao') == 'true') {
+      this.confirmationService.confirm({
+        message: 'Tem a Certeza que pretende Gravar?',
+        accept: () => {
+          var total = this.utilizadores.length;
+          var count = 0;
+          for (var x in this.utilizadores) {
+            count++;
+            this.atualizarFUNC(this.utilizadores[x].value, total, count);
+          }
         }
-      }
-    });
+      });
+    } else {
+      this.displayalter = true;
+    }
   }
 
   atualizarFUNC(user, total, count) {

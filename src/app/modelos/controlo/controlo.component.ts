@@ -455,7 +455,8 @@ export class ControloComponent implements OnInit {
 
   //verificar enventos
   verifica() {
-    var data = [{ MODULO: 1, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true }];
+    var dados = "{of:12344,ASSUNTO:ola}"
+    var data = [{ MODULO: 1, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {
     }, error => {

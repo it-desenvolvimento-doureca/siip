@@ -49,10 +49,14 @@
   <div class="col-md-7 col-md-offset-7" style="float:left;">
 
 
-    <p-dataTable [value]="referencias" [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}}" (onRowUnselect)="onRowUnselect($event)"
+    <p-dataTable [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)"
       dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
       <p-header>REFERÊNCIA(S)</p-header>
-      <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+      <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}">
+        <ng-template let-col let-x="rowData" pTemplate="body">
+          <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
+        </ng-template>
+      </p-column>
       <p-column field="design" header="Designação" [style]="{'width':'50%'}"></p-column>
       <p-column field="tipo" header="Tipo" [style]="{'width':'5%'}"></p-column>
     </p-dataTable>

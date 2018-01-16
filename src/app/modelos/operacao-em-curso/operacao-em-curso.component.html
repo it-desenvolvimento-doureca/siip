@@ -129,7 +129,7 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
-    <!--<button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('M')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
+    <!-- <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
   </div>
 </div>
 
@@ -185,6 +185,18 @@
             {{ut.label}}
           </li>
         </ul>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!--popup sem alterações -->
+<p-dialog header="Sem Alterações" [(visible)]="displayalter" class="novoop" modal="modal" width="700" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="padding: 22px 0 22px 0;">
+        Não existem alterações para Gravar!
       </div>
     </div>
   </div>
