@@ -62,6 +62,14 @@ export class RPOFPARALINService {
       .catch((error: any) => Observable.throw('Server error'));
   }
   
+  getbyallUSER(id,user): Observable<RP_OF_PARA_LIN[]> {
+    const url = webUrl.host+'/rest/siip/getbyallUSER/' + id + '/'+user;
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }  
+
   getbyid_op_cab(id): Observable<RP_OF_PARA_LIN[]> {
     const url = webUrl.host+'/rest/siip/getbyid_op_cabRP_OF_PARA_LIN/' + id + '';
     return this.http

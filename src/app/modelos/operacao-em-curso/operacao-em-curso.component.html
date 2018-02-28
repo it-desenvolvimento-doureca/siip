@@ -18,9 +18,9 @@
           </div>
           <div class="form-group">
             <label class="control-label ">Funcionário</label>
-            <input [hidden]="!disableEditar" style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true"
+            <input [hidden]="modoedicao" style="font-size: 0.8rem;" class="form-control" value="{{id_utz}}" type="text" [disabled]="true"
             />
-            <p-dropdown [hidden]="disableEditar" [options]="utilizadores" [(ngModel)]="utz_lider" [ngModelOptions]="{standalone: true}"
+            <p-dropdown [hidden]="!modoedicao" [options]="utilizadores" [(ngModel)]="utz_lider" [ngModelOptions]="{standalone: true}"
               (onChange)="atualizaDados($event)" [style]="{'width':'100%'}"></p-dropdown>
           </div>
           <div class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
@@ -57,13 +57,53 @@
               </div>
             </div>
           </div>
+
+
+          <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
+              <div class="form-group">
+                <label class="control-label ">Data Início Preparação</label>
+                <input (change)="atualizartempofunc('data_ini_preparacao')" style="display: -webkit-box; height: 44.4px;" class="form-control"
+                  [(ngModel)]="data_ini_preparacao" type="date" [ngModelOptions]="{standalone: true}" [disabled]="true" [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null )}"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
+              <div class="form-group">
+                <label class="control-label ">Hora Início Preparação</label>
+                <input (change)="atualizartempofunc('hora_ini_preparacao')" class="form-control" [(ngModel)]="hora_ini_preparacao" type="time"
+                  [ngModelOptions]="{standalone: true}" [disabled]="true" style="display: -webkit-box; height: 44.4px;" [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null )}"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="padding-right: 0;">
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
+              <div class="form-group">
+                <label class="control-label ">Data Fim Preparação</label>
+                <input (change)="atualizartempofunc('data_fim_preparacao')" [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) }"
+                  class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim_preparacao" min="{{data_fim_preparacao}}"
+                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="true" />
+              </div>
+            </div>
+            <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
+              <div class="form-group">
+                <label class="control-label ">Hora Fim Preparação</label>
+                <input (change)="atualizartempofunc('hora_fim_preparacao')" [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null )}"
+                  class="form-control" [(ngModel)]="hora_fim_preparacao" style="display: -webkit-box; height: 44.4px;" type="time"
+                  [ngModelOptions]="{standalone: true}" [disabled]="true" />
+              </div>
+            </div>
+          </div>
+
           <div [hidden]="!modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="padding-top: 10px; display: -webkit-box;">
             <label class="control-label ">Estado</label>
             <p-dropdown [options]="estados_array" [style]="{'width':'200px'}" [(ngModel)]="estado_val" [ngModelOptions]="{standalone: true}"
               [hidden]="!modoedicao" [disabled]="true"></p-dropdown>
+            <button type="button" class="ui-button-success" pButton (click)="pausas()" label="Ver Pausas" style="float: none; height: 39px;"></button>
           </div>
         </form>
-
       </div>
       <div class="col-md-12">
         <div *ngIf="utilizadores_adici?.length > 0">
@@ -129,7 +169,7 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
-    <!-- <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
+     <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 
@@ -226,6 +266,25 @@
       </div>
     </p-footer>
   </form>
+</p-dialog>
+
+
+<!--popup sem Pausas -->
+<p-dialog header="Pausas" [(visible)]="displaypausas" class="novoop" modal="modal" width="800" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="padding: 22px 0 22px 0;">
+        <p-dataTable [rowStyleClass]="lookupRowStyleClass" [value]="pausas_array" class="tabelaref_of" dataKey="id">
+          <!--<p-header></p-header>-->
+          <p-column [style]="{'width':'8%'}" field="datahora_ini" header="Data Inicio"></p-column>
+          <p-column [style]="{'width':'8%'}" field="datahora_fim" header="Data Fim"></p-column>
+          <p-column [style]="{'width':'10%'}" field="paragem" header="Tipo Pausa"></p-column>
+          <p-column [style]="{'width':'8%'}" field="momento" header="Estado"></p-column>
+        </p-dataTable>
+      </div>
+    </div>
+  </div>
 </p-dialog>
 
 <p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>

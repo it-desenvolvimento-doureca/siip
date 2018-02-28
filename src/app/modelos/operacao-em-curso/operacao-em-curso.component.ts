@@ -23,6 +23,8 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  pausas_array = [];
+  displaypausas: boolean = false;
   displayalter: boolean;
   texto_assunto: string;
   texto_mensagem: string;
@@ -59,6 +61,10 @@ export class OperacaoEmCursoComponent implements OnInit {
   hora_ini = "";
   data_fim = "";
   hora_fim = "";
+  data_ini_preparacao = "";
+  hora_ini_preparacao = "";
+  data_fim_preparacao = "";
+  hora_fim_preparacao = "";
   id_op_cab = "";
   estados_array = [{ label: "---", value: "" }, { label: "Anulado", value: "A" }, { label: "Execução", value: "E" }, { label: "Concluido", value: "C" }, { label: "Preparação", value: "P" }, { label: "Modificado", value: "M" }];
   estado_val = "";
@@ -83,7 +89,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
         if (urlarray[1].match("edicao")) {
           this.disableEditar = false;
-          this.preenchecombouUtz(localStorage.getItem('id_of_cab'))
+          // this.preenchecombouUtz(localStorage.getItem('id_of_cab'))
         }
       }
 
@@ -104,6 +110,9 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.estado.push('C', 'A', 'M');
       }
 
+      if (this.modoedicao) {
+        this.preenchecombouUtz(localStorage.getItem('id_of_cab'))
+      }
 
       this.RPOFOPCABService.getdataof(JSON.parse(localStorage.getItem('id_of_cab')), this.user, this.estado).subscribe(
         response => {
@@ -125,6 +134,12 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.hora_ini = response[x][0].hora_INI_M2;
               this.hora_fim = response[x][0].hora_FIM_M2;
               this.data_fim = response[x][0].data_FIM_M2;
+
+              this.data_ini_preparacao = response[x][3];
+              this.hora_ini_preparacao = response[x][4];
+              this.data_fim_preparacao = response[x][5];
+              this.hora_fim_preparacao = response[x][6];
+
               this.id_op_cab = response[x][2].id_OP_CAB;
               this.id_of_cab = response[x][1].id_OF_CAB;
               this.estado_val = response[x][0].estado;
@@ -133,7 +148,7 @@ export class OperacaoEmCursoComponent implements OnInit {
               if (response[x][0].data_FIM != null) {
                 this.concluido = true;
               }
-              if (!this.disableEditar && this.utilizadores.length > 0) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+              if (this.utilizadores.length > 0) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
             } else {
               this.id_op_cab_lista.push({ id: response[x][2].id_OP_CAB, comp: true });
             }
@@ -179,11 +194,12 @@ export class OperacaoEmCursoComponent implements OnInit {
         for (var x in response) {
           this.utilizadores.push({
             label: response[x].id_UTZ_CRIA + " - " + response[x].nome_UTZ_CRIA,
-            value: { id_OP_FUNC: response[x].id_OP_FUNC, id: response[x].id_UTZ_CRIA, data_FIM: response[x].data_FIM_M2, hora_FIM: response[x].hora_FIM_M2, data_INI: response[x].data_INI_M2, hora_INI: response[x].hora_INI_M2 }
+            value: { id_OP_FUNC: response[x].id_OP_FUNC,id_OP_CAB: response[x].id_OP_CAB, id: response[x].id_UTZ_CRIA, data_FIM: response[x].data_FIM_M2, hora_FIM: response[x].hora_FIM_M2, data_INI: response[x].data_INI_M2, hora_INI: response[x].hora_INI_M2, estado: response[x].estado }
           });
         }
+
         this.utilizadores = this.utilizadores.slice();
-        if (!this.disableEditar && this.id_utz_lider != null) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+        if (this.id_utz_lider != null) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
 
       }, error => console.log(error));
   }
@@ -279,7 +295,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           if (total == res[x][0].quant_OF) cor = "#2be32b";
           if (total > res[x][0].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
           var tipo = "PF";
-          if (res[x][1].id_OF_CAB_ORIGEM){ tipo = "C"; comp = true;};
+          if (res[x][1].id_OF_CAB_ORIGEM) { tipo = "C"; comp = true; };
           this.defeitos.push({ tipo: tipo, id: count, ref_num: res[x][0].ref_NUM, cor: cor, ref_des: res[x][0].ref_DES, quant_of: res[x][0].quant_OF, quant_boas: res[x][0].quant_BOAS_TOTAL_M2, quant_def_total: res[x][0].quant_DEF_TOTAL_M2, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
@@ -630,7 +646,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     localStorage.setItem('siip_edicao', 'false');
     if (this.disableEditar) {
       this.ofService.atualizarcampos(this.id_of_cab).subscribe(resu => {
-        
+
       }, error => {
         console.log(error)
       });
@@ -658,6 +674,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.hora_ini = event.value.hora_INI;
     this.hora_fim = event.value.hora_FIM;
     this.data_fim = event.value.data_FIM;
+    this.estado_val = event.value.estado;
   }
 
 
@@ -669,13 +686,13 @@ export class OperacaoEmCursoComponent implements OnInit {
         utz.data_INI = this.data_ini;
         break;
       case "hora_ini":
-        utz.hora_INI = this.hora_ini + ":00";
+        utz.hora_INI = this.hora_ini;
         break;
       case "data_fim":
         utz.data_FIM = this.data_fim;
         break;
       case "hora_fim":
-        utz.hora_FIM = this.hora_fim + ":00";
+        utz.hora_FIM = this.hora_fim;
         break;
     }
   }
@@ -751,4 +768,27 @@ export class OperacaoEmCursoComponent implements OnInit {
       }
     });
   }
+
+
+  //mostrar pausas
+  pausas() {
+    this.pausas_array = [];
+    this.displaypausas = true;
+    this.RPOFPARALINService.getbyallUSER(this.utz_lider.id_OP_CAB, this.utz_lider.id).subscribe(
+      response => {
+        for (var x in response) {
+          var estado = this.estados_array.find(item => item.value == response[x].momento_PARAGEM).label;
+          this.pausas_array.push({
+            datahora_ini: response[x].data_INI + ' ' + response[x].hora_INI,
+            datahora_fim: response[x].data_FIM + ' ' + response[x].hora_FIM,
+            paragem: response[x].des_PARAGEM,
+            momento: estado,
+            id: response[x].id_PARA_LIN
+          });
+        }
+
+        this.pausas_array = this.pausas_array.slice();
+      }, error => console.log(error));
+  }
+
 }
