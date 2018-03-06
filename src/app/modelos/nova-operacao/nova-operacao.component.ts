@@ -460,11 +460,13 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.estado = estado;
         rpof.of_NUM = this.num_of;
         rpof.op_COD = this.op_cod.toString();
-        rpof.op_NUM = this.op_NUM;
+        if(this.op_PREVISTA == '1'){
+            rpof.op_NUM = this.op_NUM;
+        }        
         rpof.op_DES = this.op_desc;
         rpof.maq_NUM = this.maq_NUM;
         rpof.maq_NUM_ORIG = this.MAQ_NUM_ORIG;
-        rpof.maq_DES = this.maq_DES;;
+        rpof.maq_DES = this.maq_DES;
         rpof.id_UTZ_CRIA = this.username
         rpof.nome_UTZ_CRIA = this.nome_utz;
         rpof.of_OBS = this.observacoes;
@@ -493,7 +495,7 @@ export class NovaOperacaoComponent implements OnInit {
                 rpof.id_OF_CAB_ORIGEM = id;
                 rpof.of_NUM = null;
                 rpof.op_COD = '60';
-                rpof.op_NUM = '' + opnum;
+                rpof.op_NUM = '';// + opnum;
                 rpof.op_DES = null;
                 rpof.maq_NUM = '000';
                 rpof.maq_NUM_ORIG = '000';

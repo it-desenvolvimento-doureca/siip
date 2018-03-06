@@ -126,7 +126,12 @@ export class OperacaoEmCursoComponent implements OnInit {
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][2].id_OP_CAB));
               this.of_num = response[x][1].of_NUM.trim()
-              this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
+              
+              if(response[x][1].op_NUM != null){
+                this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
+              }else{
+                this.op_num = "----/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
+              }             
               this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
               this.id_utz_lider = response[x][1].id_UTZ_CRIA.trim();
@@ -633,6 +638,7 @@ export class OperacaoEmCursoComponent implements OnInit {
       //alert("FICHEIRO CRIADO")
     }, error => {
       //alert("ERRO CRIAR FICHEIRO");
+      //this.ficheiroteste(estado)
       console.log(error)
     });
   }
@@ -706,7 +712,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           var count = 0;
           for (var x in this.utilizadores) {
             count++;
-            this.atualizarFUNC(this.utilizadores[x].value, total, count);
+            this.atualizarFUNC(this.utilizadores[x].value, total, count,true);
           }
         }
       });
@@ -715,7 +721,16 @@ export class OperacaoEmCursoComponent implements OnInit {
     }
   }
 
-  atualizarFUNC(user, total, count) {
+  gravar_utilizadores(){
+    var total = this.utilizadores.length;
+    var count = 0;
+    for (var x in this.utilizadores) {
+      count++;
+      this.atualizarFUNC(this.utilizadores[x].value, total, count,false);
+    }
+  }
+
+  atualizarFUNC(user, total, count,file) {
     var userid = JSON.parse(localStorage.getItem('user'))["username"];
     var nome = JSON.parse(localStorage.getItem('user'))["name"];
     this.RPOPFUNCService.getUser(user.id_OP_FUNC).subscribe(
@@ -746,7 +761,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           rpfunc.estado = "M"
         }
         this.RPOPFUNCService.update(rpfunc).then(res => {
-          if (total == count) {
+          if (total == count && file) {
             this.createfile("M", "E");
           }
         });

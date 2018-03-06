@@ -6,11 +6,13 @@ export class RP_OF_OP_ETIQUETA {
     ref_LOTE: string;
     of_NUM_ORIGEM: string;
     op_COD_ORIGEM: string;
+    op_COD_FAM: string;
     quant_ETIQUETA: number;
     quant_BOAS: number;
     quant_DEF: number;
     id_UTZ_CRIA: string;
     id_UTZ_MODIF: string;
+    op_NUM: string;
     data_HORA_MODIF: Date;
     quant_BOAS_M1: number;
     quant_BOAS_M2: number;

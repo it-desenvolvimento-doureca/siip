@@ -289,6 +289,7 @@ export class RegistoQuantidadesComponent implements OnInit {
         rp_of_op_etiqueta.id_UTZ_CRIA = this.username;
         rp_of_op_etiqueta.data_HORA_MODIF = new Date();
         rp_of_op_etiqueta.of_NUM_ORIGEM = of_NUM;
+        rp_of_op_etiqueta.op_NUM = "1010";
         rp_of_op_etiqueta.ref_LOTE = ofref;
         rp_of_op_etiqueta.ref_ETIQUETA = this.display_etiqueta;
         rp_of_op_etiqueta.ref_NUM = this.ref_num;
