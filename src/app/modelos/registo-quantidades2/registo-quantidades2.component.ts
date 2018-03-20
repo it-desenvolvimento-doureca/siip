@@ -987,6 +987,8 @@ export class RegistoQuantidades2Component implements OnInit {
         }
       }, error => console.log(error));
 
+      if(this.closewaiting) this.simular(this.closewaiting);
+
     } else {
       this.RPOFOPLINService.getRP_OF_OP_LINOp(id).subscribe(res => {
         this.index = 0;

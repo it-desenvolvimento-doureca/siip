@@ -629,8 +629,20 @@ export class OperacaoEmCursoComponent implements OnInit {
     evento.estado = "C";
     this.GEREVENTOService.create(evento).subscribe(result => {
       this.displaymensagem = false;
+      this.verifica(this.of_num,this.texto_assunto,this.texto_mensagem,nome);
     }, error => console.log(error));
 
+  }
+
+  //verificar enventos
+  verifica(of,assunto,mensagem,utilizador) {
+    var dados = "{of:"+of+",assunto:"+assunto+",mensagem:"+mensagem+",utilizador:"+utilizador+"}"
+    var data = [{ MODULO: 2, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
+
+    this.GEREVENTOService.verficaEventos(data).subscribe(result => {
+    }, error => {
+      console.log(error);
+    });
   }
 
   ficheiroteste(estado) {
@@ -652,6 +664,11 @@ export class OperacaoEmCursoComponent implements OnInit {
     localStorage.setItem('siip_edicao', 'false');
     if (this.disableEditar) {
       this.ofService.atualizarcampos(this.id_of_cab).subscribe(resu => {
+
+      }, error => {
+        console.log(error)
+      });
+      this.ofService.atualizaropenum(this.id_of_cab).subscribe(resu => {
 
       }, error => {
         console.log(error)

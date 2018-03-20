@@ -144,4 +144,11 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    atualizaropenum(id) {
+        const url = webUrl.host + '/rest/siip/atualizaropenum/' + id;
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
 }

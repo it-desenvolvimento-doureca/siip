@@ -50,7 +50,8 @@ export class ControloComponent implements OnInit {
   date4;
   rowData;
   checked: boolean = false;
-  estados = [{ label: "--", value: null }, { label: "Concluido", value: "C" }, { label: "Execução", value: "E" }]
+  estados = [{ label: "--", value: null }, { label: "Concluido", value: "C" }, { label: "Execução", value: "E" },
+  { label: "Modificado", value: "M" }, { label: "Pausa", value: "S" }, { label: "Anulado", value: "A" }, { label: "Preparação", value: "P" }];
 
   constructor(private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
@@ -112,15 +113,16 @@ export class ControloComponent implements OnInit {
         var perc_obj_val = 0;
         var inser = false;
         //var estado = "";
-        var cor_of = "green";
-        var cor_tempo_prod = "green";
-        var cor_estado = "green";
-        var cor_qtd_of = "";
-        var cor_total_def = "";
-        var cor_perc_def = "";
-        var val_perc_def = 0;
+
 
         for (var x in response) {
+          var cor_of = "green";
+          var cor_tempo_prod = "green";
+          var cor_estado = "green";
+          var cor_qtd_of = "";
+          var cor_total_def = "";
+          var cor_perc_def = "";
+          var val_perc_def = 0;
 
           //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
           if ((response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2) > response[x][0].quant_OF) {
@@ -130,7 +132,9 @@ export class ControloComponent implements OnInit {
           }
 
           //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
-          val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
+          val_perc_def = (response[x][0].quant_DEF_TOTAL_M2 / (response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2))*100;
+          //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
+          if(isNaN(val_perc_def) ) val_perc_def= 0;
 
           if (val_perc_def >= response[x][0].perc_OBJETIV) {
             cor_total_def = "yellow";
@@ -169,8 +173,12 @@ export class ControloComponent implements OnInit {
           qtd_of.push({ value: response[x][0].quant_OF, cor: cor_qtd_of });
           qtd_boas.push(response[x][0].quant_BOAS_TOTAL_M2);
           total_def.push({ value: response[x][0].quant_DEF_TOTAL_M2, cor: cor_total_def });
-          perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString(), cor: cor_perc_def });
-          perc_obj.push(response[x][0].perc_OBJETIV);
+          perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString() + "%", cor: cor_perc_def });
+          var perc = 0;
+          if(response[x][0].perc_OBJETIV != null){
+            perc = response[x][0].perc_OBJETIV;
+          }
+          perc_obj.push(perc.toFixed(2).toLocaleString() + "%");
         }
 
         this.RPOFCABService.getRP_OF_CABbyid(res[y][0].id_OF_CAB).subscribe(
@@ -197,8 +205,9 @@ export class ControloComponent implements OnInit {
     var qtd_func = 0;
     var tempo_prod = [];
 
-    for (var n in res5) {
 
+    for (var n in res5) {
+      var cor_tempo_prod1 = "green";
       if (res5[n][1].data_FIM_M2 != null) var dtfim2 = this.formatDate(res5[n][1].data_FIM_M2);
       if (res5[n][1].hora_FIM_M2 != null) var hfim2 = res5[n][1].hora_FIM_M2.slice(0, 5);
 
@@ -206,10 +215,35 @@ export class ControloComponent implements OnInit {
       hfim.push(hfim2);
       dt_inicio.push(this.formatDate(res5[n][1].data_INI_M2));
       hora_inicio.push(res5[n][1].hora_INI_M2.slice(0, 5));
+
+
+
+      var hora1 = new Date(res5[n][1].data_INI_M2 + "," + res5[n][1].hora_INI_M2.slice(0, 5));
+      var hora2 = null;
+      if (res5[n][1].data_FIM_M2 == null) {
+        hora2 = new Date();
+      } else {
+        hora2 = new Date(dtfim2 + "," + hfim2);
+      }
+
+      var timedif1 = hora2.getTime() - hora1.getTime();
+      //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
+      //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
+      if (timedif1 > 57600000 && res5[n][0].tempo_EXEC_TOTAL_M2 == null) {
+        cor_tempo_prod1 = "red";
+        cor_estado = "red";
+        cor_of = "red";
+      }
+      //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
+      if ((timedif1 < 900000 || timedif1 > 28800000) && res5[n][0].tempo_EXEC_TOTAL_M2 != null) {
+        cor_tempo_prod1 = "yellow";
+        cor_estado = "yellow";
+        cor_of = "yellow";
+      }
       func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 14));
 
       if (res5[n][1].data_FIM_M2 == null) qtd_func++;
-      tempo_prod.push(res5[n][0].tempo_EXEC_TOTAL_M2);
+      tempo_prod.push({ tempo: res5[n][0].tempo_EXEC_TOTAL_M2, cor: cor_tempo_prod1 });
 
       if (res5[n][1].estado == 'C') estado.push("Concluido");
       if (res5[n][1].estado == 'I') estado.push("Iniciado");
@@ -217,8 +251,16 @@ export class ControloComponent implements OnInit {
       if (res5[n][1].estado == 'S') estado.push("Pausa");
       if (res5[n][1].estado == 'E') estado.push("Execução");
       if (res5[n][1].estado == 'P') estado.push("Preparação");
-      if (res5[n][1].estado == 'A') estado.push("Anulado");
+      if (res5[n][1].estado == 'A') {
+        estado.push("Anulado");
+        cor_estado = "red";
+        cor_of = "red";
+      }
+
     }
+
+
+
 
     var total_lidas = false;
     if (res[y][3] == res[y][4]) total_lidas = true;
@@ -246,7 +288,7 @@ export class ControloComponent implements OnInit {
       perc_obj: perc_obj,
       estado: estado,
       cor_of: cor_of,
-      cor_tempo_prod: cor_tempo_prod,
+      //cor_tempo_prod: cor_tempo_prod1,
       cor_estado: cor_estado,
       total_lidas: total_lidas,
       mensagens: res[y][3]
@@ -294,6 +336,11 @@ export class ControloComponent implements OnInit {
     this.adicionaop = true;
   }
 
+  //ao clicar no botão fechar pesquisa avançada 
+  closepesquisa() {
+    this.state = (this.state === 'firstpos' ? 'secondpos' : 'firstpos');
+    this.adicionaop = false;
+  }
   //esconde a tabela
   ontogglestates(e) {
     var combo = false;
@@ -453,16 +500,6 @@ export class ControloComponent implements OnInit {
   }
 
 
-  //verificar enventos
-  verifica() {
-    var dados = "{of:12344,ASSUNTO:ola}"
-    var data = [{ MODULO: 1, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
-
-    this.GEREVENTOService.verficaEventos(data).subscribe(result => {
-    }, error => {
-      console.log(error);
-    });
-  }
 
   //marcar mensagens por ler como lidas
   marcarMensagemLida(mensagem) {

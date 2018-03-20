@@ -150,7 +150,11 @@ export class NovaOperacaoComponent implements OnInit {
                                     this.referencias = [];
                                     var referencias = [];
                                     for (var x in response2) {
-                                        referencias.push({ perc_obj: response2[x].ZPAVAL, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
+                                        var perc = 0;
+                                        if(response2[x].ZPAVAL != null){
+                                            perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
+                                        }
+                                        referencias.push({ perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
                                         //verifica familia
                                         this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias);
                                     }
@@ -593,7 +597,7 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.quant_BOAS_TOTAL_M2 = 0;
             rpofoplin.quant_DEF_TOTAL_M2 = 0;
             rpofoplin.quant_OF = parseInt(this.referencias[0].OFBQTEINI);
-            rpofoplin.perc_OBJETIV = parseFloat(ref.perc_obj);
+            rpofoplin.perc_OBJETIV = ref.perc_obj;
             rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
             this.insereref(rpofoplin, true);
         } else {
@@ -613,7 +617,7 @@ export class NovaOperacaoComponent implements OnInit {
                     rpofoplin.quant_DEF_TOTAL_M1 = 0;
                     rpofoplin.quant_BOAS_TOTAL_M2 = 0;
                     rpofoplin.quant_DEF_TOTAL_M2 = 0;
-                    rpofoplin.perc_OBJETIV = parseFloat(this.referencias[x].perc_obj);
+                    rpofoplin.perc_OBJETIV = this.referencias[x].perc_obj;
                     rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
                     rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
                     this.insereref(rpofoplin, false);
@@ -714,8 +718,9 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     getdefeitosop(res, x, id_OP_LIN) {
-        if (this.operacao_temp.indexOf(res[x].id_OP_SEC) == -1) {
-            this.operacao_temp.push(res[x].id_OP_SEC);
+        if(!this.operacao_temp[id_OP_LIN]) this.operacao_temp[id_OP_LIN] = [];
+        if (this.operacao_temp[id_OP_LIN].indexOf(res[x].id_OP_SEC) == -1) {
+            this.operacao_temp[id_OP_LIN].push(res[x].id_OP_SEC);
             this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
                 result => {
                     var count = Object.keys(result).length;
