@@ -43,10 +43,10 @@ export class RPOFCABService {
   }
 
 
-  getAll(): Observable<RP_OF_CAB[]> {
+  getAll(data): Observable<RP_OF_CAB[]> {
     const url = webUrl.host + '/rest/siip/getRP_OF_CAB';
     return this.http
-      .get(url)
+      .post(url, data, { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }

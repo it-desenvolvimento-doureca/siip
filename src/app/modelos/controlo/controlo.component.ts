@@ -71,7 +71,8 @@ export class ControloComponent implements OnInit {
       this.dados_old = this.dados;
       //this.dados = [];
       //this.items = 10;
-      this.RPOFCABService.getAll().subscribe(
+      var sec_num_user = JSON.parse(localStorage.getItem('sec_num_user'));
+      this.RPOFCABService.getAll(sec_num_user).subscribe(
         res => {
           this.count = 0;
           var total = Object.keys(res).length; if (total > 0) {
@@ -389,6 +390,8 @@ export class ControloComponent implements OnInit {
       }
 
     }
+
+    innerObj["sec_num"] = JSON.parse(localStorage.getItem('sec_num_user'));
     data.push(innerObj)
     if (this.atualizacao) {
       this.atualizacao = false;

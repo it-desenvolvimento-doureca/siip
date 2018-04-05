@@ -3,6 +3,7 @@ import { Http, Headers, Response } from '@angular/http';
 import { RP_CONF_UTZ_PERF } from "app/modelos/entidades/RP_CONF_UTZ_PERF";
 import { Observable } from "rxjs/Observable";
 import { webUrl } from "webUrl";
+import { RP_CONF_CHEF_SEC } from '../entidades/RP_CONF_CHEF_SEC';
 
 @Injectable()
 export class RPCONFUTZPERFService {
@@ -46,6 +47,14 @@ export class RPCONFUTZPERFService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+
+    getSEC(id): Observable<RP_CONF_CHEF_SEC[]> {
+        const url = webUrl.host+'/rest/siip/getRP_CONF_CHEF_SECbyidUSER/' + id + '';
+        return this.http
+            .get(url)
+            .map(this.extractData)
+            .catch((error: any) => Observable.throw('Server error'));
+    }
 
     private extractData(res: Response) {
         let body = res.json();

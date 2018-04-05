@@ -168,46 +168,56 @@ export class LoginComponent implements OnInit {
                 }
               }
               count = total;
-              if (count == 1) {
-                for (var x in response) {
-                  dataacess.push(response[x].perfil);
-                  switch (response[x].perfil) {
-                    case "O":
-                      localStorage.setItem('perfil', JSON.stringify("O"));
-                      this.router.navigate(['./nova-operacao']);
-                      break;
-                    case "G":
-                      localStorage.setItem('perfil', JSON.stringify("G"));
-                      this.chefelogin();
-                      //this.router.navigate(['./controlo']);
-                      break;
-                    case "A":
-                      localStorage.setItem('perfil', JSON.stringify("A"));
-                      this.adminlogin();
-                      break;
+              this.service__utz.getSEC(id).subscribe(
+                response2 => {
+                  var sec_num = [];
+                  for (var y in response2) {
+                    sec_num.push(response2[y].sec_NUM);
                   }
-                }
-              } else if (count == 0) {
-                alert("SEM ACESSO");
-              } else {
-                for (var x in response) {
-                  dataacess.push(response[x].perfil);
-                  switch (response[x].perfil) {
-                    case "O":
-                      this.isHidden1 = false;
-                      break;
-                    case "G":
-                      this.isHidden3 = false;
-                      break;
-                    case "A":
-                      this.isHidden2 = false;
-                      break;
+                  localStorage.setItem('sec_num_user', JSON.stringify(sec_num.toString()));
+                  if (count == 1) {
+                    for (var x in response) {
+                      dataacess.push(response[x].perfil);
+                      switch (response[x].perfil) {
+                        case "O":
+                          localStorage.setItem('perfil', JSON.stringify("O"));
+                          this.router.navigate(['./nova-operacao']);
+                          break;
+                        case "G":
+                          localStorage.setItem('perfil', JSON.stringify("G"));
+                          this.chefelogin();
+                          //this.router.navigate(['./controlo']);
+                          break;
+                        case "A":
+                          localStorage.setItem('perfil', JSON.stringify("A"));
+                          localStorage.setItem('sec_num_user', JSON.stringify("ADMIN"));
+                          this.adminlogin();
+                          break;
+                      }
+                    }
+                  } else if (count == 0) {
+                    alert("SEM ACESSO");
+                  } else {
+                    for (var x in response) {
+                      dataacess.push(response[x].perfil);
+                      switch (response[x].perfil) {
+                        case "O":
+                          this.isHidden1 = false;
+                          break;
+                        case "G":
+                          this.isHidden3 = false;
+                          break;
+                        case "A":
+                          this.isHidden2 = false;
+                          break;
+                      }
+                      this.display = true;
+                    }
                   }
-                  this.display = true;
-                }
-              }
 
-              localStorage.setItem('access', JSON.stringify(dataacess));
+                  localStorage.setItem('access', JSON.stringify(dataacess));
+                },
+                error => console.log(error));
 
             },
             error => console.log(error));
