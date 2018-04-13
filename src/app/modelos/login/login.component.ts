@@ -172,7 +172,7 @@ export class LoginComponent implements OnInit {
                 response2 => {
                   var sec_num = [];
                   for (var y in response2) {
-                    sec_num.push(response2[y].sec_NUM);
+                    sec_num.push("'"+response2[y].sec_NUM+"'");
                   }
                   localStorage.setItem('sec_num_user', JSON.stringify(sec_num.toString()));
                   if (count == 1) {
