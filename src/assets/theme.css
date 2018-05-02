@@ -3053,8 +3053,8 @@ body .ui-datatable .ui-cell-data {
     margin-left: 0 !important;
 }
 
-html,
-body {
+body
+ {
     color: white !important;
     margin: 0;
     /*height: 100%;*/
@@ -3065,15 +3065,21 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d0e4f7', endColorstr='#87bcea',GradientType=0 );*/
     /* The image used */
     /*background-image: url("../assets/fundo.jpeg");*/
-    background: rgb(96, 147, 192) !important;
+    
+    /*background: rgb(238, 238, 238) !important;*/
+    background:rgb(96, 147, 192) !important;
     background-size: cover;
     /* Full height */
     /*height: 100%;*/
     /* Center and scale the image nicely */
     /*background-position: center;*/
     background-repeat: no-repeat;
+    height: auto;
 }
-
+html {
+    background: rgb(96, 147, 192) !important;
+    height: 100vh;
+}
 @media (min-width: 1199px) {
     .loginadicional {
         flex: 0 0 46.666667% !important;
