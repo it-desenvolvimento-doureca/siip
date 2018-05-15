@@ -23,6 +23,7 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  permissao_ficheiroteste: any;
   pausas_array = [];
   displaypausas: boolean = false;
   displayalter: boolean;
@@ -78,7 +79,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.perfil = localStorage.getItem('access');
     var access = JSON.parse(localStorage.getItem('access'));
     this.permissao_editar = access.find(item => item === "E");
-
+    this.permissao_ficheiroteste = access.find(item => item === "A");
     //verifica se tem o id_of_cab
     if (localStorage.getItem('id_of_cab')) {
 

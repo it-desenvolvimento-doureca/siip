@@ -170,7 +170,7 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
-     <button type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="Gerar Ficheiros Inic." style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+     <button  [hidden]="!permissao_ficheiroteste" type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="Gerar Ficheiros Inic." style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 
