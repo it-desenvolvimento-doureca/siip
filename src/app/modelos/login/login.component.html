@@ -58,6 +58,11 @@
             </div>
             <input readonly type="password" name="name" id="telNumber" #box class="form-control tel " style=" font-size: 27pt; padding: 0;"
                 value="{{ operation }}" maxlength="4" />
+            <div *ngIf="loading" class="load-bar">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
         </div>
     </div>
 </div>

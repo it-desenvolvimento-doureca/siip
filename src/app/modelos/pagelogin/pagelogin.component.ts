@@ -29,7 +29,9 @@ export class PageloginComponent implements OnInit {
     }
 
     if (this.count > 3) {
-      this.userexists();
+      setTimeout(() => {
+        this.userexists();
+      }, 1000);
     }
 
   }
@@ -37,7 +39,7 @@ export class PageloginComponent implements OnInit {
   //verificar se utilizador existe
   userexists() {
     //apenas verifica se utilizador existe se o código for diferente do dele
-    if (this.operation != JSON.parse(localStorage.getItem('user'))["username"]){
+    if (this.operation != JSON.parse(localStorage.getItem('user'))["username"]) {
       this.service.getbyid(this.operation).subscribe(
         response => {
 

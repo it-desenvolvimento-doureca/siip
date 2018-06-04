@@ -155,7 +155,7 @@
     <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
     <button type="button" icon="fa-envelope-o" class="ui-button-info" pButton (click)="mensagem()" label="MENSAGEM" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-    <button [disabled]="concluido || disabledAdici" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
+    <button [disabled]="concluido || disabledAdici || maq_numcod == '000'" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
       label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile('C','O')" label="CONCLUIR"
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>

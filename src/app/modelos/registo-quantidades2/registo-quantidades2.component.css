@@ -1,3 +1,55 @@
+
+
+.svg {
+    /*margin-top: 25%;*/
+    display: block;
+    animation: svg-rotate 8000ms linear infinite;
+  }
+  circle {
+    fill: transparent;
+    stroke: #c0392b;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 0, 301.59289;
+    animation: stroke-dash 2000ms linear infinite, stroke-width 2000ms linear infinite, stroke-color 8000ms steps(4) infinite;
+  }
+  @keyframes svg-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes stroke-width {
+    0%, 100% {
+      stroke-width: 0;
+    }
+    45%, 55% {
+      stroke-width: 2;
+    }
+    50% {
+      stroke-width: 4;
+    }
+  }
+  @keyframes stroke-dash {
+    0% {
+      stroke-dasharray: 0, 301.59289;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 301.59289, 0;
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dasharray: 301.59289, 301.59289;
+      stroke-dashoffset: -301.59289;
+    }
+  }
+  @keyframes stroke-color {
+    from {
+      stroke: #e74c3c;
+    }
+  }
+  
+
 .form-group {
     width: 10%;
     float: left;

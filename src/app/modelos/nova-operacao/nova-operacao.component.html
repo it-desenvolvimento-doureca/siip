@@ -27,7 +27,8 @@
         <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
         <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)"
           [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
-        <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px" (click)="togglestates()">
+        <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px; float: right; width: 51px;"
+          (click)="togglestates()">
           <i class="icon-plus"></i>
         </button>
       </div>
@@ -49,8 +50,9 @@
   <div class="col-md-7 col-md-offset-7" style="float:left;">
 
 
-    <p-dataTable [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)"
-      dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
+    <p-dataTable [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single" (onRowSelect)="onRowSelect($event)"
+      class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)" dataKey="codigo" scrollable="true" scrollHeight="600px"
+      [rows]="10">
       <p-header>REFERÊNCIA(S)</p-header>
       <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}">
         <ng-template let-col let-x="rowData" pTemplate="body">
@@ -76,7 +78,7 @@
         <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
       </div>
       <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb" #dt dataKey="OPECOD"
-        scrollable="true" scrollHeight="400px" [responsive]="true" [rows]="10">
+        scrollable="true" scrollHeight="73vh" [responsive]="true" [rows]="10">
         <p-header>Operações</p-header>
         <p-column field="OPECOD" header="Código" [sortable]="true"></p-column>
         <p-column field="OPEDES" header="Designação"></p-column>
@@ -92,6 +94,9 @@
     </div>
 
   </div>
+
+  <div [hidden]="!(state != 'secondpos' && displayvermais)" class="scrollup"></div>
+  <div [hidden]="!(state != 'secondpos' && displayvermais)" class="scrolldown"></div>
 </div>
 
 <!-- Popup caso o operador só escolhe-se um referencia (Não vai ser utilizada) -->
@@ -167,16 +172,16 @@
 
 
 <!--POPUP- CAmpos Obrigatórios” -->
-<p-dialog [(visible)]="display_campos_obrigatorios" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-[draggable]="false">
-<div style="text-align:center;">
-  <p>
-    É necessário preencher o campo: {{campo}}
-  </p>
-</div>
-<p-footer>
-  <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-    <button type="button" pButton (click)="display_campos_obrigatorios = false" label="OK" style="float: none; width: auto;"></button>
+<p-dialog [(visible)]="display_campos_obrigatorios" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      É necessário preencher o campo: {{campo}}
+    </p>
   </div>
-</p-footer>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton (click)="display_campos_obrigatorios = false" label="OK" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
 </p-dialog>

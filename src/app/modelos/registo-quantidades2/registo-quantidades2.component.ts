@@ -25,6 +25,7 @@ import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
 })
 
 export class RegistoQuantidades2Component implements OnInit {
+  textoloading: string;
   utilizador: boolean = false;
   versao_modif: any;
   modoedicao: boolean;
@@ -88,7 +89,7 @@ export class RegistoQuantidades2Component implements OnInit {
   @ViewChild('fileInput') fileInput: ElementRef;
   @ViewChild('dialogwaiting') dialogwaiting: ElementRef;
   @ViewChild('closewaiting') closewaiting: ElementRef;
-  @ViewChild('editarclick2') editarclick2: ElementRef;
+  //@ViewChild('editarclick2') editarclick2: ElementRef;
   @ViewChild('divinput') divinput: ElementRef;
 
 
@@ -204,6 +205,7 @@ export class RegistoQuantidades2Component implements OnInit {
       this.bt_class = "btn-primary";
       if (this.display_etiqueta != "" && this.display_etiqueta != null) {
         this.simular(this.dialogwaiting);
+        this.textoloading = "A Pesquisar...";
         if (!nova) this.spinner = true;
         if (!nova) this.refresh = false;
 
@@ -219,7 +221,8 @@ export class RegistoQuantidades2Component implements OnInit {
             if (count > 0) {
               if (response[0].PROREF == this.ref_num) {
                 localStorage.setItem('siip_edicao', 'true');
-                this.simular(this.editarclick2);
+                //this.simular(this.editarclick2);
+                this.textoloading = "A Inserir Dados...";
                 for (var x in response) {
                   this.num_lote = response[x].OFNUM;
                   this.atualizarRPOFOPLIN(response[x].OFNUM, response[x].ofref, response[x].ofanumenr, response[x].ETQEMBQTE, response[x].INDNUMENR, response[x].VA2REF, response[x].VA1REF, response[x].INDREF);
@@ -249,7 +252,7 @@ export class RegistoQuantidades2Component implements OnInit {
                 this.mensagemdialog = "não pertence a esta referência!";
               }
             } else {
-              this.simular(this.closewaiting);
+              if (this.closewaiting) this.simular(this.closewaiting);
               if (!nova) {
                 this.bt_class = "btn-danger";
                 this.spinner = false;
@@ -332,7 +335,7 @@ export class RegistoQuantidades2Component implements OnInit {
         //atualiza OPECOD
         var rp_of_op_etiqueta = new RP_OF_OP_ETIQUETA();
         rp_of_op_etiqueta.op_COD_ORIGEM = response[0].OPECOD;
-        
+
         rp_of_op_etiqueta.id_UTZ_CRIA = this.username;
         rp_of_op_etiqueta.data_HORA_MODIF = new Date();
         rp_of_op_etiqueta.of_NUM_ORIGEM = of_NUM;
@@ -354,7 +357,7 @@ export class RegistoQuantidades2Component implements OnInit {
         var op_cod = [];
         if (count1 > 0) {
           var ult = false;
-         
+
           for (var x in response) {
             if (parseInt(x) + 1 == count1) ult = true;
             if (op_cod.indexOf(response[x].OPECOD) == -1) {
@@ -366,7 +369,7 @@ export class RegistoQuantidades2Component implements OnInit {
           rp_of_op_etiqueta.op_COD_FAM = op_cod.toString();
           this.RPOFOPETIQUETAService.create(rp_of_op_etiqueta).then(
             res => {
-  
+
             },
             error => {
               console.log(error);
@@ -508,6 +511,8 @@ export class RegistoQuantidades2Component implements OnInit {
     if (this.operacao_temp.indexOf(id) == -1) {
       this.operacao_temp.push(id);
       this.tabSets_temp.push(tab);
+      if (this.closewaiting) this.simular(this.closewaiting);
+
       this.RPOFDEFLINService.getbyid(id, this.ref[this.i].id, this.ref[this.i].id_ref_etiq).subscribe(res => {
         var countt = Object.keys(res).length;
         var pos = 0;
@@ -562,9 +567,9 @@ export class RegistoQuantidades2Component implements OnInit {
 
 
   //atualiza totalcontrol
-  updatetotal(num: number) {
+  updatetotal(num) {
     localStorage.setItem('siip_edicao', 'true');
-    this.qttboas = num;
+    this.qttboas = (num != '') ? num : 0;
     this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
     //ao alterar valor qtd. boas atualiza na BD
     this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(resp => {
@@ -699,7 +704,7 @@ export class RegistoQuantidades2Component implements OnInit {
           this.submitFunc(true, this.ref[ind].id, this.ref[ind].id_ref_etiq, this.ref[ind].comp, ind);
         }
       }
-      if ( this.ref.length > 0){ 
+      if (this.ref.length > 0) {
         this.ref_name = this.ref[ind].design;
         this.totaldefeitos = this.ref[ind].totaldefeitos;
         this.qttboas = this.ref[ind].qttboas;
@@ -987,7 +992,7 @@ export class RegistoQuantidades2Component implements OnInit {
         }
       }, error => console.log(error));
 
-      if(this.closewaiting) this.simular(this.closewaiting);
+      if (this.closewaiting) this.simular(this.closewaiting);
 
     } else {
       this.RPOFOPLINService.getRP_OF_OP_LINOp(id).subscribe(res => {

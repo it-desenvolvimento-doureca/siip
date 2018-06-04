@@ -23,6 +23,7 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
+  maq_numcod: any;
   permissao_ficheiroteste: any;
   pausas_array = [];
   displaypausas: boolean = false;
@@ -134,6 +135,7 @@ export class OperacaoEmCursoComponent implements OnInit {
                 this.op_num = "----/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
               }             
               this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
+              this.maq_numcod = response[x][1].maq_NUM.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
               this.id_utz_lider = response[x][1].id_UTZ_CRIA.trim();
               this.data_ini = response[x][0].data_INI_M2;

@@ -1,10 +1,5 @@
 @charset "UTF-8";
-body .ui-widget,
-body .ui-widget .ui-widget,
-body .ui-widget input,
-body .ui-widget select,
-body .ui-widget textarea,
-body .ui-widget button {
+body .ui-widget, body .ui-widget .ui-widget, body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     text-decoration: none;
     font-size: 1em;
@@ -21,14 +16,12 @@ body .ui-widget-header {
     border: 1px solid #cdcdcd;
 }
 
-body .ui-state-active,
-body .ui-state-highlight {
+body .ui-state-active, body .ui-state-highlight {
     background-color: #0275d8;
     color: #ffffff;
 }
 
-body .ui-state-error,
-body .ui-state-default.ui-state-error {
+body .ui-state-error, body .ui-state-default.ui-state-error {
     border-bottom-color: #e13131;
 }
 
@@ -38,16 +31,14 @@ body .ui-icon {
     line-height: 1em;
 }
 
-body .ui-state-disabled,
-body .ui-widget:disabled {
+body .ui-state-disabled, body .ui-widget:disabled {
     opacity: .35;
     filter: Alpha(Opacity=35);
     background-image: none;
     cursor: default !important;
 }
 
-body .ui-state-disabled *,
-body .ui-widget:disabled * {
+body .ui-state-disabled *, body .ui-widget:disabled * {
     cursor: default !important;
 }
 
@@ -121,8 +112,7 @@ body .ui-inputtext {
     width: 100%;
 }
 
-body .ui-inputtext.ui-state-focus,
-body .ui-inputtext:focus {
+body .ui-inputtext.ui-state-focus, body .ui-inputtext:focus {
     border: 1px solid #66afe9;
 }
 
@@ -138,8 +128,7 @@ body .ui-button {
     transition: background-color 0.3s;
 }
 
-body .ui-button:focus,
-body .ui-button:enabled:hover {
+body .ui-button:focus, body .ui-button:enabled:hover {
     outline: 0 none;
     background-color: #0267bf;
 }
@@ -262,13 +251,11 @@ body .ui-inputswitch .ui-inputswitch-handle.ui-state-focus {
     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
 }
 
-body .ui-inputswitch .ui-inputswitch-on,
-body .ui-inputswitch .ui-inputswitch-off {
+body .ui-inputswitch .ui-inputswitch-on, body .ui-inputswitch .ui-inputswitch-off {
     color: #fff;
 }
 
-body .ui-inputswitch .ui-inputswitch-on span,
-body .ui-inputswitch .ui-inputswitch-off span {
+body .ui-inputswitch .ui-inputswitch-on span, body .ui-inputswitch .ui-inputswitch-off span {
     margin-right: 0.2em;
     position: relative;
     top: -0.1em;
@@ -348,10 +335,7 @@ body .ui-dropdown .ui-dropdown-trigger .fa {
     margin-top: .65em;
 }
 
-body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-trigger,
-body .ui-dropdown.ui-state-focus .ui-dropdown-trigger,
-body .ui-dropdown.ui-state-focus .ui-dropdown-label,
-body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-label {
+body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-trigger, body .ui-dropdown.ui-state-focus .ui-dropdown-trigger, body .ui-dropdown.ui-state-focus .ui-dropdown-label, body .ui-dropdown:not(.ui-state-disabled):hover .ui-dropdown-label {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -1085,18 +1069,12 @@ body .ui-tabview {
     border-bottom: 1px solid #c7c7c7;
 }
 
-body .ui-tabview.ui-tabview-top,
-body .ui-tabview.ui-tabview-bottom,
-body .ui-tabview.ui-tabview-left,
-body .ui-tabview.ui-tabview-right {
+body .ui-tabview.ui-tabview-top, body .ui-tabview.ui-tabview-bottom, body .ui-tabview.ui-tabview-left, body .ui-tabview.ui-tabview-right {
     border: 0 none;
     height: 100%;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav, body .ui-tabview.ui-tabview-left .ui-tabview-nav, body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     padding: 0;
     border: 0 none;
     /*background: #ffffff;*/
@@ -1106,10 +1084,7 @@ body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     border-bottom: 1px solid #cccccc;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li, body .ui-tabview.ui-tabview-left .ui-tabview-nav li, body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     position: static;
     -moz-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
@@ -1125,94 +1100,58 @@ body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     border-bottom: none;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a {
     padding: 0.375em 0.75em;
     color: #2d353c;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a:focus,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a:focus {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-default a:focus, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-default a:focus {
     outline: 0 none;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-left .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-right .ui-tabview-nav li:not(.ui-state-active):not(.ui-state-disabled):hover {
     border-color: #dedede;
     border-bottom: none;
     background-color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-tabview-outline,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-tabview-outline {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-tabview-outline, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-tabview-outline {
     outline: 0 none;
     background-color: #e6e6e6;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
     background-color: #0275d8;
     border-color: #0275d8;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active a,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active a {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active a, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active a {
     color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active.ui-tabview-outline,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active.ui-tabview-outline {
+body .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-bottom .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active.ui-tabview-outline, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active.ui-tabview-outline {
     background-color: #0283f1;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn {
     background-color: #ffffff;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn:not(.ui-state-active):not(.ui-state-disabled):hover {
     background-color: #f4f3f4;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-left {
     left: 0;
     height: 2.063em;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn.ui-tabview-navscroller-btn-right {
     right: 0;
     height: 2.125em;
 }
 
-body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn .ui-icon,
-body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn .ui-icon {
+body .ui-tabview.ui-tabview-top .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-bottom .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-left .ui-tabview-navscroller-btn .ui-icon, body .ui-tabview.ui-tabview-right .ui-tabview-navscroller-btn .ui-icon {
     margin-top: 0.5em;
 }
 
@@ -1226,24 +1165,20 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav li {
     border-top-right-radius: 0.25em;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav, body .ui-tabview.ui-tabview-right .ui-tabview-nav {
     border-bottom: none;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li, body .ui-tabview.ui-tabview-right .ui-tabview-nav li {
     border: 1px solid transparent;
     width: 100%;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li:hover,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li:hover {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li:hover, body .ui-tabview.ui-tabview-right .ui-tabview-nav li:hover {
     border: 1px solid #dedede;
 }
 
-body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active,
-body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
+body .ui-tabview.ui-tabview-left .ui-tabview-nav li.ui-state-active, body .ui-tabview.ui-tabview-right .ui-tabview-nav li.ui-state-active {
     border-color: #0275d8;
     border-bottom: none;
 }
@@ -1349,10 +1284,7 @@ body .ui-paginator {
     box-sizing: border-box;
 }
 
-body .ui-paginator .ui-paginator-first,
-body .ui-paginator .ui-paginator-prev,
-body .ui-paginator .ui-paginator-next,
-body .ui-paginator .ui-paginator-last {
+body .ui-paginator .ui-paginator-first, body .ui-paginator .ui-paginator-prev, body .ui-paginator .ui-paginator-next, body .ui-paginator .ui-paginator-last {
     color: #0275d8;
     -moz-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
@@ -1364,17 +1296,11 @@ body .ui-paginator .ui-paginator-last {
     vertical-align: top;
 }
 
-body .ui-paginator .ui-paginator-first:hover,
-body .ui-paginator .ui-paginator-prev:hover,
-body .ui-paginator .ui-paginator-next:hover,
-body .ui-paginator .ui-paginator-last:hover {
+body .ui-paginator .ui-paginator-first:hover, body .ui-paginator .ui-paginator-prev:hover, body .ui-paginator .ui-paginator-next:hover, body .ui-paginator .ui-paginator-last:hover {
     background-color: #f4f3f4;
 }
 
-body .ui-paginator .ui-paginator-first:before,
-body .ui-paginator .ui-paginator-prev:before,
-body .ui-paginator .ui-paginator-next:before,
-body .ui-paginator .ui-paginator-last:before {
+body .ui-paginator .ui-paginator-first:before, body .ui-paginator .ui-paginator-prev:before, body .ui-paginator .ui-paginator-next:before, body .ui-paginator .ui-paginator-last:before {
     position: relative;
     top: 0.063em;
 }
@@ -1430,8 +1356,7 @@ body .ui-paginator .ui-paginator-pages .ui-paginator-page:hover.ui-state-active 
     background-color: #0275d8;
 }
 
-body .ui-datatable .ui-datatable-header,
-body .ui-datatable .ui-datatable-footer {
+body .ui-datatable .ui-datatable-header, body .ui-datatable .ui-datatable-footer {
     padding: .75em 1.25em;
     background-color: #f5f5f5;
 }
@@ -1444,16 +1369,14 @@ body .ui-datatable .ui-paginator {
     padding: 0;
 }
 
-body .ui-datatable .ui-datatable-thead>tr>th,
-body .ui-datatable .ui-datatable-tfoot>tr>td {
+body .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td {
     background-color: #ffffff;
     padding: .75em;
     border-color: #c7c7c7;
     color: #373a3c;
 }
 
-body .tabelaref_of .ui-datatable .ui-datatable-thead>tr>th,
-body .tabelaref_of .ui-datatable .ui-datatable-tfoot>tr>td {
+body .tabelaref_of .ui-datatable .ui-datatable-thead>tr>th, body .tabelaref_of .ui-datatable .ui-datatable-tfoot>tr>td {
     background-color: #bababa;
 }
 
@@ -1506,12 +1429,10 @@ body .ui-datatable .ui-datatable-data.ui-datatable-hoverable-rows>tr.ui-widget-c
     cursor: pointer;
 }
 
-body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd,
-body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
+body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-odd, body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     border-color: #c7c7c7;
     border-bottom-color: #0275d8;
 }
-
 
 /* TIAGO PEREIRA */
 
@@ -1525,8 +1446,7 @@ body .ui-datatable .ui-datatable-data tr.ui-row-editing.ui-datatable-even {
     background: #efefef;
 }
 
-.gestao .ui-datatable .ui-datatable-thead>tr>th,
-body .ui-datatable .ui-datatable-tfoot>tr>td {
+.gestao .ui-datatable .ui-datatable-thead>tr>th, body .ui-datatable .ui-datatable-tfoot>tr>td {
     background-color: #b2b2b2 !important;
 }
 
@@ -1605,13 +1525,11 @@ body .ui-datatable .ui-datatable-data tr td.ui-editable-column input {
     border-radius: 0;
 }
 
-body .ui-datatable .ui-datatable-scrollable-header,
-body .ui-datatable .ui-datatable-scrollable-footer {
+body .ui-datatable .ui-datatable-scrollable-header, body .ui-datatable .ui-datatable-scrollable-footer {
     background-color: #f5f5f5;
 }
 
-body .ui-datatable .ui-datatable-scrollable-header .ui-datatable-scrollable-header-box td,
-body .ui-datatable .ui-datatable-scrollable-footer .ui-datatable-scrollable-header-box td {
+body .ui-datatable .ui-datatable-scrollable-header .ui-datatable-scrollable-header-box td, body .ui-datatable .ui-datatable-scrollable-footer .ui-datatable-scrollable-header-box td {
     color: #373a3c;
 }
 
@@ -1898,13 +1816,11 @@ body .ui-treetable .ui-treetable-data tr td .ui-chkbox .ui-chkbox-icon {
     left: 0px;
 }
 
-body .ui-treetable .ui-treetable-scrollable-header,
-body .ui-treetable .ui-treetable-scrollable-footer {
+body .ui-treetable .ui-treetable-scrollable-header, body .ui-treetable .ui-treetable-scrollable-footer {
     background-color: #f0f3f5;
 }
 
-body .ui-treetable .ui-treetable-scrollable-header .ui-treetable-scrollable-header-box td,
-body .ui-treetable .ui-treetable-scrollable-footer .ui-treetable-scrollable-header-box td {
+body .ui-treetable .ui-treetable-scrollable-header .ui-treetable-scrollable-header-box td, body .ui-treetable .ui-treetable-scrollable-footer .ui-treetable-scrollable-header-box td {
     color: #373a3c;
 }
 
@@ -1973,8 +1889,7 @@ body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight {
     color: #ffffff;
 }
 
-body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-tree-toggler,
-body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-treenode-icon {
+body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-tree-toggler, body .ui-tree.ui-tree-horizontal .ui-treenode-content.ui-state-highlight .ui-treenode-icon {
     color: #ffffff;
 }
 
@@ -2039,7 +1954,6 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
     top: 0.186em;
 }
 
-
 /* Messages */
 
 .ui-messages.ui-messages-success {
@@ -2081,7 +1995,6 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
 .ui-messages.ui-messages-error .ui-messages-close {
     color: #a94442;
 }
-
 
 /* Growl */
 
@@ -2470,8 +2383,7 @@ body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link {
     color: #373a3c;
 }
 
-body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link:hover,
-body .ui-menu .ui-menu-list .ui-menuitem.ui-menuitem-active>.ui-menuitem-link {
+body .ui-menu .ui-menu-list .ui-menuitem .ui-menuitem-link:hover, body .ui-menu .ui-menu-list .ui-menuitem.ui-menuitem-active>.ui-menuitem-link {
     background-color: #0275d8;
     color: #ffffff;
 }
@@ -2548,8 +2460,7 @@ body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link {
     padding: 0.375em 0.75em;
 }
 
-body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-icon,
-body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-text {
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-icon, body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem .ui-menuitem-link .ui-menuitem-text {
     vertical-align: middle;
     display: inline-block;
     float: none;
@@ -2712,32 +2623,16 @@ body .ui-slidemenu .ui-slidemenu-backward {
     border-top-right-radius: 0;
 }
 
-
 /* Validation */
 
-.ui-inputtext.ng-dirty.ng-invalid,
-p-dropdown.ng-dirty.ng-invalid>.ui-dropdown,
-p-autocomplete.ng-dirty.ng-invalid>.ui-autocomplete>.ui-inputtext,
-p-calendar.ng-dirty.ng-invalid>.ui-inputtext,
-p-chips.ng-dirty.ng-invalid>.ui-inputtext,
-p-inputmask.ng-dirty.ng-invalid>.ui-inputtext,
-p-checkbox.ng-dirty.ng-invalid .ui-chkbox-box,
-p-radiobutton.ng-dirty.ng-invalid .ui-radiobutton-box,
-p-inputswitch.ng-dirty.ng-invalid .ui-inputswitch,
-p-listbox.ng-dirty.ng-invalid .ui-inputtext,
-p-multiselect.ng-dirty.ng-invalid>.ui-multiselect,
-p-spinner.ng-dirty.ng-invalid>.ui-inputtext,
-p-selectbutton.ng-dirty.ng-invalid .ui-button,
-p-togglebutton.ng-dirty.ng-invalid .ui-button {
+.ui-inputtext.ng-dirty.ng-invalid, p-dropdown.ng-dirty.ng-invalid>.ui-dropdown, p-autocomplete.ng-dirty.ng-invalid>.ui-autocomplete>.ui-inputtext, p-calendar.ng-dirty.ng-invalid>.ui-inputtext, p-chips.ng-dirty.ng-invalid>.ui-inputtext, p-inputmask.ng-dirty.ng-invalid>.ui-inputtext, p-checkbox.ng-dirty.ng-invalid .ui-chkbox-box, p-radiobutton.ng-dirty.ng-invalid .ui-radiobutton-box, p-inputswitch.ng-dirty.ng-invalid .ui-inputswitch, p-listbox.ng-dirty.ng-invalid .ui-inputtext, p-multiselect.ng-dirty.ng-invalid>.ui-multiselect, p-spinner.ng-dirty.ng-invalid>.ui-inputtext, p-selectbutton.ng-dirty.ng-invalid .ui-button, p-togglebutton.ng-dirty.ng-invalid .ui-button {
     border-bottom-color: #e13131;
 }
-
-
-
 
 body .ui-datatable .ui-cell-data {
     font-size: 12px;
 }
+
 .disabled-account-row .ui-cell-data {
     font-size: 14px !important;
 }
@@ -2834,8 +2729,7 @@ body .ui-datatable .ui-cell-data {
     background-position: 40px 0 !important;
 }
 
-.progress1-striped .progress1-bar,
-.progress1-bar-striped {
+.progress1-striped .progress1-bar, .progress1-bar-striped {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
@@ -2843,8 +2737,7 @@ body .ui-datatable .ui-cell-data {
     background-size: 40px 40px
 }
 
-.progress1.active .progress1-bar,
-.progress1-bar.active {
+.progress1.active .progress1-bar, .progress1-bar.active {
     -webkit-animation: progress1-bar-stripes 2s linear infinite;
     -o-animation: progress1-bar-stripes 2s linear infinite;
     animation: progress1-bar-stripes 2s linear infinite
@@ -3037,8 +2930,7 @@ body .ui-datatable .ui-cell-data {
     }
 }
 
-.modal-footer:before,
-.modal-footer:after {
+.modal-footer:before, .modal-footer:after {
     display: table;
     content: " "
 }
@@ -3053,8 +2945,7 @@ body .ui-datatable .ui-cell-data {
     margin-left: 0 !important;
 }
 
-body
- {
+body {
     color: white !important;
     margin: 0;
     /*height: 100%;*/
@@ -3065,9 +2956,8 @@ body
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d0e4f7', endColorstr='#87bcea',GradientType=0 );*/
     /* The image used */
     /*background-image: url("../assets/fundo.jpeg");*/
-    
     /*background: rgb(238, 238, 238) !important;*/
-    background:rgb(96, 147, 192) !important;
+    background: rgb(96, 147, 192) !important;
     background-size: cover;
     /* Full height */
     /*height: 100%;*/
@@ -3076,10 +2966,12 @@ body
     background-repeat: no-repeat;
     height: auto;
 }
+
 html {
     background: rgb(96, 147, 192) !important;
     height: 100vh;
 }
+
 @media (min-width: 1199px) {
     .loginadicional {
         flex: 0 0 46.666667% !important;
@@ -3133,8 +3025,7 @@ html {
     background: #EEEEEE;
 }
 
-.iconmelon,
-.im {
+.iconmelon, .im {
     position: relative;
     text-align: center;
     height: 129px;
@@ -3142,8 +3033,7 @@ html {
     fill: #525151;
 }
 
-.iconmelon:after,
-.im:after {
+.iconmelon:after, .im:after {
     content: '';
     position: absolute;
     top: 0;
@@ -3174,22 +3064,55 @@ html {
     padding: 0px 2px 0px 2px !important
 }
 
-body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-even{
-    background-color: #d1cece ;
+body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-even {
+    background-color: #d1cece;
 }
-
 
 .disabled-account-row {
     background: white !important;
     font-weight: 600;
 }
 
-
-body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd{
-    background-color: #e5dede ;
+body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
+    background-color: #e5dede;
 }
 
 .mensagem_dialog .ui-dialog {
     top: 20px !important;
 }
 
+.btobs span {
+    padding: 3px !important;
+}
+
+.tabelacontrolo th {
+    padding: 0 4px 0px 4px !important;
+    text-align: -webkit-center;
+}
+
+.scrollup {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+    bottom: 80px;
+    position: fixed;
+    right: 29px;
+    text-indent: -999px;
+    background: url('../../assets/6t3jba.png') no-repeat;
+    cursor: pointer;
+    z-index: 4;
+}
+
+.scrolldown {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+    bottom: 30px;
+    position: fixed;
+    right: 29px;
+    text-indent: -999px;
+    background: url('../../assets/6t3jba.png') no-repeat;
+    cursor: pointer;
+    transform: rotate(180deg);
+    z-index: 4;
+}

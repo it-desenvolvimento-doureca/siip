@@ -6,6 +6,19 @@
 
 jQuery.ajaxSetup({ cache: false });
 
+
+$('.scrollup').click(function () {
+	$(".ui-datatable-scrollable-body").animate({ scrollTop: '-=100' });
+	return false;
+});
+$('.scrolldown').click(function () {
+	$(".ui-datatable-scrollable-body").animate({ scrollTop: '+=100' });
+	return false;
+});
+
+
+
+/*
 $('#editarclick2').click(function () {
 
 	$dialog.find('h3').text("A Inserir Dados...")
@@ -22,7 +35,9 @@ var $dialog = $(
 	'<div class="progress1 progress1-striped active" style="margin-bottom:0;"><div class="progress1-bar" style="width: 100%"></div></div>' +
 	'</div>' +
 	'</div></div></div>');
+*/
 
+/*
 var waitingDialog = waitingDialog || (function ($) {
 	'use strict';
 
@@ -36,7 +51,8 @@ var waitingDialog = waitingDialog || (function ($) {
 		 * @param options Custom options:
 		 * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
 		 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
-		 */
+		
+		 
 		show: function (message, options) {
 			// Assigning defaults
 			if (typeof options === 'undefined') {
@@ -69,7 +85,8 @@ var waitingDialog = waitingDialog || (function ($) {
 		},
 		/**
 		 * Closes dialog
-		 */
+		 
+		 
 		hide: function () {
 			if ($('#myModal').hasClass('show')) {
 				$dialog.modal('hide');
@@ -78,7 +95,7 @@ var waitingDialog = waitingDialog || (function ($) {
 		}
 	};
 
-})(jQuery);
+})(jQuery);*/
 $(document).ready(function () {
 	var count = 0;
 	$(".tabcss .ui-tabview-nav").children().each(function () {

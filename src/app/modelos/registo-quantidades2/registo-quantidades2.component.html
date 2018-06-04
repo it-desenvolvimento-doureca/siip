@@ -42,10 +42,12 @@
           <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()" class="btn btn-primary" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()" class="btn btn-primary"
+            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-plus"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="apagardados()" class="btn btn-danger" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="apagardados()" class="btn btn-danger"
+            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-trash"></i>
           </button>
           <label *ngIf="num_lote!='' && num_lote != null" class="control-label " for="name">
@@ -97,7 +99,12 @@
         <label class="control-label " for="name">Quant. OF</label>
         <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
       </div>
+      <div [hidden]="!(comp && qtdetiquetas == 0)" class="nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
+        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton style="height: 43px;"
+          label="Obs. Referência"></button>
+      </div>
     </div>
+
     <div [hidden]="(comp && qtdetiquetas == 0)" class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 0px 0 0 0; text-align: center;">
       <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
         <label class="control-label " for="name">Quant. Boas</label>
@@ -106,8 +113,9 @@
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
               (click)="menosqtdboas()" class="btn btn-default">-</button>
           </span>
-          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number" #box
-            (ngModelChange)="updatetotal(box.value)" style="text-align: center;" min="0" style="text-align: center;" />
+          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number"
+            #box (ngModelChange)="updatetotal(box.value)" (click)="box.select()" style="text-align: center;" min="0" style="text-align: center;"
+          />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
               (click)="maisqtdboas()" class="btn btn-default">+</button>
@@ -142,6 +150,14 @@
         <input class="form-control" type="text" style="text-align: center;" value="{{qtd_etiqueta}}" readonly />
       </div>
 
+      <div class="nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
+        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton style="height: 43px;"
+          label="Obs. Referência"></button>
+      </div>
+      <div *ngIf="tabSets.length > 0" class=" nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: 95px;">
+        <button type="button" class="form-control btn  btobs" (click)="adicionarobs()" pButton style="height: 43px; background: dimgrey;"
+          label="Obs. do Defeito"></button>
+      </div>
       <!--
       <div *ngIf="comp" class="col-md-3 col-md-offset-2 col-sm-3 nopadding" style=" float: left; margin-left: 10px;  max-width: 17%;">
         <label class="control-label " for="name">Total Etiquetas</label>
@@ -231,24 +247,26 @@
                   <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
                     class="btn btn-default">-</button>
                 </span>
-                <input tabindex="{{item.pos}}" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}"
-                  (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)" name="{{ item.cod }}"
-                  #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0" style="text-align: center;" [disabled]="!modoedicao">
+                <input tabindex="{{item.pos}}" (click)="inputvalue.select()" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)"
+                  id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
+                  name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0"
+                  style="text-align: center;" [disabled]="!modoedicao">
                 <span class="input-group-btn">
-                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)" class="btn btn-default">+</button>
+                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)"
+                    class="btn btn-default">+</button>
                 </span>
               </div>
             </div>
 
           </div>
-          <div *ngIf="tabSets.length > 0" class="col-md-12 col-md-offset-12 nopadding" style="display: grid; bottom: 0; text-align: right; margin-top: 21px;">
+          <!--  <div *ngIf="tabSets.length > 0" class="col-md-12 col-md-offset-12 nopadding" style="display: grid; bottom: 0; text-align: right; margin-top: 21px;">
             <a style="cursor: pointer" (click)="adicionarobs()">
               <h5 style="color: black;">
                 <span>*</span>Adicionar/Consultar Observações do Defeito Selecionado
                 <i class="fa fa-plus fa-1x fa-fw"></i>
               </h5>
             </a>
-          </div>
+          </div>-->
         </div>
       </div>
       <button type="input" #fileInput class="form-control btn ui-button-secondary" icon="fa-refresh" [disabled]="!valForm.form.valid"
@@ -256,49 +274,49 @@
         label="Atualizar Valores"></button>
       <br>
       <div class="col-md-12 col-md-offset-12" style="float: right">
-        <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float: left">
+        <div class="col-md-9 col-md-offset-9 col-sm-12 nopadding" style="float: left">
           <h5> Verificações Adicionais </h5>
-          <div class="checkbox col-md-6 col-sm-6" style="float: left;">
+          <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
               <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
-              <span style="font-size: 1.2vw">Teste X-Ato</span>
+              <span style="font-size: 1.4vw">Teste X-Ato</span>
             </label>
           </div>
-          <div class="checkbox col-md-6 col-sm-6" style="float: left;">
+          <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
               <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
-              <span style="font-size: 1.2vw">Teste Aderência</span>
+              <span style="font-size: 1.4vw">Teste Aderência</span>
             </label>
           </div>
-          <div class="checkbox col-md-6 col-sm-6" style="float: left;">
+          <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
               <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
-              <span style="font-size: 1.2vw">Teste Fita Adesiva</span>
+              <span style="font-size: 1.4vw">Teste Fita Adesiva</span>
             </label>
           </div>
-          <div class="checkbox col-md-6 col-sm-6" style="float: left; ">
+          <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left; ">
             <label style="font-size: 1.5em">
               <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
-              <span style="font-size: 1.2vw">Teste Dimensional</span>
+              <span style="font-size: 1.4vw">Teste Dimensional</span>
             </label>
           </div>
         </div>
-        <div class="col-md-3 col-md-offset-3 col-sm-12 nopadding" style="float: left; bottom: 10px; position: absolute; display: inline-block;">
-            <button type="button" class="form-control btn ui-button-success" (click)="abrirobsref()" pButton style="height: 60px;" label="Observações Referência"></button>
-        </div>
-        <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding" style="float: right; text-align: center; bottom: 10px; position: absolute; display: inline-block; right: 0;">
+        <!--<div class="col-md-3 col-md-offset-3 col-sm-12 nopadding" style="float: left; bottom: 10px; position: absolute; display: inline-block;">
+          <button type="button" class="form-control btn ui-button-success" (click)="abrirobsref()" pButton style="height: 60px;" label="Observações Referência"></button>
+        </div>-->
+        <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding" style="float: right; text-align: center; /*bottom: 10px;*/ position: absolute; display: inline-block; right: 0;">
           <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton style="width: 70%; height: 60px;"
             label="CONCLUIR / SAIR"></button>
           <!--<button type="button" class="form-control btn btn-success ui-button-secondary" (click)="gravar()" pButton style="width: 48%; height: 60px; float: left;"
@@ -312,8 +330,29 @@
 </div>
 <button #editarclick2 id="editarclick2" data-toggle="modal" [hidden]="true"></button>
 
-<button type="button" [hidden]="true" #dialogwaiting class="btn btn-success" onclick="waitingDialog.show('A Pesquisar...', {dialogSize: 'sm'});">Show dialog</button>
-<button type="button" [hidden]="true" #closewaiting class="btn btn-success" onclick="setTimeout(function () { waitingDialog.hide(); }, 500);">Show dialog</button>
+<button type="button" [hidden]="true" #dialogwaiting data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#myModal"
+  class="btn btn-success">Show dialog</button>
+
+
+<div id="myModal" class="modal" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="text-align: center; display: flow-root;">
+        <h4 class="modal-title" style="color: black;">{{textoloading}}</h4>
+      </div>flow-rootflow-root
+      <div class="modal-body" style="padding: 0;">
+        <div class="container" style="text-align: -webkit-center;">
+          <svg class="svg" width=200 height=200>
+            <circle cx=100 cy=100 r=50 />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <button type="button" [hidden]="true" #closewaiting data-dismiss="modal">Show dialog</button>
+  </div>
+</div>
 
 <!-- POPUP OBS DEFEITOS-->
 <p-dialog header="Observações do Defeito: {{defeito_desg}}" [(visible)]="displayDialog" modal="modal" [responsive]="true"
@@ -348,7 +387,7 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button  type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
+      <button type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
       <button [disabled]="!modoedicao" type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
     </div>
   </p-footer>

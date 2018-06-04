@@ -6,6 +6,7 @@ import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
 import { Router } from '@angular/router';
 import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
+import { utilizadorService } from '../../utilizadorService';
 
 @Component({
   selector: 'app-controlo',
@@ -25,6 +26,10 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
   ]
 })
 export class ControloComponent implements OnInit {
+  seccao;
+  sec_num_user: any;
+  seccoes = [];
+  estado: any;
   mensagens: any[];
   displaymensagem: boolean;
   count3 = 0;
@@ -50,19 +55,59 @@ export class ControloComponent implements OnInit {
   date4;
   rowData;
   checked: boolean = false;
-  estados = [{ label: "--", value: null }, { label: "Concluido", value: "C" }, { label: "Execução", value: "E" },
-  { label: "Modificado", value: "M" }, { label: "Pausa", value: "S" }, { label: "Anulado", value: "A" }, { label: "Preparação", value: "P" }];
+  estados = [/*{ label: "--", value: null },*/ { label: "Concluido", value: "'C'" }, { label: "Execução", value: "'E'" },
+  { label: "Modificado", value: "'M'" }, { label: "Pausa", value: "'S'" }, { label: "Anulado", value: "'A'" }, { label: "Preparação", value: "'P'" }];
 
-  constructor(private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
+  constructor(private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
   ngOnInit() {
     this.count2 = 0;
     this.pesquisa = [];
     this.num_rows = this.items;
-    this.inicia();
+
+    this.sec_num_user = JSON.parse(localStorage.getItem('sec_num_user'));
+    var secarray = this.sec_num_user.split(",");
+    this.service.getSeccoes().subscribe(
+      response => {
+        for (var x in response) {
+          if (secarray.find(item => item == "'" + response[x].SECCOD + "'")) {
+            this.seccoes.push({ label: response[x].SECCOD + " - " + response[x].SECLIB, value: response[x].SECCOD });
+          } else if (this.sec_num_user == "ADMIN") {
+            this.seccoes.push({ label: response[x].SECCOD + " - " + response[x].SECLIB, value: response[x].SECCOD });
+          }
+        }
+        this.seccoes = this.seccoes.slice();
+
+        this.inicia();
+
+      },
+      error => console.log(error));
+
+
 
     setInterval(() => { if (this.checked) this.atualiza(); }, 60000);
 
+  }
+
+  atualizasec() {
+
+    this.dataTableComponent.reset();
+    this.start_row = 0;
+    this.num_rows = this.items;
+    this.hiddenvermais = false;
+    this.dados = [];
+    this.count3 = 0;
+
+    if (this.seccao.length > 0) {
+      var secc_n = [];
+      for (var x in this.seccao) {
+        secc_n.push("'" + this.seccao[x] + "'")
+      }
+      this.sec_num_user = secc_n.toString();
+    } else {
+      this.sec_num_user = JSON.parse(localStorage.getItem('sec_num_user'));
+    }
+    this.inicia();
   }
 
   inicia() {
@@ -71,11 +116,11 @@ export class ControloComponent implements OnInit {
       this.dados_old = this.dados;
       //this.dados = [];
       //this.items = 10;
-      var sec_num_user = JSON.parse(localStorage.getItem('sec_num_user'));
-      this.RPOFCABService.getAll(sec_num_user).subscribe(
+      this.RPOFCABService.getAll(this.sec_num_user).subscribe(
         res => {
           this.count = 0;
-          var total = Object.keys(res).length; if (total > 0) {
+          var total = Object.keys(res).length;
+          if (total > 0) {
             if (this.start_row >= total) this.start_row = total;
             if (this.num_rows >= total) { this.num_rows = total; this.hiddenvermais = true; }
 
@@ -87,11 +132,14 @@ export class ControloComponent implements OnInit {
               }
             }
           } else {
+            this.tabela = [];
+            this.hiddenvermais = true;
             this.atualizacao = true;
           }
         },
         error => {
           console.log(error);
+          this.hiddenvermais = true;
           this.atualizacao = true;
         });
 
@@ -133,9 +181,9 @@ export class ControloComponent implements OnInit {
           }
 
           //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
-          val_perc_def = (response[x][0].quant_DEF_TOTAL_M2 / (response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2))*100;
+          val_perc_def = (response[x][0].quant_DEF_TOTAL_M2 / (response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2)) * 100;
           //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
-          if(isNaN(val_perc_def) ) val_perc_def= 0;
+          if (isNaN(val_perc_def)) val_perc_def = 0;
 
           if (val_perc_def >= response[x][0].perc_OBJETIV) {
             cor_total_def = "yellow";
@@ -176,7 +224,7 @@ export class ControloComponent implements OnInit {
           total_def.push({ value: response[x][0].quant_DEF_TOTAL_M2, cor: cor_total_def });
           perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString() + "%", cor: cor_perc_def });
           var perc = 0;
-          if(response[x][0].perc_OBJETIV != null){
+          if (response[x][0].perc_OBJETIV != null) {
             perc = response[x][0].perc_OBJETIV;
           }
           perc_obj.push(perc.toFixed(2).toLocaleString() + "%");
@@ -324,7 +372,20 @@ export class ControloComponent implements OnInit {
     this.hiddenvermais = false;
     this.dados = [];
     this.count3 = 0;
-    this.inicia();
+
+    var count = 0;
+    for (var n in this.pesquisa) {
+      if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
+        count++;
+      }
+    }
+
+    if (count > 0 || (this.estado != null && this.estado != "")) {
+      this.aplicar();
+    } else {
+      this.inicia();
+    }
+
   }
 
   onRowSelect(event) {
@@ -362,6 +423,7 @@ export class ControloComponent implements OnInit {
 
   //limpar filtros pesquisa avançada
   limpar() {
+    this.estado = null;
     this.pesquisa = [];
     this.atualiza();
     /*var dirtyFormID = 'formArranque';
@@ -390,8 +452,17 @@ export class ControloComponent implements OnInit {
       }
 
     }
+    if (this.seccao.length > 0) {
+      var secc_n = [];
+      for (var x in this.seccao) {
+        secc_n.push("'" + this.seccao[x] + "'")
+      }
+      innerObj["sec_num"] = secc_n.toString();
+    } else {
+      innerObj["sec_num"] = JSON.parse(localStorage.getItem('sec_num_user'));
+    }
 
-    innerObj["sec_num"] = JSON.parse(localStorage.getItem('sec_num_user'));
+    if (this.estado && this.estado != "" && this.estado != null) innerObj["estado"] = this.estado.toString();
     data.push(innerObj)
     if (this.atualizacao) {
       this.atualizacao = false;

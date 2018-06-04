@@ -11,6 +11,9 @@
     <a (click)="apaga()" style="cursor: pointer;">
       <i class="fa fa-times" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
     </a>
+    
+    <p-multiSelect (onChange)="atualizasec()" maxSelectedLabels="1" defaultLabel="Secções" [(ngModel)]="seccao" class="comboestado" [ngModelOptions]="{standalone: true}" 
+      [options]="seccoes" [style]="{'width':'20%','padding':'3px 0px 4px 3px','display':'inline-grid','margin-left':'25px'}"></p-multiSelect>
 
     <a style="cursor: pointer; margin-left: 50px;" (click)="togglestates()">
       <i class="fa fa-search" style="margin:4px 4px 0 0; font-size: 25px; color: white;"></i>
@@ -23,7 +26,7 @@
   </div>
   <p-dataTable (onRowDblclick)="onRowDblclick($event)" [value]="tabela" [rows]="1" class="tabelacontrolo" [globalFilter]="gb"
     selectionMode="single" [(selection)]="selectedCar2" (onRowSelect)="onRowSelect($event)" dataKey="pos" scrollable="true"
-    [rows]="1">
+    [rows]="1" >
     <p-column field="pos" header="" [style]="{'background':'black','width':'3%'}">
       <ng-template let-col let-row="rowData" pTemplate="body">
         <div class="divtable">
@@ -44,14 +47,14 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="operacao" header="Oper" [sortable]="true" [style]="{'width':'3%'}">
+    <p-column field="operacao" header="Operação" [sortable]="true" [style]="{'width':'7%'}">
       <ng-template pTemplate="body" *ngFor="let col of rowData">
         <div class="divtable">
           {{row[col.field]}}
         </div>
       </ng-template>
     </p-column>
-    <p-column field="maquina" header="Máq." [sortable]="true" [style]="{'width':'7%'}">
+    <p-column field="maquina" header="Máquina" [sortable]="true" [style]="{'width':'7%'}">
       <ng-template pTemplate="body" *ngFor="let col of rowData">
         <div class="divtable" style="font-size: 10px;">
           {{row[col.field]}}
@@ -146,7 +149,7 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="qtd_boas" header="Qtd. Boas" [sortable]="true" [style]="{'width':'4%','position':'relative'}">
+    <p-column field="qtd_boas" header="Qtd. Boas" [sortable]="true" [style]="{'width':'3%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable2 " style="padding: 0px">
           <tr *ngFor="let col2 of row[col.field]">
@@ -155,7 +158,7 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="total_def" header="Total Def." [sortable]="true" [style]="{'width':'4%','position':'relative'}">
+    <p-column field="total_def" header="Total Def." [sortable]="true" [style]="{'width':'3%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable2 " style="padding: 0px; ">
           <tr *ngFor="let col2 of row[col.field]">
@@ -164,7 +167,7 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="perc_def" header="% Defeitos" [sortable]="true" [style]="{'width':'5%','position':'relative'}">
+    <p-column field="perc_def" header="% Defeitos" [sortable]="true" [style]="{'width':'4%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable2" style="padding: 0px;">
           <tr *ngFor="let col2 of row[col.field]">
@@ -173,7 +176,7 @@
         </div>
       </ng-template>
     </p-column>
-    <p-column field="perc_obj" header="% Objetivo" [sortable]="true" [style]="{'width':'5%','position':'relative'}">
+    <p-column field="perc_obj" header="% Objetivo" [sortable]="true" [style]="{'width':'4%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div [ngClass]="(row[col.field].length > 2)? 'divtable' :'divtable2'"   style="padding: 0px">
           <tr *ngFor="let col2 of row[col.field]">
@@ -211,13 +214,13 @@
   </div>
 </div>
 
-<div [hidden]="atualizacao" style="height: 100%; width: 100%; background: rgba(0, 0, 0, 0.33); position: fixed; text-align: -webkit-center; padding-top: 10%;">
+<div [hidden]="atualizacao" style="height: 100%; width: 100%; background: rgba(0, 0, 0, 0.33); position: fixed; text-align: -webkit-center; padding-top: 10%; z-index: 1004;">
   <i class="fa fa-spinner fa-spin" style="font-size:70px"></i>
 </div>
 
 
 <div id="adicionaop">
-  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none;" (clickOutside)="ontogglestates($event)">
+  <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow-y: auto;" (clickOutside)="ontogglestates($event)">
     <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color: black; flex: 0 0 9%;">
       <button (click)="closepesquisa()" type="button" class="close" aria-label="Close" style="float: left; font-size: 35px;">
         <span aria-hidden="true">&times;</span>
@@ -231,11 +234,11 @@
         <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Data Início >=</label>
-            <p-calendar [(ngModel)]="pesquisa.date1" [ngModelOptions]="{standalone: true}" tabindex="1"></p-calendar>
+            <p-calendar dateFormat="yy-mm-dd" placeholder="AAAA-MM-DD" [(ngModel)]="pesquisa.date1" [ngModelOptions]="{standalone: true}" tabindex="1"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Data Fim >=</label>
-            <p-calendar [(ngModel)]="pesquisa.date2" [ngModelOptions]="{standalone: true}" tabindex="5"></p-calendar>
+            <p-calendar dateFormat="yy-mm-dd" placeholder="AAAA-MM-DD" [(ngModel)]="pesquisa.date2" [ngModelOptions]="{standalone: true}" tabindex="5"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Tempo Prod. >=</label>
@@ -251,12 +254,12 @@
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
               <= Data Início</label>
-                <p-calendar tabindex="2" [(ngModel)]="pesquisa.date3" [ngModelOptions]="{standalone: true}"></p-calendar>
+                <p-calendar dateFormat="yy-mm-dd" placeholder="AAAA-MM-DD" tabindex="2" [(ngModel)]="pesquisa.date3" [ngModelOptions]="{standalone: true}"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
               <= Data Fim</label>
-                <p-calendar  tabindex="6" [(ngModel)]="pesquisa.date4" [ngModelOptions]="{standalone: true}"></p-calendar>
+                <p-calendar dateFormat="yy-mm-dd" placeholder="AAAA-MM-DD"  tabindex="6" [(ngModel)]="pesquisa.date4" [ngModelOptions]="{standalone: true}"></p-calendar>
           </div>
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">
@@ -319,16 +322,16 @@
             <input tabindex="18" class="form-control" [(ngModel)]="pesquisa.design_ref" [ngModelOptions]="{standalone: true}" type="text" />
           </div>
         </div>
-        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+        <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
           <div class="form-group">
-            <label class="control-label requiredField" style="width: 100%; ">Estado</label>
-            <p-dropdown [(ngModel)]="pesquisa.estado" class="comboestado" [ngModelOptions]="{standalone: true}" [options]="estados" [style]="{'width':'80%'}"></p-dropdown>
+            <label class="control-label requiredField" style="width: 100%; ">Estados</label>
+            <p-multiSelect defaultLabel="Estados" [(ngModel)]="estado" class="comboestado" [ngModelOptions]="{standalone: true}" [options]="estados" [style]="{'width':'80%'}"></p-multiSelect>
             <!-- <input class="form-control" [(ngModel)]="pesquisa.estado" [ngModelOptions]="{standalone: true}" type="text" />-->
           </div>
         </div>
         <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
-          <button pButton type="button" (click)="aplicar()" label="APLICAR" style="float:right;"></button>
-          <button pButton type="button" (click)="limpar()" label="LIMPAR" style="float:right;"></button>
+          <button pButton type="button" class="ui-button-success" (click)="aplicar()" label="APLICAR" style="float:right;"></button>
+          <button pButton type="button" class="ui-button-danger" (click)="limpar()" label="LIMPAR" style="float:right;"></button>
         </div>
       </form>
     </div>

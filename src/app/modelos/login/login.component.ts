@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router } from "@angular/router";
 import { utilizadorService } from "app/utilizadorService";
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
@@ -21,6 +21,7 @@ import { ofService } from 'app/ofService';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  loading = false;
   id_OP_CAB: void;
   estado: any = [];
   displaypausa: boolean = false;
@@ -57,45 +58,56 @@ export class LoginComponent implements OnInit {
 
   //adiciona número ao input de login
   append(element: string) {
+
     if (this.count <= 4) {
       this.operation += element;
       this.count++;
     }
 
     if (this.count > 3) {
-      this.userexists();
+      this.loading = true;
+      var count = this.count;
+      setTimeout(() => {
+        if (this.count == count) this.userexists();
+      }, 1500);
     }
 
   }
 
   //verificar se utilizador existe
   userexists() {
+    if (this.operation != "" && this.operation != null) {
+      this.service.searchuser(this.operation).subscribe(
+        response => {
+          var count = Object.keys(response).length;
 
-    this.service.searchuser(this.operation).subscribe(
-      response => {
-        var count = Object.keys(response).length;
-
-        if (count > 0) {
-          localStorage.setItem('user', JSON.stringify({ username: response[0].RESCOD, name: response[0].RESDES }));
-          localStorage.setItem('time_siip', JSON.stringify({ data: new Date() }));
-          this.edited = true;
-          this.name = response[0].RESDES;
-
-          //guarda os dados do login
-          return true;
-        } else {
-          this.edited = false;
-          this.name = "";
+          if (count > 0) {
+            localStorage.setItem('user', JSON.stringify({ username: response[0].RESCOD, name: response[0].RESDES }));
+            localStorage.setItem('time_siip', JSON.stringify({ data: new Date() }));
+            this.edited = true;
+            this.name = response[0].RESDES;
+            this.loading = false;
+            //guarda os dados do login
+            return true;
+          } else {
+            this.edited = false;
+            this.name = "";
+            this.loading = false;
+            alert("Utilizador não foi encontrado!");
+          }
+        },
+        error => {
+          console.log(error)
+          if (error.status == 0) {
+            alert("Conexão com o Servidor Perdida!");
+            this.loading = false;
+          }
         }
-      },
-      error => {
-        console.log(error)
-        if (error.status == 0) {
-          alert("Conexão com o Servidor Perdida!");
-        }
-      }
 
-    );
+      );
+    } else {
+      this.loading = false;
+    }
 
   }
 
@@ -106,10 +118,14 @@ export class LoginComponent implements OnInit {
       this.operation = this.operation.slice(0, -1);
       this.count--;
       if (this.count > 3) {
-        this.userexists();
+        this.loading = true;
+        setTimeout(() => {
+          this.userexists();
+        }, 1500);
       } else {
         this.edited = false;
         this.name = "";
+        this.loading = false;
       }
     }
   }
@@ -172,7 +188,7 @@ export class LoginComponent implements OnInit {
                 response2 => {
                   var sec_num = [];
                   for (var y in response2) {
-                    sec_num.push("'"+response2[y].sec_NUM+"'");
+                    sec_num.push("'" + response2[y].sec_NUM + "'");
                   }
                   localStorage.setItem('sec_num_user', JSON.stringify(sec_num.toString()));
                   if (count == 1) {
@@ -705,6 +721,19 @@ export class LoginComponent implements OnInit {
 
       this.RPOPFUNCService.update(rpfunc);
     }, error => console.log(error));
+  }
+
+  //detecta evento tecclado escreve no popup se estiver aberto 
+  @HostListener('window:keydown', ['$event'])
+  doSomething(event) {
+
+    if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)) {
+      this.append(event.key)
+    } else if (event.keyCode == 8) {
+      this.undo();
+    }
+
+
   }
 
 }
