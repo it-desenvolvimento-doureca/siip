@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 import { utilizadorService } from '../../utilizadorService';
+import { AppGlobals } from 'webUrl';
 
 @Component({
   selector: 'app-controlo',
@@ -26,7 +27,11 @@ import { utilizadorService } from '../../utilizadorService';
   ]
 })
 export class ControloComponent implements OnInit {
-  seccao;
+  campos: any;
+  results: any[];
+  multiSortMeta = null;
+  filtro: boolean;
+  seccao = [];
   sec_num_user: any;
   seccoes = [];
   estado: any;
@@ -58,7 +63,7 @@ export class ControloComponent implements OnInit {
   estados = [/*{ label: "--", value: null },*/ { label: "Concluido", value: "'C'" }, { label: "Execução", value: "'E'" },
   { label: "Modificado", value: "'M'" }, { label: "Pausa", value: "'S'" }, { label: "Anulado", value: "'A'" }, { label: "Preparação", value: "'P'" }];
 
-  constructor(private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
+  constructor(private AppGlobals: AppGlobals, private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
   ngOnInit() {
     this.count2 = 0;
@@ -78,7 +83,23 @@ export class ControloComponent implements OnInit {
         }
         this.seccoes = this.seccoes.slice();
 
-        this.inicia();
+        if (this.AppGlobals.getfiltros("seccao")) { this.seccao = this.AppGlobals.getfiltros("seccao"); }
+        if (this.AppGlobals.getfiltros("estado")) { this.estado = this.AppGlobals.getfiltros("estado"); }
+        if (this.AppGlobals.getfiltros("pesquisa")) { this.pesquisa = this.AppGlobals.getfiltros("pesquisa"); }
+
+        var count = 0;
+        for (var n in this.pesquisa) {
+          if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
+            count++;
+          }
+        }
+
+        if ((this.estado != null && this.estado != "") || count > 0) {
+          this.aplicar();
+        } else {
+          this.inicia();
+        }
+
 
       },
       error => console.log(error));
@@ -104,13 +125,28 @@ export class ControloComponent implements OnInit {
         secc_n.push("'" + this.seccao[x] + "'")
       }
       this.sec_num_user = secc_n.toString();
+      this.AppGlobals.setfiltros("seccao", this.seccao);
     } else {
       this.sec_num_user = JSON.parse(localStorage.getItem('sec_num_user'));
     }
-    this.inicia();
+
+    var count = 0;
+    for (var n in this.pesquisa) {
+      if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
+        count++;
+      }
+    }
+
+    if ((this.estado != null && this.estado != "") || count > 0) {
+      this.aplicar();
+    } else {
+      this.inicia();
+    }
+
   }
 
   inicia() {
+    this.filtro = false;
     if (this.atualizacao) {
       this.atualizacao = false;
       this.dados_old = this.dados;
@@ -355,6 +391,18 @@ export class ControloComponent implements OnInit {
 
 
       this.ordernar();
+
+      var sorttab = this.AppGlobals.getfiltros("sorttabela");
+
+      this.multiSortMeta = null;
+      if (sorttab && sorttab.length > 0) {
+        this.multiSortMeta = [];
+        for (var v in sorttab) {
+          this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
+        }
+
+      }
+
     }
 
 
@@ -362,8 +410,11 @@ export class ControloComponent implements OnInit {
 
   apaga() {
     this.input_pesquisa = "";
+    this.multiSortMeta = [];
+    this.AppGlobals.setfiltros("sorttabela", "limpar");
     this.dataTableComponent.reset();
   }
+
   atualiza() {
     this.input_pesquisa = "";
     this.dataTableComponent.reset();
@@ -407,7 +458,7 @@ export class ControloComponent implements OnInit {
   ontogglestates(e) {
     var combo = false;
     if (e.srcElement.parentElement) {
-      if (e.srcElement.parentElement.className.search("ui-dropdown-ite") != 0) {
+      if (e.srcElement.parentElement.className.search("ui-dropdown-ite") != 0 && e.srcElement.parentElement.className.search("ui-autocomplete-token") != 0) {
         combo = true;
       }
     }
@@ -426,6 +477,7 @@ export class ControloComponent implements OnInit {
     this.estado = null;
     this.pesquisa = [];
     this.atualiza();
+    this.AppGlobals.limpaFiltros();
     /*var dirtyFormID = 'formArranque';
     var resetForm = <HTMLFormElement>document.getElementById(dirtyFormID);
     resetForm.reset();*/
@@ -433,6 +485,7 @@ export class ControloComponent implements OnInit {
 
   //aplicar filtro pesquisa avançada
   aplicar() {
+    this.filtro = true;
     this.input_pesquisa = "";
     this.dataTableComponent.reset();
     this.start_row = 0;
@@ -442,10 +495,18 @@ export class ControloComponent implements OnInit {
     this.count3 = 0;
     var data = [];
     var innerObj = {};
+    this.AppGlobals.setfiltros("pesquisa", this.pesquisa);
+
     for (var n in this.pesquisa) {
       if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
         if (n.match("date")) {
           innerObj[n] = new Date(this.pesquisa[n]).toLocaleDateString();
+        } else if (n == "ordenacao") {
+          var ord = []
+          for (var v in this.pesquisa[n]) {
+            ord.push(this.campos.find(item => item.nome == this.pesquisa[n][v].nome).value)
+          }
+          innerObj[n] = ord.toString();
         } else {
           innerObj[n] = this.pesquisa[n];
         }
@@ -458,11 +519,15 @@ export class ControloComponent implements OnInit {
         secc_n.push("'" + this.seccao[x] + "'")
       }
       innerObj["sec_num"] = secc_n.toString();
+      this.AppGlobals.setfiltros("seccao", this.seccao);
     } else {
       innerObj["sec_num"] = JSON.parse(localStorage.getItem('sec_num_user'));
     }
 
-    if (this.estado && this.estado != "" && this.estado != null) innerObj["estado"] = this.estado.toString();
+    if (this.estado && this.estado != "" && this.estado != null) {
+      innerObj["estado"] = this.estado.toString();
+      this.AppGlobals.setfiltros("estado", this.estado);
+    }
     data.push(innerObj)
     if (this.atualizacao) {
       this.atualizacao = false;
@@ -593,4 +658,69 @@ export class ControloComponent implements OnInit {
   fechar() {
     document.getElementById("page_html").style.overflow = 'auto';
   }
+
+
+  sortabela(event) {
+    this.AppGlobals.setfiltros("sorttabela", event.multisortmeta);
+  }
+
+  search(event) {
+    let query = event.query;
+    var campos = [{ nome: "Data Início", value: "c.DATA_INI_M2" },
+    { nome: "Data Início Desc", value: "c.DATA_INI_M2 desc" },
+    { nome: "Hora Início", value: "c.HORA_INI_M2" },
+    { nome: "Hora Início Desc", value: "c.HORA_INI_M2 desc" },
+    { nome: "Data Fim", value: "c.DATA_FIM_M2" },
+    { nome: "Data Fim Desc", value: "c.DATA_FIM_M2 desc" },
+    { nome: "Hora Fim", value: "c.HORA_FIM_M2 desc" },
+    { nome: "Hora Fim Desc", value: "c.HORA_FIM_M2 desc" },
+    { nome: "Estado", value: "c.ESTADO" },
+    { nome: "Estado Desc", value: "c.ESTADO desc" },
+    { nome: "OF", value: "a.OF_NUM" },
+    { nome: "OF Desc", value: "a.OF_NUM desc" },
+    { nome: "Número Operação", value: "a.OP_COD_ORIGEM" },
+    { nome: "Número Operação Desc", value: "a.OP_COD_ORIGEM desc" },
+    { nome: "Operação", value: "a.OP_DES" },
+    { nome: "Operação Desc", value: "a.OP_DES desc" },
+    { nome: "Máquina", value: "a.MAQ_DES" },
+    { nome: "Máquina Desc", value: "a.MAQ_DES desc" },
+    { nome: "Número Máquina", value: "a.MAQ_NUM" },
+    { nome: "Número Máquina Desc", value: "a.MAQ_NUM desc" },
+    { nome: "Funcionário", value: "c.NOME_UTZ_CRIA" },
+    { nome: "Funcionário Desc", value: "c.NOME_UTZ_CRIA desc" },
+    { nome: "Número Funcionário", value: "c.ID_UTZ_CRIA" },
+    { nome: "Número Funcionário Desc", value: "c.ID_UTZ_CRIA desc" },
+    { nome: "Tempo Produção", value: "h.TEMPO_EXEC_TOTAL_M2" },
+    { nome: "Tempo Produção Desc", value: "h.TEMPO_EXEC_TOTAL_M2 desc" },
+    { nome: "Referência", value: "a.REF_NUM" },
+    { nome: "Referência Desc", value: "a.REF_NUM desc" },
+    { nome: "Nome Referência", value: "a.REF_DES" },
+    { nome: "Nome Referência Desc", value: "a.REF_DES desc" },
+    { nome: "Estado", value: "c.ESTADO" },
+    { nome: "Estado Desc", value: "c.ESTADO desc" }];
+    this.campos = campos;
+    this.results = this.filterCountry(query, campos);
+  }
+
+  filterCountry(query, campos: any[]): any[] {
+    let filtered: any[] = [];
+    for (let i = 0; i < campos.length; i++) {
+      let campo = campos[i];
+
+      var nome = campo.nome.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      var query2 = query.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      if (nome.toLowerCase().match(query2.toLowerCase())) {
+        filtered.push(campo);
+      }
+    }
+    return filtered;
+  }
+
+  onSelectcampo(event) {
+    if (this.pesquisa.ordenacao.find(item => item.nome.replace("Desc", "").trim().toLowerCase() == event.nome.replace("Desc", "").trim().toLowerCase() && item.nome != event.nome)) {
+      this.pesquisa.ordenacao.splice(this.pesquisa.ordenacao.length - 1, 1)
+    }
+
+  }
+
 }

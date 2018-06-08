@@ -128,12 +128,12 @@ export class OperacaoEmCursoComponent implements OnInit {
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][2].id_OP_CAB));
               this.of_num = response[x][1].of_NUM.trim()
-              
-              if(response[x][1].op_NUM != null){
+
+              if (response[x][1].op_NUM != null) {
                 this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
-              }else{
+              } else {
                 this.op_num = "----/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
-              }             
+              }
               this.maq_num = response[x][1].maq_NUM.trim() + " - " + response[x][1].maq_DES.trim();
               this.maq_numcod = response[x][1].maq_NUM.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
@@ -202,7 +202,7 @@ export class OperacaoEmCursoComponent implements OnInit {
         for (var x in response) {
           this.utilizadores.push({
             label: response[x].id_UTZ_CRIA + " - " + response[x].nome_UTZ_CRIA,
-            value: { id_OP_FUNC: response[x].id_OP_FUNC,id_OP_CAB: response[x].id_OP_CAB, id: response[x].id_UTZ_CRIA, data_FIM: response[x].data_FIM_M2, hora_FIM: response[x].hora_FIM_M2, data_INI: response[x].data_INI_M2, hora_INI: response[x].hora_INI_M2, estado: response[x].estado }
+            value: { id_OP_FUNC: response[x].id_OP_FUNC, id_OP_CAB: response[x].id_OP_CAB, id: response[x].id_UTZ_CRIA, data_FIM: response[x].data_FIM_M2, hora_FIM: response[x].hora_FIM_M2, data_INI: response[x].data_INI_M2, hora_INI: response[x].hora_INI_M2, estado: response[x].estado }
           });
         }
 
@@ -342,22 +342,30 @@ export class OperacaoEmCursoComponent implements OnInit {
       this.displayDialogLider = true;
     } else {
 
-      var date = new Date();
-      var user = JSON.parse(localStorage.getItem('user'))["username"];
-      var nome = JSON.parse(localStorage.getItem('user'))["name"];
-      var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      //Confirmação
 
-      var num_count = 0;
-      var total = this.id_op_cab_lista.length;
-      for (var x in this.id_op_cab_lista) {
-        num_count++;
+      this.confirmationService.confirm({
+        message: 'Confirma que os dados foram validados? O trabalho será finalizado.',
+        accept: () => {
+          var date = new Date();
+          var user = JSON.parse(localStorage.getItem('user'))["username"];
+          var nome = JSON.parse(localStorage.getItem('user'))["name"];
+          var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
-        if (this.count > 1) {
-          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false, num_count, total, estado, perfil, this.id_op_cab);
-        } else {
-          this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true, num_count, total, estado, perfil, this.id_op_cab);
+          var num_count = 0;
+          var total = this.id_op_cab_lista.length;
+          for (var x in this.id_op_cab_lista) {
+            num_count++;
+
+            if (this.count > 1) {
+              this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false, num_count, total, estado, perfil, this.id_op_cab);
+            } else {
+              this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true, num_count, total, estado, perfil, this.id_op_cab);
+            }
+          }
         }
-      }
+      });
+
     }
   }
 
@@ -539,6 +547,7 @@ export class OperacaoEmCursoComponent implements OnInit {
             rp_of_op_cab.tempo_PARA_TOTAL_M2 = time_pausa_of;
             rp_of_op_cab.tempo_EXEC_TOTAL_M2 = tempo_total_execucao;
           } else {
+            rp_of_op_cab.tempo_PARA_TOTAL = rp_of_op_cab.tempo_PARA_TOTAL;
             rp_of_op_cab.tempo_PARA_TOTAL_M1 = rp_of_op_cab.tempo_PARA_TOTAL_M2;
             rp_of_op_cab.tempo_EXEC_TOTAL_M1 = rp_of_op_cab.tempo_EXEC_TOTAL_M2;
             rp_of_op_cab.tempo_PARA_TOTAL_M2 = time_pausa_of;
@@ -632,15 +641,15 @@ export class OperacaoEmCursoComponent implements OnInit {
     evento.estado = "C";
     this.GEREVENTOService.create(evento).subscribe(result => {
       this.displaymensagem = false;
-      this.verifica(this.of_num,this.texto_assunto,this.texto_mensagem,nome);
+      this.verifica(this.of_num, this.texto_assunto, this.texto_mensagem, nome);
     }, error => console.log(error));
 
   }
 
   //verificar enventos
-  verifica(of,assunto,mensagem,utilizador) {
-    var dados = "{of:"+of+",assunto:"+assunto+",mensagem:"+mensagem+",utilizador:"+utilizador+"}"
-    var data = [{ MODULO: 2, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
+  verifica(of, assunto, mensagem, utilizador) {
+    var dados = "{of:" + of + ",assunto:" + assunto + ",mensagem:" + mensagem + ",utilizador:" + utilizador + "}"
+    var data = [{ MODULO: 4, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {
     }, error => {
@@ -732,7 +741,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           var count = 0;
           for (var x in this.utilizadores) {
             count++;
-            this.atualizarFUNC(this.utilizadores[x].value, total, count,true);
+            this.atualizarFUNC(this.utilizadores[x].value, total, count, true);
           }
         }
       });
@@ -741,16 +750,16 @@ export class OperacaoEmCursoComponent implements OnInit {
     }
   }
 
-  gravar_utilizadores(){
+  gravar_utilizadores() {
     var total = this.utilizadores.length;
     var count = 0;
     for (var x in this.utilizadores) {
       count++;
-      this.atualizarFUNC(this.utilizadores[x].value, total, count,false);
+      this.atualizarFUNC(this.utilizadores[x].value, total, count, false);
     }
   }
 
-  atualizarFUNC(user, total, count,file) {
+  atualizarFUNC(user, total, count, file) {
     var userid = JSON.parse(localStorage.getItem('user'))["username"];
     var nome = JSON.parse(localStorage.getItem('user'))["name"];
     this.RPOPFUNCService.getUser(user.id_OP_FUNC).subscribe(

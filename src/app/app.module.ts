@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule, CalendarModule, MultiSelectModule } from 'primeng/primeng';
+import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule, CalendarModule, MultiSelectModule, AutoCompleteModule } from 'primeng/primeng';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './modelos/login/login.component';
 import { GestaoUsersComponent } from './modelos/gestao-users/gestao-users.component';
@@ -70,11 +70,11 @@ const routes: Routes = [
     path: 'pausa',
     component: TipoPausaComponent,
     canActivate: [LoginService]
-  },{
+  }, {
     path: 'registo-quantidades',
     component: RegistoQuantidades2Component,
     canActivate: [LoginService]
-  },{
+  }, {
     path: 'registo-quantidades/edicao',
     component: RegistoQuantidades2Component,
     canActivate: [LoginService]
@@ -128,6 +128,7 @@ const routes: Routes = [
     CheckboxModule,
     MultiSelectModule,
     ConfirmDialogModule,
+    AutoCompleteModule,
     [RouterModule.forRoot(routes, { useHash: true })]
   ],
   providers: [ConfirmationService,

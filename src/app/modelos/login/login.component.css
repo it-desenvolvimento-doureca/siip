@@ -147,6 +147,9 @@ p {
 }
 
 @media screen and (max-width: 523px) {
+    .load-bar {
+        width: 100% !important;
+    }
     .phone {
         width: 80% !important;
     }

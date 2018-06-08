@@ -14,8 +14,8 @@ export class LoginService implements CanActivate {
 
     private userIsAuthenticated: boolean;
 
-    canActivate(route: ActivatedRouteSnapshot,) {
-       
+    canActivate(route: ActivatedRouteSnapshot, ) {
+
         if (localStorage.getItem('time_siip')) {
             var data_storage = new Date(JSON.parse(localStorage.getItem('time_siip'))["data"]).getTime();
             if ((data_storage + 14400000) <= new Date().getTime()) {
@@ -25,9 +25,9 @@ export class LoginService implements CanActivate {
             }
         }
 
-        
+
         var access = JSON.parse(localStorage.getItem('access'));
-        if (!localStorage.getItem('user') ) {
+        if (!localStorage.getItem('user')) {
             alert('Efetue o Login!');
             this.router.navigate(['./home']);
             return false;

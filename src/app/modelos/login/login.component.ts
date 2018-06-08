@@ -14,6 +14,8 @@ import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
 import { AppGlobals } from 'webUrl';
 import { ofService } from 'app/ofService';
+import { RP_CONF_UTZ_PERF } from '../entidades/RP_CONF_UTZ_PERF';
+import { GEREVENTOService } from '../services/ger-evento.service';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +39,7 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
   displayprep: boolean = false;
-  constructor(private ofService: ofService, private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
+  constructor(private GEREVENTOService: GEREVENTOService, private ofService: ofService, private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
 
   }
 
@@ -143,6 +145,8 @@ export class LoginComponent implements OnInit {
   redirect() {
     var dataacess: any[] = [];
     var id = JSON.parse(localStorage.getItem('user'))["username"];
+    var nome = JSON.parse(localStorage.getItem('user'))["name"];
+
     this.RPOFOPCABService.listofcurrentof(id).subscribe(
       response => {
         var count = Object.keys(response).length;
@@ -212,7 +216,19 @@ export class LoginComponent implements OnInit {
                       }
                     }
                   } else if (count == 0) {
-                    alert("SEM ACESSO");
+                    //alert("SEM ACESSO");
+
+                    var conf_utiliz = new RP_CONF_UTZ_PERF;
+                    conf_utiliz.id_UTZ = id;
+                    conf_utiliz.perfil = "O";
+                    conf_utiliz.nome_UTZ = nome;
+                    dataacess.push("O");
+                    localStorage.setItem('perfil', JSON.stringify("O"));
+                    this.service__utz.create(conf_utiliz).then(() => {
+                      this.router.navigate(['./nova-operacao']);
+                      this.verifica(id, nome);
+                    });
+
                   } else {
                     for (var x in response) {
                       dataacess.push(response[x].perfil);
@@ -245,6 +261,17 @@ export class LoginComponent implements OnInit {
           alert("Conexão com o Servidor Perdida!");
         }
       });
+  }
+
+  //verificar enventos
+  verifica(id, utilizador) {
+    var dados = "{id:" + id + ",utilizador:" + utilizador + "}"
+    var data = [{ MODULO: 4, MOMENTO: "Utilizador Não Existe nos Acessos", PAGINA: "Login", ESTADO: true, DADOS: dados }];
+
+    this.GEREVENTOService.verficaEventos(data).subscribe(result => {
+    }, error => {
+      console.log(error);
+    });
   }
 
   //popupadministratoa

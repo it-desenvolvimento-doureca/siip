@@ -114,8 +114,8 @@
               (click)="menosqtdboas()" class="btn btn-default">-</button>
           </span>
           <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number"
-            #box (ngModelChange)="updatetotal(box.value)" (click)="box.select()" style="text-align: center;" min="0" style="text-align: center;"
-          />
+            #box (ngModelChange)="updatetotal(box.value)" (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;"
+            min="0" style="text-align: center;" />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
               (click)="maisqtdboas()" class="btn btn-default">+</button>
@@ -150,11 +150,11 @@
         <input class="form-control" type="text" style="text-align: center;" value="{{qtd_etiqueta}}" readonly />
       </div>
 
-      <div class="nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
+      <div class="btobserva nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
         <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton style="height: 43px;"
           label="Obs. Referência"></button>
       </div>
-      <div *ngIf="tabSets.length > 0" class=" nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: 95px;">
+      <div *ngIf="tabSets.length > 0" class="btobserva btobserva2 nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: 95px;">
         <button type="button" class="form-control btn  btobs" (click)="adicionarobs()" pButton style="height: 43px; background: dimgrey;"
           label="Obs. do Defeito"></button>
       </div>
@@ -247,7 +247,7 @@
                   <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
                     class="btn btn-default">-</button>
                 </span>
-                <input tabindex="{{item.pos}}" (click)="inputvalue.select()" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)"
+                <input tabindex="{{item.pos}}" (blur)="blurText($event)" (click)="selectText($event)" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)"
                   id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
                   name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0"
                   style="text-align: center;" [disabled]="!modoedicao">
@@ -367,7 +367,7 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
+      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
       <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
     </div>
   </p-footer>
@@ -375,7 +375,7 @@
 
 
 <!-- POPUP OBS REFE-->
-<p-dialog header="Observações da Referência: {{ref_desg}}" [(visible)]="displayDialog2" modal="modal" [responsive]="true"
+<p-dialog class="popupref" header="Observações da Referência: {{ref_desg}}" [(visible)]="displayDialog2" modal="modal" [responsive]="true"
   [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
@@ -387,7 +387,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button type="button" pButton icon="fa-close" (click)="cancel_obs()" label="Cancelar"></button>
+      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel_obs()"
+        label="Cancelar"></button>
       <button [disabled]="!modoedicao" type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
     </div>
   </p-footer>

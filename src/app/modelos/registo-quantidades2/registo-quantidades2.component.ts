@@ -1389,4 +1389,17 @@ export class RegistoQuantidades2Component implements OnInit {
     }, error => console.log(error));
   }
 
+  selectText(event) {
+    if (event.srcElement.value == 0) {
+      event.srcElement.value = '';
+    }
+  }
+
+  blurText(event) {
+    if (event.srcElement.value == '' || event.srcElement.value == null) {
+      event.srcElement.value = 0;
+    }
+  }
+
+
 }
