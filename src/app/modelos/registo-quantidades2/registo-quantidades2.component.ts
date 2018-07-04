@@ -352,6 +352,9 @@ export class RegistoQuantidades2Component implements OnInit {
         rp_of_op_etiqueta.quant_BOAS_M2 = 0;
         rp_of_op_etiqueta.quant_DEF_M2 = 0;
         //create
+        if (this.modoedicao && !this.utilizador) {
+          rp_of_op_etiqueta.novo = true;
+        }
 
         var count1 = Object.keys(response).length;
         var op_cod = [];

@@ -198,10 +198,11 @@ export class ControloComponent implements OnInit {
         var perc_obj_val = 0;
         var inser = false;
         //var estado = "";
-
+        
+        var cor_of = "green";
 
         for (var x in response) {
-          var cor_of = "green";
+         // var cor_of = "green";
           var cor_tempo_prod = "green";
           var cor_estado = "green";
           var cor_qtd_of = "";
@@ -213,7 +214,7 @@ export class ControloComponent implements OnInit {
           if ((response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2) > response[x][0].quant_OF) {
             cor_qtd_of = "yellow";
             cor_estado = "yellow";
-            cor_of = "yellow";
+            if (cor_of != "red") cor_of = "yellow";
           }
 
           //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
@@ -221,11 +222,20 @@ export class ControloComponent implements OnInit {
           //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
           if (isNaN(val_perc_def)) val_perc_def = 0;
 
-          if (val_perc_def >= response[x][0].perc_OBJETIV) {
+          var val = response[x][0].perc_OBJETIV;
+          if (val == null) val = 0;
+
+          if (val_perc_def == val) {
             cor_total_def = "yellow";
             cor_perc_def = "yellow";
-            cor_estado = "yellow";
-            cor_of = "yellow";
+            if (cor_of != "red") cor_of = "yellow";
+
+          }
+
+          if (val_perc_def > val) {
+            cor_total_def = "red";
+            cor_perc_def = "red";
+            cor_of = "red";
 
           }
 
@@ -250,7 +260,7 @@ export class ControloComponent implements OnInit {
           if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
             cor_tempo_prod = "yellow";
             cor_estado = "yellow";
-            cor_of = "yellow";
+            if (cor_of != "red") cor_of = "yellow";
           }
 
           artigos.push(response[x][0].ref_DES.substring(0, 32));
@@ -323,7 +333,7 @@ export class ControloComponent implements OnInit {
       if ((timedif1 < 900000 || timedif1 > 28800000) && res5[n][0].tempo_EXEC_TOTAL_M2 != null) {
         cor_tempo_prod1 = "yellow";
         cor_estado = "yellow";
-        cor_of = "yellow";
+        if (cor_of != "red") cor_of = "yellow";
       }
       func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 14));
 
@@ -484,17 +494,23 @@ export class ControloComponent implements OnInit {
   }
 
   //aplicar filtro pesquisa avançada
-  aplicar() {
-    this.filtro = true;
-    this.input_pesquisa = "";
-    this.dataTableComponent.reset();
-    this.start_row = 0;
-    this.num_rows = this.items;
+  aplicar(atualiza = false) {
+    if (atualiza) {
+      this.start_row = 0;
+      this.num_rows = this.items;
+      this.input_pesquisa = "";
+      this.dataTableComponent.reset();
+
+      this.dados = [];
+      this.count3 = 0;
+
+    }
+
     this.hiddenvermais = false;
-    this.dados = [];
-    this.count3 = 0;
+    this.filtro = true;
     var data = [];
     var innerObj = {};
+
     this.AppGlobals.setfiltros("pesquisa", this.pesquisa);
 
     for (var n in this.pesquisa) {
@@ -589,7 +605,18 @@ export class ControloComponent implements OnInit {
      this.ordernar();*/
     this.num_rows += this.items;
     this.start_row += this.items;
-    this.inicia();
+
+    var count = 0;
+    for (var n in this.pesquisa) {
+      if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
+        count++;
+      }
+    }
+    if ((this.estado != null && this.estado != "") || count > 0) {
+      this.aplicar();
+    } else {
+      this.inicia();
+    }
 
   }
 

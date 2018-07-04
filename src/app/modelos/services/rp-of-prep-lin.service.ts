@@ -15,14 +15,14 @@ export class RPOFPREPLINService {
 
   create(data: RP_OF_PREP_LIN) {
     return this.http
-      .post(webUrl.host+'/rest/siip/createRP_OF_PREP_LIN', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/createRP_OF_PREP_LIN', JSON.stringify(data), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
   delete(id) {
     return this.http
-      .delete(webUrl.host+'/rest/siip/deleteRP_OF_PREP_LIN/' + id + '')
+      .delete(webUrl.host + '/rest/siip/deleteRP_OF_PREP_LIN/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -30,7 +30,7 @@ export class RPOFPREPLINService {
 
 
   getAll(): Observable<RP_OF_PREP_LIN[]> {
-    const url = webUrl.host+'/rest/siip/getRP_OF_PREP_LIN';
+    const url = webUrl.host + '/rest/siip/getRP_OF_PREP_LIN';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -38,7 +38,16 @@ export class RPOFPREPLINService {
   }
 
   getbyid(id): Observable<RP_OF_PREP_LIN[]> {
-    const url = webUrl.host+'/rest/siip/getbyidRP_OF_PREP_LIN/'+id+'';
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_PREP_LIN/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+
+  getbyid2(id): Observable<RP_OF_PREP_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_PREP_LIN2/' + id + '';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -49,7 +58,7 @@ export class RPOFPREPLINService {
 
   update(data: RP_OF_PREP_LIN) {
     return this.http
-      .put(webUrl.host+'/rest/siip/updateRP_OF_PREP_LIN', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host + '/rest/siip/updateRP_OF_PREP_LIN', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);

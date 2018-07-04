@@ -4,7 +4,6 @@
     padding: 20px;
 }
 
-
 label {
     margin-bottom: 0 !important;
 }
@@ -15,4 +14,12 @@ label {
 
 input {
     line-height: inherit !important;
+}
+
+.tabelaeditarpausas .ui-state-highlight {
+    border-color: inherit !important;
+}
+
+.tabelaeditarpausas td {
+    padding: .25em .5em !important;
 }

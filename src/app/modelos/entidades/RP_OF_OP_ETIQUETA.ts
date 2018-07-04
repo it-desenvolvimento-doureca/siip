@@ -18,5 +18,6 @@ export class RP_OF_OP_ETIQUETA {
     quant_BOAS_M2: number;
     quant_DEF_M1: number;
     quant_DEF_M2: number;
-    versao_MODIF : number;
+    versao_MODIF: number;
+    novo: boolean;
 }

@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule, CalendarModule, MultiSelectModule, AutoCompleteModule } from 'primeng/primeng';
+import { DataTableModule, SharedModule, DropdownModule, TabViewModule, DialogModule, ButtonModule, PickListModule, CalendarModule, MultiSelectModule, AutoCompleteModule, GrowlModule } from 'primeng/primeng';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './modelos/login/login.component';
 import { GestaoUsersComponent } from './modelos/gestao-users/gestao-users.component';
@@ -129,6 +129,7 @@ const routes: Routes = [
     MultiSelectModule,
     ConfirmDialogModule,
     AutoCompleteModule,
+    GrowlModule,
     [RouterModule.forRoot(routes, { useHash: true })]
   ],
   providers: [ConfirmationService,

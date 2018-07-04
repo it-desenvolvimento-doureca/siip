@@ -1,4 +1,10 @@
 @charset "UTF-8";
+#tabelacontroloclone {
+    position: fixed;
+    top: 48px;
+    z-index: 10;
+}
+
 body .ui-widget, body .ui-widget .ui-widget, body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     text-decoration: none;
@@ -2000,22 +2006,22 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
 
 .ui-growl .ui-growl-message-success {
     background-color: #dff0d8;
-    color: #3c763d;
+    /*color: #3c763d;*/
 }
 
 .ui-growl .ui-growl-message-info {
     background-color: #d9edf7;
-    color: #31708f;
+    /*color: #31708f;*/
 }
 
 .ui-growl .ui-growl-message-warn {
     background-color: #fcf8e3;
-    color: #8a6d3b;
+   /* color: #8a6d3b;*/
 }
 
 .ui-growl .ui-growl-message-error {
     background-color: #f2dede;
-    color: #a94442;
+    /*color: #a94442;*/
 }
 
 body .ui-overlaypanel {
@@ -3117,6 +3123,34 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
     z-index: 4;
 }
 
-.popupref .ui-shadow{
+.popupref .ui-shadow {
     width: 80%;
+}
+
+.load-3 .line:nth-last-child(1) {animation: loadingC .6s .1s linear infinite;}
+.load-3 .line:nth-last-child(2) {animation: loadingC .6s .2s linear infinite;}
+.load-3 .line:nth-last-child(3) {animation: loadingC .6s .3s linear infinite;}
+.load-wrapp {
+    float: left;
+    width: 100%;
+    margin: 0 10px 10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.load-wrapp p {padding: 0 0 20px;}
+.load-wrapp:last-child {margin-right: 0;}
+
+.line {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    background-color: #4b9cdb;
+}
+
+@keyframes loadingC {
+    0 {transform: translate(0,0);}
+    50% {transform: translate(0,15px);}
+    100% {transform: translate(0,0);}
 }

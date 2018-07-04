@@ -11,4 +11,14 @@ export class RP_OF_PREP_LIN {
     id_UTZ_MODIF: string;
     data_HORA_MODIF: Date;
     estado: string;
+
+    data_INI_M1: Date;
+    hora_INI_M1: string;
+    data_FIM_M1: Date;
+    hora_FIM_M1: string;
+
+    data_INI_M2: Date;
+    hora_INI_M2: string;
+    data_FIM_M2: Date;
+    hora_FIM_M2: string;
 }

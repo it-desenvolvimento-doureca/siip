@@ -340,9 +340,15 @@ export class LoginComponent implements OnInit {
 
         this.RPOFPARALINService.getbyid_op_cab(id_op_cab).subscribe(result2 => {
           rp_of_para_lin = result2[0];
-          rp_of_para_lin.data_FIM = date;
 
+          rp_of_para_lin.data_FIM = date;
           rp_of_para_lin.hora_FIM = time;
+
+          rp_of_para_lin.data_FIM_M1 = date;
+          rp_of_para_lin.hora_FIM_M1 = time;
+          rp_of_para_lin.data_FIM_M2 = date;
+          rp_of_para_lin.hora_FIM_M2 = time;
+
           rp_of_para_lin.id_UTZ_MODIF = user;
           rp_of_para_lin.data_HORA_MODIF = date;
           rp_of_para_lin.estado = "C";
@@ -438,6 +444,11 @@ export class LoginComponent implements OnInit {
             rp_of_prep_lin.estado = "C";
             rp_of_prep_lin.data_FIM = date;
             rp_of_prep_lin.hora_FIM = time;
+            rp_of_prep_lin.data_FIM_M1 = date;
+            rp_of_prep_lin.hora_FIM_M1 = time;
+            rp_of_prep_lin.data_FIM_M2 = date;
+            rp_of_prep_lin.hora_FIM_M2 = time;
+
             rp_of_prep_lin.data_HORA_MODIF = date;
             rp_of_prep_lin.id_UTZ_MODIF = user;
 
@@ -643,6 +654,12 @@ export class LoginComponent implements OnInit {
             rp_of_prep_lin.estado = "C";
             rp_of_prep_lin.data_FIM = date;
             rp_of_prep_lin.hora_FIM = time_fim;
+
+            rp_of_prep_lin.data_FIM_M1 = date;
+            rp_of_prep_lin.hora_FIM_M1 = time_fim;
+            rp_of_prep_lin.data_FIM_M2 = date;
+            rp_of_prep_lin.hora_FIM_M2 = time_fim;
+
             rp_of_prep_lin.data_HORA_MODIF = date;
             rp_of_prep_lin.id_UTZ_MODIF = user;
 

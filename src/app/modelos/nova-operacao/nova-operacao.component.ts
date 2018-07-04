@@ -151,7 +151,7 @@ export class NovaOperacaoComponent implements OnInit {
                                     var referencias = [];
                                     for (var x in response2) {
                                         var perc = 0;
-                                        if(response2[x].ZPAVAL != null){
+                                        if (response2[x].ZPAVAL != null) {
                                             perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
                                         }
                                         referencias.push({ perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
@@ -464,9 +464,9 @@ export class NovaOperacaoComponent implements OnInit {
         rpof.estado = estado;
         rpof.of_NUM = this.num_of;
         rpof.op_COD = this.op_cod.toString();
-        if(this.op_PREVISTA == '1'){
+        if (this.op_PREVISTA == '1') {
             rpof.op_NUM = this.op_NUM;
-        }        
+        }
         rpof.op_DES = this.op_desc;
         rpof.maq_NUM = this.maq_NUM;
         rpof.maq_NUM_ORIG = this.MAQ_NUM_ORIG;
@@ -659,6 +659,10 @@ export class NovaOperacaoComponent implements OnInit {
         prep.id_OP_CAB = id_OP_CAB;
         prep.data_INI = date;
         prep.hora_INI = time;
+        prep.data_INI_M1 = date;
+        prep.hora_INI_M1 = time;
+        prep.data_INI_M2 = date;
+        prep.hora_INI_M2 = time;
         prep.id_UTZ_CRIA = this.username
         prep.estado = "P";
 
@@ -718,7 +722,7 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     getdefeitosop(res, x, id_OP_LIN) {
-        if(!this.operacao_temp[id_OP_LIN]) this.operacao_temp[id_OP_LIN] = [];
+        if (!this.operacao_temp[id_OP_LIN]) this.operacao_temp[id_OP_LIN] = [];
         if (this.operacao_temp[id_OP_LIN].indexOf(res[x].id_OP_SEC) == -1) {
             this.operacao_temp[id_OP_LIN].push(res[x].id_OP_SEC);
             this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(

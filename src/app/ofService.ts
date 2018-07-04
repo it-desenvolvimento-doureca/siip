@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response } from '@angular/http';
+import { Http, Headers, Response, ResponseContentType } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
@@ -128,12 +128,14 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    criaficheiro(id, estado) {
-        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado;
-        return this.http
-            .get(url)
-            .map((res: Response) => res.json())
-            .catch((error: any) => Observable.throw('Server error'));
+    criaficheiro(id, estado, ficheiros = false) {
+        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado + '/' + ficheiros;
+        return this.http.get(url, { responseType: ResponseContentType.Blob }).map(
+            (res) => {
+                if (ficheiros) {
+                    return new Blob([res.blob()], { type: 'application/zip' });
+                }
+            });
     }
 
     atualizarcampos(id) {

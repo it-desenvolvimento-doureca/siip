@@ -53,6 +53,13 @@ export class TipoPausaComponent implements OnInit {
           var rp_of_para_lin = new RP_OF_PARA_LIN();
           rp_of_para_lin.data_INI = date;
           rp_of_para_lin.hora_INI = time;
+
+          rp_of_para_lin.data_INI_M1 = date;
+          rp_of_para_lin.hora_INI_M1 = time;
+
+          rp_of_para_lin.data_INI_M2 = date;
+          rp_of_para_lin.hora_INI_M2 = time;
+
           rp_of_para_lin.id_UTZ_CRIA = user;
           rp_of_para_lin.id_OP_CAB = id_op_cab;
           rp_of_para_lin.tipo_PARAGEM = item;

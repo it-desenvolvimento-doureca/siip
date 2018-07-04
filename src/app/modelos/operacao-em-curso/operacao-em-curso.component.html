@@ -34,8 +34,9 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
-                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" step='1' min="00:00:00" type="time" [ngModelOptions]="{standalone: true}"
-                  [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" />
+                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" step='1' min="00:00:00" type="time"
+                  [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;"
+                />
               </div>
             </div>
           </div>
@@ -52,10 +53,11 @@
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
                 <input (change)="atualizartempofunc('hora_fim')" [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}"
-                  class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;" step='1' min="00:00:00" type="time" [ngModelOptions]="{standalone: true}"
-                  [disabled]="disableEditar" />
+                  class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;" step='1' min="00:00:00"
+                  type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
-              <button (click)="gravar_utilizadores()" [hidden]="!modoedicao || disableEditar" style="position: absolute; right: -29px; height: 44px; top: 24px; width: 42px;" pButton type="button" icon="fa-save" iconPos="left"></button>
+              <button (click)="gravar_utilizadores()" [hidden]="!modoedicao || disableEditar" style="position: absolute; right: -29px; height: 44px; top: 24px; width: 42px;"
+                pButton type="button" icon="fa-save" iconPos="left"></button>
             </div>
           </div>
 
@@ -65,7 +67,8 @@
               <div class="form-group">
                 <label class="control-label ">Data Início Preparação</label>
                 <input (change)="atualizartempofunc('data_ini_preparacao')" style="display: -webkit-box; height: 44.4px;" class="form-control"
-                  [(ngModel)]="data_ini_preparacao" type="date" [ngModelOptions]="{standalone: true}" [disabled]="true" [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null )}"
+                  [(ngModel)]="data_ini_preparacao" type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
+                  [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null ) && disableEditar}"
                 />
               </div>
             </div>
@@ -73,7 +76,8 @@
               <div class="form-group">
                 <label class="control-label ">Hora Início Preparação</label>
                 <input (change)="atualizartempofunc('hora_ini_preparacao')" class="form-control" [(ngModel)]="hora_ini_preparacao" type="time"
-                  [ngModelOptions]="{standalone: true}" [disabled]="true" style="display: -webkit-box; height: 44.4px;" [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null )}"
+                  [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" step='1' min="00:00:00"
+                  [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null ) && disableEditar}"
                 />
               </div>
             </div>
@@ -83,18 +87,20 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Fim Preparação</label>
-                <input (change)="atualizartempofunc('data_fim_preparacao')" [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) }"
+                <input (change)="atualizartempofunc('data_fim_preparacao')" [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) && disableEditar }"
                   class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim_preparacao" min="{{data_fim_preparacao}}"
-                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="true" />
+                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Fim Preparação</label>
-                <input (change)="atualizartempofunc('hora_fim_preparacao')" [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null )}"
-                  class="form-control" [(ngModel)]="hora_fim_preparacao" style="display: -webkit-box; height: 44.4px;" type="time"
-                  [ngModelOptions]="{standalone: true}" [disabled]="true" />
+                <input (change)="atualizartempofunc('hora_fim_preparacao')" [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null ) && disableEditar}"
+                  class="form-control" [(ngModel)]="hora_fim_preparacao" style="display: -webkit-box; height: 44.4px;" type="time" step='1' min="00:00:00"
+                  [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
+              <button (click)="gravar_preparacao()" [hidden]="!modoedicao || disableEditar" style="position: absolute; right: -29px; height: 44px; top: 24px; width: 42px;"
+                pButton type="button" icon="fa-save" iconPos="left"></button>
             </div>
           </div>
 
@@ -102,7 +108,10 @@
             <label class="control-label ">Estado</label>
             <p-dropdown [options]="estados_array" [style]="{'width':'200px'}" [(ngModel)]="estado_val" [ngModelOptions]="{standalone: true}"
               [hidden]="!modoedicao" [disabled]="true"></p-dropdown>
-            <button type="button" class="ui-button-success" pButton (click)="pausas()" label="Ver Pausas" style="float: none; height: 39px;"></button>
+            <button type="button" class="ui-button-success" [hidden]="modoedicao && !disableEditar" pButton (click)="pausas()" label="Ver Pausas"
+              style="float: none; height: 39px;"></button>
+            <button type="button" class="ui-button-success" [hidden]="!modoedicao || disableEditar" pButton (click)="pausas_editar()"
+              label="Editar Pausas" style="float: none; height: 39px;"></button>
           </div>
         </form>
       </div>
@@ -155,8 +164,8 @@
     <button type="button" class="ui-button-danger" pButton (click)="cancelar()" label="CANCELAR / SAIR" style="float: none; width: 17%;vertical-align: -webkit-baseline-middle;"></button>
     <button type="button" icon="fa-envelope-o" class="ui-button-info" pButton (click)="mensagem()" label="MENSAGEM" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-warning" pButton routerLink="/pausa" label="PAUSA" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-    <button [disabled]="concluido || disabledAdici || maq_numcod == '000'" type="button" class="ui-button-secondary" pButton (click)="adicionaop()"
-      label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido || disabledAdici || maq_numcod == '000'" type="button" class="ui-button-secondary" pButton
+      (click)="adicionaop()" label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido" type="button" class="ui-button-success" pButton (click)="createfile('C','O')" label="TERMINAR TRABALHO"
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
@@ -170,7 +179,8 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="disableEditar" type="button" class="ui-button-success" pButton (click)="gravar()" label="GRAVAR" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
-     <button  [hidden]="!permissao_ficheiroteste" type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C')" label="Gerar Ficheiros Inic." style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [hidden]="!permissao_ficheiroteste" type="button" class="ui-button-warning" pButton (click)="ficheiroteste('C',true,true)"
+      label="Gerar Ficheiros Inic." style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
   </div>
 </div>
 
@@ -289,3 +299,90 @@
 </p-dialog>
 
 <p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>
+
+<p-growl [(value)]="msgs"></p-growl>
+
+
+
+<!--popup editar Pausas -->
+<p-dialog header="Pausas" [(visible)]="displayeditarpausas" class="novoop" modal="modal" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false" (onShow)="onShow()" (onHide)="onHide()">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="padding: 22px 0 22px 0;">
+        <form role="form" ngNativeValidate (ngSubmit)="gravar_pausas()">
+          <p-dataTable class="tabelaeditarpausas" [rowStyleClass]="lookupRowStyleClass" [value]="pausas_array_editar" dataKey="id"
+            scrollable="true" scrollHeight="50vh">
+            <!--<p-header></p-header>-->
+            <p-column [style]="{'width':'17%'}" field="data_ini" header="Data Inicio">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <button [disabled]="car['id'] != null " style="height: 32px; float: left;" class="ui-button-danger" type="button" pButton
+                  icon="fa-trash" (click)="apagarlinha(car)"></button>
+                <input class="form-control" style="display: -webkit-box; height: 32px; width: 90%; padding: 5px;" [(ngModel)]="car[col.field]"
+                  type="date" [ngModelOptions]="{standalone: true}" [hidden]="disableEditar" required/>
+              </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'12%'}" field="hora_ini" header="Hora Inicio">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <input class="form-control" style="display: -webkit-box; height: 32px; padding: 5px;" [(ngModel)]="car[col.field]" step='1'
+                  min="00:00:00" type="time" [ngModelOptions]="{standalone: true}" [hidden]="disableEditar" required/>
+              </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'17%'}" field="data_fim" header="Data Fim">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <input class="form-control" style="display: -webkit-box; height: 32px; padding: 5px;" [(ngModel)]="car[col.field]" type="date"
+                  [ngModelOptions]="{standalone: true}" [hidden]="disableEditar" required/>
+              </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'12%'}" field="hora_fim" header="Hora Fim">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <input class="form-control" style="display: -webkit-box; height: 32px; padding: 5px;" [(ngModel)]="car[col.field]" step='1'
+                  min="00:00:00" type="time" [ngModelOptions]="{standalone: true}" [hidden]="disableEditar" required />
+              </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'14%'}" field="paragem" header="Tipo Pausa">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <p-dropdown appendTo="body" [required]="true" [(ngModel)]="car[col.field]" [ngModelOptions]="{standalone: true}" [options]="pausa_nomes"
+                  [style]="{'width':'100%'}"></p-dropdown>
+              </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'8%'}" field="momento" header="Estado">
+              <ng-template let-col let-car="rowData" pTemplate="body">
+                <p-dropdown appendTo="body" [disabled]="data_ini_preparacao == null || data_ini_preparacao == '' " [required]="true" [(ngModel)]="car[col.field]"
+                  [ngModelOptions]="{standalone: true}" [options]="estados_pausa" [style]="{'width':'100%'}"></p-dropdown>
+              </ng-template>
+            </p-column>
+            <p-footer>
+              <button class="ui-button-success" style="height: 44px;" pButton type="submit" icon="fa-save" iconPos="left" label="Gravar"></button>
+              <button class="ui-button-warning" (click)="nova_pausas()" label="Nova Linha" style="height: 44px;" pButton type="button"
+                icon="fa-plus" iconPos="left"></button>
+              <button style="height: 44px;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="displayeditarpausas=false"
+                label="Cancelar"></button>
+            </p-footer>
+          </p-dataTable>
+        </form>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog header="Gerar Ficheiro" [(visible)]="displaygerarficheiros" class="novoop" modal="modal" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false" (onShow)="onShow()" (onHide)="onHide()">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="padding: 22px 0 22px 0;">
+        <button class="ui-button-success" (click)="ficheiroteste('C',true)" style="height: 44px;" pButton type="button" icon="fa-save"
+          iconPos="left" label="DESCARREGAR FICHEIROS"></button>
+        <button class="ui-button-warning" (click)="ficheiroteste('C',false)" label="GUARDAR PASTA DESTINO" style="height: 44px;"
+          pButton type="button" icon="fa-folder" iconPos="left"></button>
+      </div>
+      <div *ngIf="progressBarDialog" class="load-wrapp">
+        <div class="load-3">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
