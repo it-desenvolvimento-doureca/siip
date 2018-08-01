@@ -18,6 +18,7 @@ import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RP_OF_PARA_LIN } from '../entidades/RP_OF_PARA_LIN';
+import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic/src/platform_providers';
 
 @Component({
   selector: 'app-operacao-em-curso',
@@ -41,6 +42,8 @@ export class OperacaoEmCursoComponent implements OnInit {
   permissao_editar: any;
   displayDialogLider: boolean = false;
   displayDialogutz_em_uso: boolean = false;
+  display_alerta_opnum = false;
+  texto_alerta = "";
   disabledAdici: boolean;
   perfil: string;
   concluido: boolean = false;
@@ -70,7 +73,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   data_fim_preparacao = "";
   hora_fim_preparacao = "";
   id_op_cab = "";
-  estados_array = [{ label: "---", value: "" }, { label: "Anulado", value: "A" }, { label: "Execução", value: "E" }, { label: "Concluido", value: "C" }, { label: "Preparação", value: "P" }, { label: "Modificado", value: "M" }];
+  estados_array = [{ label: "---", value: "" }, { label: "Anulado", value: "A" }, { label: "Pausa", value: "S" }, { label: "Execução", value: "E" }, { label: "Concluido", value: "C" }, { label: "Preparação", value: "P" }, { label: "Modificado", value: "M" }, { label: "Em Edição", value: "R" }];
   estado_val = "";
   utilizadores_adici: any[] = [];
   fileURL: any;
@@ -82,6 +85,18 @@ export class OperacaoEmCursoComponent implements OnInit {
   msgs: Message[] = [];
   displaygerarficheiros: boolean;
   progressBarDialog: boolean = false;
+  datafim_utz_lider: any;
+  dataini_utz_lider: Date;
+  msgs2: Message[] = [];
+  pausas_array_editar_temp: any;
+  btdisabled: boolean = true;
+  btdisabled2: boolean = true;
+  preparacaonovo: boolean = false;
+  terminadisabled: boolean;
+  utz_edicao: any = null;
+  btdisabled3: boolean;
+  estado_INICIAL: any;
+  verpausas: boolean = true;
 
   constructor(private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
@@ -118,6 +133,10 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.modoedicao = true;
         this.user = id;
         this.estado.push('T')
+
+        if (id != JSON.parse(localStorage.getItem('user'))["username"]) {
+          this.verpausas = false;
+        }
       } else {
         this.user = JSON.parse(localStorage.getItem('user'))["username"];
         this.estado.push('C', 'A', 'M');
@@ -149,6 +168,10 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.maq_numcod = response[x][1].maq_NUM.trim();
               this.id_utz = response[x][0].id_UTZ_CRIA.trim() + " - " + response[x][0].nome_UTZ_CRIA.trim();
               this.id_utz_lider = response[x][1].id_UTZ_CRIA.trim();
+
+              if (response[x][0].data_FIM_M2 != null) this.datafim_utz_lider = new Date(response[x][0].data_FIM_M2 + ' ' + response[x][0].hora_FIM_M2);
+              if (response[x][0].data_INI_M2 != null) this.dataini_utz_lider = new Date(response[x][0].data_INI_M2 + ' ' + response[x][0].hora_INI_M2);
+
               this.data_ini = response[x][0].data_INI_M2;
               this.hora_ini = response[x][0].hora_INI_M2;
               this.hora_fim = response[x][0].hora_FIM_M2;
@@ -158,6 +181,17 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.hora_ini_preparacao = response[x][4];
               this.data_fim_preparacao = response[x][5];
               this.hora_fim_preparacao = response[x][6];
+              if (response[x][3] == null && response[x][4] == null) {
+                this.preparacaonovo = true;
+              }
+              if (response[x][1].id_UTZ_EDICAO != null) {
+                this.utz_edicao = response[x][1].id_UTZ_EDICAO;
+              }
+              this.estado_INICIAL = response[x][1].estado_INICIAL;
+
+              if (response[x][0].estado == "S" || response[x][0].estado == "P" || response[x][0].estado == "E") {
+                this.modoedicao = false;
+              }
 
               this.id_op_cab = response[x][2].id_OP_CAB;
               this.id_of_cab = response[x][1].id_OF_CAB;
@@ -182,7 +216,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           this.verificar_operadores(this.id_of_cab);
         },
         error => console.log(error));
-
+      if (!this.disableEditar) this.verpausas = true;
     } else {
       this.router.navigate(['./home']);
     }
@@ -363,7 +397,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           var user = JSON.parse(localStorage.getItem('user'))["username"];
           var nome = JSON.parse(localStorage.getItem('user'))["name"];
           var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
+          this.terminadisabled = true;
           var num_count = 0;
           var total = this.id_op_cab_lista.length;
           for (var x in this.id_op_cab_lista) {
@@ -536,6 +570,10 @@ export class OperacaoEmCursoComponent implements OnInit {
         rp_of_prep_lin.estado = estado;
         rp_of_prep_lin.data_FIM = date;
         rp_of_prep_lin.hora_FIM = time_fim;
+        rp_of_prep_lin.data_FIM_M1 = date;
+        rp_of_prep_lin.hora_FIM_M1 = time_fim;
+        rp_of_prep_lin.data_FIM_M2 = date;
+        rp_of_prep_lin.hora_FIM_M2 = time_fim;
         rp_of_prep_lin.data_HORA_MODIF = date;
         rp_of_prep_lin.id_UTZ_MODIF = user;
 
@@ -572,6 +610,7 @@ export class OperacaoEmCursoComponent implements OnInit {
           rp_of_op_func.hora_FIM_M1 = time_fim;
           rp_of_op_func.data_FIM_M2 = date;
           rp_of_op_func.hora_FIM_M2 = time_fim;
+          //rp_of_op_func.estado = "M";
         }
 
 
@@ -661,7 +700,14 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   //botãocancelar
   cancelar() {
-    if (this.modoedicao) {
+    var id;
+    var sub = this.route
+      .queryParams
+      .subscribe(params => {
+        id = params['id'] || 0;
+      });
+
+    if (this.modoedicao || id != 0) {
       this.router.navigate(['./controlo']);
     } else {
       this.router.navigate(['./home']);
@@ -708,6 +754,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   ficheiroteste(estado, ficheiros = false, dialog = false) {
+
     if (dialog) {
       this.displaygerarficheiros = true;
     } else {
@@ -739,21 +786,102 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   editar() {
+
+    this.btdisabled = true;
+    this.btdisabled2 = true;
+    this.btdisabled3 = true;
     localStorage.setItem('siip_edicao', 'false');
-    if (this.disableEditar) {
+
+    if (JSON.parse(localStorage.getItem('user'))["username"] != this.utz_edicao && this.estado_val == "R") {
+      this.display_alerta_opnum = true;
+      this.btdisabled = false;
+      this.texto_alerta = "O Utilizador " + this.utz_edicao + " terá de terminar a edição primeiro."
+    } else {
+      if (this.disableEditar) {
+        if (this.estado_val != "R") {
+          this.display_alerta_opnum = true;
+          this.texto_alerta = "Aguarde..."
+          this.ofService.atualizaropenum(this.id_of_cab).subscribe(resu => {
+            this.ofService.verificaopnum(this.id_of_cab).subscribe(result => {
+              var countx = Object.keys(result).length;
+
+              if (countx > 0) {
+                if (result[0][2] != 0) {
+                  this.display_alerta_opnum = true;
+                  this.texto_alerta = "Valor de Origem para a PF não foi encontrado!"
+                  this.btdisabled = false;
+                  if (this.permissao_ficheiroteste) this.btdisabled2 = false;
+                } else if (result[0][0] != result[0][1]) {
+                  this.display_alerta_opnum = true;
+                  this.btdisabled = false;
+                  if (this.permissao_ficheiroteste) this.btdisabled2 = false;
+                  this.texto_alerta = "Valor de Origem para o(s) Componente(s) não foi encontrado!"
+                } else {
+                  this.editarGoTo();
+                }
+              } else {
+                this.editarGoTo();
+              }
+
+
+            }, error => {
+              console.log(error)
+            });
+
+          }, error => {
+            console.log(error)
+          });
+        } else {
+          this.editarGoTo();
+        }
+
+
+      } else {
+        this.router.navigate(['./operacao-em-curso'], { queryParams: { id: this.user } });
+      }
+    }
+  }
+
+
+
+  cancelaredicao() {
+
+    this.confirmationService.confirm({
+      message: 'Tem a Certeza que pretende Cancelar Edição?',
+      accept: () => {
+        var estado = "C";
+        if (this.estado_INICIAL != null) {
+          estado = this.estado_INICIAL;
+        }
+        this.ofService.atualizaestado(this.id_of_cab, JSON.parse(localStorage.getItem('user'))["username"], estado).subscribe(resu => {
+          this.router.navigate(['./operacao-em-curso'], { queryParams: { id: this.user } });
+        }, error => {
+          console.log(error)
+        });
+      }
+    });
+  }
+
+  editarGoTo() {
+
+    if (this.estado_val != "R") {
       this.ofService.atualizarcampos(this.id_of_cab).subscribe(resu => {
 
       }, error => {
         console.log(error)
       });
-      this.ofService.atualizaropenum(this.id_of_cab).subscribe(resu => {
+    }
 
+
+    if (this.estado_val != "R") {
+      this.ofService.atualizaestado(this.id_of_cab, JSON.parse(localStorage.getItem('user'))["username"], "R").subscribe(resu => {
+        this.router.navigate(['./operacao-em-curso/edicao'], { queryParams: { id: this.user, v: this.versao_modif } });
       }, error => {
         console.log(error)
       });
-      this.router.navigate(['./operacao-em-curso/edicao'], { queryParams: { id: this.user, v: this.versao_modif } });
     } else {
-      this.router.navigate(['./operacao-em-curso'], { queryParams: { id: this.user } });
+      this.router.navigate(['./operacao-em-curso/edicao'], { queryParams: { id: this.user, v: this.versao_modif } });
+
     }
   }
 
@@ -797,67 +925,330 @@ export class OperacaoEmCursoComponent implements OnInit {
         break;
     }
   }
-
   gravar() {
-    if (localStorage.getItem('siip_edicao') == 'true') {
-      this.confirmationService.confirm({
-        message: 'Tem a Certeza que pretende Gravar?',
-        accept: () => {
-          var total = this.utilizadores.length;
-          var count = 0;
-          for (var x in this.utilizadores) {
-            count++;
-            this.atualizarFUNC(this.utilizadores[x].value, total, count, true);
+    this.msgs2 = [];
+    this.pausas_array_editar_temp = [];
+    for (var y in this.utilizadores) {
+      this.verificapausas(this.utilizadores[y].value.id_OP_CAB, this.utilizadores[y].value.id, this.utilizadores.length, y);
+    }
+  }
 
-            if (!this.id_op_cab_lista.find(item => item.id == this.utilizadores[x].value.id_OP_CAB)) {
-              this.id_op_cab_lista.push({ id: this.utilizadores[x].value.id_OP_CAB, comp: false });
+  verificapausas(id_OP_CAB, id, total, count) {
+
+    this.RPOFPARALINService.getbyallUSER(id_OP_CAB, id).subscribe(
+      response => {
+        var pausas = [];
+        var pos = 0;
+        for (var x in response) {
+          pausas.push({
+            data_ini: response[x].data_INI_M2,
+            hora_ini: response[x].hora_INI_M2,
+            data_fim: response[x].data_INI_M2,
+            hora_fim: response[x].hora_FIM_M2,
+            paragem: response[x].tipo_PARAGEM_M2,
+            momento: response[x].momento_PARAGEM_M2,
+            id_op_cab: response[x].id_OP_CAB,
+            id: response[x].id_PARA_LIN,
+            utz: response[x].id_UTZ_CRIA,
+            pos: pos++
+          });
+        }
+        if (pausas.length > 0) this.pausas_array_editar_temp.push({ id: id, value: pausas });
+        if (total == parseInt(count) + 1) {
+          this.pausasvalidar();
+        }
+      }, error => console.log(error));
+
+  }
+
+  pausasvalidar() {
+    var continuar = true;
+    for (var y in this.pausas_array_editar_temp) {
+      if (this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id)) {
+        var utz = this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id).value;
+        var utznome = this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id).label;
+        if (!this.validapausas(this.pausas_array_editar_temp[y].value, utz.data_INI, utz.hora_INI, utz.data_FIM, utz.hora_FIM,
+          this.data_ini_preparacao, this.hora_ini_preparacao, this.data_fim_preparacao, this.hora_fim_preparacao, utznome)) {
+          continuar = false;
+          break;
+        }
+      }
+    }
+
+    this.gravar2(continuar);
+  }
+  gravar2(continuar) {
+    if (localStorage.getItem('siip_edicao') == 'true') {
+      if (this.validar() && continuar) {
+        this.confirmationService.confirm({
+          message: 'Tem a Certeza que pretende Gravar?',
+          accept: () => {
+            var total = this.utilizadores.length;
+            var count = 0;
+            for (var x in this.utilizadores) {
+              count++;
+              this.atualizarFUNC(this.utilizadores[x].value, total, count, true);
+
+              if (!this.id_op_cab_lista.find(item => item.id == this.utilizadores[x].value.id_OP_CAB)) {
+                this.id_op_cab_lista.push({ id: this.utilizadores[x].value.id_OP_CAB, comp: false });
+              }
             }
           }
-        }
-      });
+        });
+      }
     } else {
       this.displayalter = true;
     }
   }
 
-  gravar_utilizadores() {
-    var total = this.utilizadores.length;
-    var count = 0;
+  validar() {
+    var continuar = true;
+    //this.msgs2 = [];
     for (var x in this.utilizadores) {
-      count++;
-      this.atualizarFUNC(this.utilizadores[x].value, total, count, false);
+      var data_inicio = null;
+      var data_fim = null;
+      var data_prepinicio = null;
+      var data_prepfim = null;
+
+      if (this.utilizadores[x].value.data_INI != null && this.utilizadores[x].value.data_INI != '') data_inicio = new Date(this.utilizadores[x].value.data_INI + ' ' + this.utilizadores[x].value.hora_INI);
+      if (this.utilizadores[x].value.data_FIM != null && this.utilizadores[x].value.data_FIM != '') data_fim = new Date(this.utilizadores[x].value.data_FIM + ' ' + this.utilizadores[x].value.hora_FIM);
+
+      if (this.data_ini_preparacao != null && this.data_ini_preparacao != '') data_prepinicio = new Date(this.data_ini_preparacao + ' ' + this.hora_ini_preparacao);
+      if (this.data_fim_preparacao != null && this.data_fim_preparacao != '') data_prepfim = new Date(this.data_fim_preparacao + ' ' + this.hora_fim_preparacao);
+
+      if (this.utilizadores[x].value.id == this.id_utz_lider) {
+
+        if (data_prepinicio != null && data_prepfim != null) {
+          if (data_inicio.getTime() != data_prepinicio.getTime()) {
+            this.msgs2.push({
+              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho e Data/Hora Início Preparação são diferentes! Utilizador: ' + this.utilizadores[x].label + ''
+            });
+            continuar = false;
+            break;
+          } else if (data_fim.getTime() < data_prepfim.getTime()) {
+            this.msgs2.push({
+              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação superior à Data/Hora Fim Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+            });
+            continuar = false;
+            break;
+          } else if (data_inicio.getTime() > data_prepfim.getTime()) {
+            this.msgs2.push({
+              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+            });
+            continuar = false;
+            break;
+          } else if (data_prepfim.getTime() < data_prepinicio.getTime()) {
+            this.msgs2.push({
+              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Preparação! Utilizador: ' + this.utilizadores[x].label + ''
+            });
+            continuar = false;
+            break;
+          }
+        }
+
+      } else {
+        if (data_inicio.getTime() < this.dataini_utz_lider.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho inferior à  Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+
+        } else if (data_fim.getTime() > this.datafim_utz_lider.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Trabalho superior à Data/Hora Fim Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+
+        } else if (data_fim.getTime() < data_inicio.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Trabalho inferior à Data/Hora Início Trabalho! Utilizador:' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_prepinicio != null && data_prepfim != null) {
+          if (data_inicio.getTime() < data_prepfim.getTime()) {
+            this.msgs2.push({
+              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho tem que ser superior à Data/Hora Fim Preparação! Utilizador: ' + this.utilizadores[x].label + ''
+            });
+            continuar = false;
+            break;
+
+          }
+        }
+      }
+    }
+
+
+    return continuar;
+  }
+
+  validapausas(pausas_array_editar, data_ini, hora_ini, data_fim, hora_fim, data_ini_preparacao, hora_ini_preparacao, data_fim_preparacao, hora_fim_preparacao, utznome = "") {
+    //this.msgs2 = [];
+    for (var x in pausas_array_editar) {
+      var continuar = true;
+      var dataini = new Date(pausas_array_editar[x].data_ini + ' ' + pausas_array_editar[x].hora_ini);
+      var datafim = new Date(pausas_array_editar[x].data_fim + ' ' + pausas_array_editar[x].hora_fim);
+
+      if (dataini.getTime() > datafim.getTime()) {
+        this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data/Hora Fim Pausa! ' + utznome });
+        break;
+      }
+      var datainip = new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime();
+      var datafimp = new Date(data_fim_preparacao + ' ' + hora_fim_preparacao).getTime();
+      if (pausas_array_editar[x].momento == "E") {
+        if (dataini.getTime() > new Date(data_fim + ' ' + hora_fim).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data/Hora Fim do Trabalho! ' + utznome });
+          continuar = false;
+          break;
+        } else if (dataini.getTime() < new Date(data_ini + ' ' + hora_ini).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Inferior à Data/Hora Início do Trabalho! ' + utznome });
+          continuar = false;
+          break;
+        } else if (datafim.getTime() > new Date(data_fim + ' ' + hora_fim).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Superior à Data/Hora Fim do Trabalho! ' + utznome });
+          continuar = false;
+          break;
+        } else if (datafim.getTime() < new Date(data_ini + ' ' + hora_ini).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Inferior à Data/Hora Início do Trabalho! ' + utznome });
+          continuar = false;
+          break;
+        } else if (datainip && datafimp) {
+          if (dataini.getTime() < datafimp) {
+            this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa tem que ser maior à Data/Hora Fim de Preparação! ' + utznome });
+            continuar = false;
+            break;
+          }
+        }
+
+      } else if (pausas_array_editar[x].momento == "P") {
+        if (dataini.getTime() > new Date(data_fim + ' ' + hora_fim).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data Fim do Trabalho! ' + utznome });
+          continuar = false;
+          break;
+        } else if (dataini.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
+          continuar = false;
+          break;
+        } else if (datafim.getTime() > new Date(data_fim_preparacao + ' ' + hora_fim_preparacao).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Superior à Data/Hora Fim da Preparação! ' + utznome });
+          continuar = false;
+          break;
+        } else if (datafim.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
+          continuar = false;
+          break;
+        }
+
+      }
+      if (!this.validPeriod(dataini, datafim, pausas_array_editar, pausas_array_editar[x].pos)) {
+        this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Valide o período das Datas! ' + utznome });
+        continuar = false;
+        break;
+      }
+    }
+    return continuar;
+  }
+
+  validPeriod(start, end, datas, pos) {
+    var valid = true;
+    for (var i = 0; i < datas.length; i++) {
+      if (datas[i].pos != pos) {
+        var datei = new Date(datas[i].data_ini + ' ' + datas[i].hora_ini);
+        var datef = new Date(datas[i].data_fim + ' ' + datas[i].hora_fim);
+        if (start.getTime() <= datef.getTime() && datei.getTime() <= end.getTime()) {
+          valid = false;
+          break;
+        } else if (datei.getTime() <= end.getTime() && datei.getTime() >= end.getTime()) {
+          valid = false;
+          break;
+        }
+      }
+    }
+
+    return valid;
+  }
+
+  gravar_utilizadores() {
+    this.msgs2 = [];
+    if (this.validar()) {
+      var total = this.utilizadores.length;
+      var count = 0;
+      for (var x in this.utilizadores) {
+        count++;
+        //console.log(this.utilizadores)
+        this.atualizarFUNC(this.utilizadores[x].value, total, count, false);
+      }
     }
   }
 
   gravar_preparacao() {
+    this.msgs2 = [];
+    if (this.validar()) {
+      var rp_of_prep_lin = new RP_OF_PREP_LIN();
 
-    var rp_of_prep_lin = new RP_OF_PREP_LIN();
-    this.RPOFPREPLINService.getbyid2(this.utz_lider.id_OP_CAB).subscribe(result3 => {
-      var countx = Object.keys(result3).length;
+      if (!this.preparacaonovo) {
+        this.RPOFPREPLINService.getbyid2(this.utz_lider.id_OP_CAB).subscribe(result3 => {
+          var countx = Object.keys(result3).length;
 
-      if (countx > 0) {
-        rp_of_prep_lin = result3[0];
+          if (countx > 0) {
+            rp_of_prep_lin = result3[0];
 
-        /*if (rp_of_prep_lin.data_INI_M1 != rp_of_prep_lin.data_INI_M2) rp_of_prep_lin.data_INI_M1 = rp_of_prep_lin.data_INI_M2;
-        if (rp_of_prep_lin.data_FIM_M1 != rp_of_prep_lin.data_FIM_M2) rp_of_prep_lin.data_FIM_M1 = rp_of_prep_lin.data_FIM_M2
-        if (rp_of_prep_lin.hora_INI_M1 != rp_of_prep_lin.hora_FIM_M2) rp_of_prep_lin.hora_INI_M1 = rp_of_prep_lin.hora_FIM_M2;
-        if (rp_of_prep_lin.hora_FIM_M1 != rp_of_prep_lin.hora_FIM_M2) rp_of_prep_lin.hora_FIM_M1 = rp_of_prep_lin.hora_FIM_M2;*/
-
-
-        rp_of_prep_lin.data_INI_M2 = new Date(this.data_ini_preparacao);
-        rp_of_prep_lin.data_FIM_M2 = new Date(this.data_fim_preparacao);
-        rp_of_prep_lin.hora_INI_M2 = (this.hora_ini_preparacao + ":00").substr(0, 8);
-        rp_of_prep_lin.hora_FIM_M2 = (this.hora_fim_preparacao + ":00").substr(0, 8);
-        rp_of_prep_lin.data_HORA_MODIF = new Date();
-        rp_of_prep_lin.id_UTZ_MODIF = JSON.parse(localStorage.getItem('user'))["username"];
+            /*if (rp_of_prep_lin.data_INI_M1 != rp_of_prep_lin.data_INI_M2) rp_of_prep_lin.data_INI_M1 = rp_of_prep_lin.data_INI_M2;
+            if (rp_of_prep_lin.data_FIM_M1 != rp_of_prep_lin.data_FIM_M2) rp_of_prep_lin.data_FIM_M1 = rp_of_prep_lin.data_FIM_M2
+            if (rp_of_prep_lin.hora_INI_M1 != rp_of_prep_lin.hora_FIM_M2) rp_of_prep_lin.hora_INI_M1 = rp_of_prep_lin.hora_FIM_M2;
+            if (rp_of_prep_lin.hora_FIM_M1 != rp_of_prep_lin.hora_FIM_M2) rp_of_prep_lin.hora_FIM_M1 = rp_of_prep_lin.hora_FIM_M2;*/
 
 
-        this.RPOFPREPLINService.update(rp_of_prep_lin).then(res => {
-          this.msgs = [];
-          this.msgs.push({ severity: 'success', summary: 'Atualização', detail: 'Atualizado com Sucesso' });
-        });
+            rp_of_prep_lin.data_INI_M2 = new Date(this.data_ini_preparacao);
+            rp_of_prep_lin.data_FIM_M2 = new Date(this.data_fim_preparacao);
+            rp_of_prep_lin.hora_INI_M2 = (this.hora_ini_preparacao + ":00").substr(0, 8);
+            rp_of_prep_lin.hora_FIM_M2 = (this.hora_fim_preparacao + ":00").substr(0, 8);
+            rp_of_prep_lin.data_HORA_MODIF = new Date();
+            rp_of_prep_lin.id_UTZ_MODIF = JSON.parse(localStorage.getItem('user'))["username"];
+
+
+            this.RPOFPREPLINService.update(rp_of_prep_lin).then(res => {
+              this.msgs = [];
+              this.msgs.push({ severity: 'success', summary: 'Atualização', detail: 'Atualizado com Sucesso' });
+            });
+          }
+        }, error => console.log(error));
+      } else {
+        this.cria_preparacao(this.utz_lider.id_OP_CAB);
       }
-    }, error => console.log(error));
+    }
+  }
+
+
+  cria_preparacao(id_OP_CAB) {
+    var prep = new RP_OF_PREP_LIN();
+
+    prep.id_OP_CAB = id_OP_CAB;
+
+    prep.data_INI_M2 = new Date(this.data_ini_preparacao);
+    prep.data_FIM_M2 = new Date(this.data_fim_preparacao);
+    prep.hora_INI_M2 = (this.hora_ini_preparacao + ":00").substr(0, 8);
+    prep.hora_FIM_M2 = (this.hora_fim_preparacao + ":00").substr(0, 8);
+
+
+    prep.data_INI = new Date(this.data_ini_preparacao);
+    prep.data_FIM = new Date(this.data_fim_preparacao);
+    prep.hora_INI = (this.hora_ini_preparacao + ":00").substr(0, 8);
+    prep.hora_FIM = (this.hora_fim_preparacao + ":00").substr(0, 8);
+
+    prep.data_HORA_MODIF = new Date();
+    prep.id_UTZ_MODIF = JSON.parse(localStorage.getItem('user'))["username"];
+    prep.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+    prep.estado = "C";
+
+    this.RPOFPREPLINService.create(prep).subscribe(
+      res => {
+        this.msgs = [];
+        this.msgs.push({ severity: 'success', summary: 'Atualização', detail: 'Atualizado com Sucesso' });
+      },
+      error => console.log(error));
   }
 
   atualizarFUNC(user, total, count, file) {
@@ -888,7 +1279,10 @@ export class OperacaoEmCursoComponent implements OnInit {
           rpfunc.nome_UTZ_MODIF = nome;
           rpfunc.perfil_MODIF = "E";
           rpfunc.data_HORA_MODIF = new Date();
-          rpfunc.estado = "M"
+          if (file) {
+            rpfunc.estado = "M";
+          }
+
         }
         this.RPOPFUNCService.update(rpfunc).then(res => {
           if (total == count && file) {
@@ -903,17 +1297,61 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   eliminar() {
+    this.btdisabled2 = true;
+    this.btdisabled3 = true;
     this.confirmationService.confirm({
       message: 'Tem a Certeza que pretende Eliminar?',
       accept: () => {
-        var user = JSON.parse(localStorage.getItem('user'))["username"];
-        var nome = JSON.parse(localStorage.getItem('user'))["name"];
-        var data = new Date();
-        var dados = [{ VERSAO_MODIF: (this.versao_modif + 1), ID_OF_CAB: this.id_of_cab, ID_UTZ_MODIF: user, ESTADO: "A", DATA_HORA_MODIF: data, PERFIL_MODIF: 'E', NOME_UTZ_MODIF: nome }];
-        this.RPOFCABService.updateEstados(dados).subscribe(res => {
-          window.location.reload();
+
+        this.display_alerta_opnum = true;
+        this.texto_alerta = "Aguarde..."
+        this.ofService.atualizaropenum(this.id_of_cab).subscribe(resu => {
+          this.ofService.verificaopnum(this.id_of_cab).subscribe(result => {
+            var countx = Object.keys(result).length;
+
+            if (countx > 0) {
+              if (result[0][2] != 0) {
+                this.display_alerta_opnum = true;
+                this.texto_alerta = "Valor de Origem para a PF não foi encontrado!"
+                this.btdisabled = false;
+                if (this.permissao_ficheiroteste) this.btdisabled3 = false;
+              } else if (result[0][0] != result[0][1]) {
+                this.display_alerta_opnum = true;
+                this.btdisabled = false;
+                if (this.permissao_ficheiroteste) this.btdisabled3 = false;
+                this.texto_alerta = "Valor de Origem para o(s) Componente(s) não foi encontrado!"
+              } else {
+                this.anularof();
+              }
+            } else {
+              this.anularof();
+            }
+
+          }, error => {
+            console.log(error)
+          });
+
+        }, error => {
+          console.log(error)
         });
+
+
+
       }
+    });
+  }
+
+  anularof() {
+
+    var user = JSON.parse(localStorage.getItem('user'))["username"];
+    var nome = JSON.parse(localStorage.getItem('user'))["name"];
+    var data = new Date();
+
+    var dados = [{ VERSAO_MODIF: (this.versao_modif + 1), ID_OF_CAB: this.id_of_cab, ID_UTZ_MODIF: user, ESTADO: "A", DATA_HORA_MODIF: data, PERFIL_MODIF: 'E', NOME_UTZ_MODIF: nome }];
+    this.display_alerta_opnum = false;
+    this.RPOFCABService.updateEstados(dados).subscribe(res => {
+      if (this.estado_val == "C") this.ficheiroteste('A');
+      window.location.reload();
     });
   }
 
@@ -952,7 +1390,12 @@ export class OperacaoEmCursoComponent implements OnInit {
         this.pausa_nomes = this.pausa_nomes.slice();
 
 
-        this.estados_pausa = [{ label: "Execução", value: "E" }, { label: "Preparação", value: "P" }];
+        this.estados_pausa = [{ label: "Execução", value: "E" }];
+
+        if (this.data_ini_preparacao != null && this.data_ini_preparacao != '' && this.utz_lider.id == this.id_utz_lider) {
+          this.estados_pausa.push({ label: "Preparação", value: "P" });
+        }
+
         this.pausas_array_editar = [];
         this.displayeditarpausas = true;
         this.RPOFPARALINService.getbyallUSER(this.utz_lider.id_OP_CAB, this.utz_lider.id).subscribe(
@@ -963,8 +1406,8 @@ export class OperacaoEmCursoComponent implements OnInit {
                 hora_ini: response[x].hora_INI_M2,
                 data_fim: response[x].data_INI_M2,
                 hora_fim: response[x].hora_FIM_M2,
-                paragem: response[x].tipo_PARAGEM,
-                momento: response[x].momento_PARAGEM,
+                paragem: response[x].tipo_PARAGEM_M2,
+                momento: response[x].momento_PARAGEM_M2,
                 id_op_cab: response[x].id_OP_CAB,
                 id: response[x].id_PARA_LIN,
                 pos: this.pos++
@@ -1003,21 +1446,24 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   gravar_pausas() {
     localStorage.setItem('siip_edicao', 'true');
-    for (var x in this.pausas_array_editar) {
-      if (this.pausas_array_editar[x].id != null) {
+    this.msgs2 = [];
+    if (this.validapausas(this.pausas_array_editar, this.data_ini, this.hora_ini, this.data_fim, this.hora_fim, this.data_ini_preparacao, this.hora_ini_preparacao, this.data_fim_preparacao, this.hora_fim_preparacao)) {
+      for (var x in this.pausas_array_editar) {
+        if (this.pausas_array_editar[x].id != null) {
 
-        this.atualizar_pausa(this.pausas_array_editar[x].paragem, this.pausa_nomes.find(item => item.value == this.pausas_array_editar[x].paragem).label,
-          this.pausas_array_editar[x].data_ini, this.pausas_array_editar[x].hora_ini, this.pausas_array_editar[x].data_fim,
-          this.pausas_array_editar[x].hora_fim, this.pausas_array_editar[x].id_op_cab, this.pausas_array_editar[x].momento, this.pausas_array_editar[x].id);
+          this.atualizar_pausa(this.pausas_array_editar[x].paragem, this.pausa_nomes.find(item => item.value == this.pausas_array_editar[x].paragem).label,
+            this.pausas_array_editar[x].data_ini, this.pausas_array_editar[x].hora_ini, this.pausas_array_editar[x].data_fim,
+            this.pausas_array_editar[x].hora_fim, this.pausas_array_editar[x].id_op_cab, this.pausas_array_editar[x].momento, this.pausas_array_editar[x].id);
 
-      } else if (this.pausas_array_editar[x].data_ini != null) {
+        } else if (this.pausas_array_editar[x].data_ini != null) {
 
-        this.criar_pausa(this.pausas_array_editar[x].paragem, this.pausa_nomes.find(item => item.value == this.pausas_array_editar[x].paragem).label,
-          this.pausas_array_editar[x].data_ini, this.pausas_array_editar[x].hora_ini, this.pausas_array_editar[x].data_fim,
-          this.pausas_array_editar[x].hora_fim, this.pausas_array_editar[x].id_op_cab, this.pausas_array_editar[x].momento);
+          this.criar_pausa(this.pausas_array_editar[x].paragem, this.pausa_nomes.find(item => item.value == this.pausas_array_editar[x].paragem).label,
+            this.pausas_array_editar[x].data_ini, this.pausas_array_editar[x].hora_ini, this.pausas_array_editar[x].data_fim,
+            this.pausas_array_editar[x].hora_fim, this.pausas_array_editar[x].id_op_cab, this.pausas_array_editar[x].momento);
+        }
       }
+      this.displayeditarpausas = false;
     }
-    this.displayeditarpausas = false;
   }
 
   atualizar_pausa(item, design, date_ini, time_ini, date_fim, time_fim, id_OP_CAB, momento, id) {
@@ -1036,8 +1482,9 @@ export class OperacaoEmCursoComponent implements OnInit {
       rp_of_para_lin.data_HORA_MODIF = new Date();
       rp_of_para_lin.estado = "C";
 
-      rp_of_para_lin.des_PARAGEM = design;
-      rp_of_para_lin.momento_PARAGEM = momento;
+      rp_of_para_lin.des_PARAGEM_M2 = design;
+      rp_of_para_lin.momento_PARAGEM_M2 = momento;
+      rp_of_para_lin.tipo_PARAGEM_M2 = item;
 
       this.RPOFPARALINService.update(rp_of_para_lin);
 
@@ -1069,8 +1516,11 @@ export class OperacaoEmCursoComponent implements OnInit {
 
     rp_of_para_lin.id_UTZ_CRIA = this.utz_lider.id;
     rp_of_para_lin.id_OP_CAB = id_op_cab;
+    rp_of_para_lin.tipo_PARAGEM_M2 = item;
     rp_of_para_lin.tipo_PARAGEM = item;
+    rp_of_para_lin.des_PARAGEM_M2 = design;
     rp_of_para_lin.des_PARAGEM = design;
+    rp_of_para_lin.momento_PARAGEM_M2 = momento;
     rp_of_para_lin.momento_PARAGEM = momento;
     rp_of_para_lin.estado = "C";
 

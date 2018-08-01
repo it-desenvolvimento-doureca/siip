@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, trigger, state, style, transition, animate } from '@angular/core';
-import { DataTable } from "primeng/primeng";
+import { DataTable, OverlayPanel } from "primeng/primeng";
 import { CalendarModule } from 'primeng/primeng';
 import { RPOFOPLINService } from "app/modelos/services/rp-of-op-lin.service";
 import { RPOFCABService } from "app/modelos/services/rp-of-cab.service";
@@ -8,6 +8,7 @@ import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 import { utilizadorService } from '../../utilizadorService';
 import { AppGlobals } from 'webUrl';
+import { ofService } from '../../ofService';
 
 @Component({
   selector: 'app-controlo',
@@ -42,7 +43,9 @@ export class ControloComponent implements OnInit {
   count2: any;
   start_row = 0;
   pesquisa = null;
-  num_rows;;
+  num_rows; listauser: any[];
+  listaglobal: any[];
+  ;
   atualizacao: boolean = true;
   count: any = 0;
   dados_old: any[];
@@ -61,9 +64,9 @@ export class ControloComponent implements OnInit {
   rowData;
   checked: boolean = false;
   estados = [/*{ label: "--", value: null },*/ { label: "Concluido", value: "'C'" }, { label: "Execução", value: "'E'" },
-  { label: "Modificado", value: "'M'" }, { label: "Pausa", value: "'S'" }, { label: "Anulado", value: "'A'" }, { label: "Preparação", value: "'P'" }];
+  { label: "Modificado", value: "'M'" }, { label: "Pausa", value: "'S'" }, { label: "Anulado", value: "'A'" }, { label: "Preparação", value: "'P'" }, { label: "Em Edição", value: "'R'" }];
 
-  constructor(private AppGlobals: AppGlobals, private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
+  constructor(private ofservice: ofService, private AppGlobals: AppGlobals, private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
   ngOnInit() {
     this.count2 = 0;
@@ -104,10 +107,16 @@ export class ControloComponent implements OnInit {
       },
       error => console.log(error));
 
-
+    var input_pesquisa = this.AppGlobals.getfiltros("input_pesquisa");
+    if (input_pesquisa != null) { this.input_pesquisa = input_pesquisa; }
 
     setInterval(() => { if (this.checked) this.atualiza(); }, 60000);
 
+  }
+
+  //atualiza filtro pesquisa
+  filtro_pesquisa() {
+    this.AppGlobals.setfiltros("input_pesquisa", this.input_pesquisa);
   }
 
   atualizasec() {
@@ -198,11 +207,11 @@ export class ControloComponent implements OnInit {
         var perc_obj_val = 0;
         var inser = false;
         //var estado = "";
-        
+
         var cor_of = "green";
 
         for (var x in response) {
-         // var cor_of = "green";
+          // var cor_of = "green";
           var cor_tempo_prod = "green";
           var cor_estado = "green";
           var cor_qtd_of = "";
@@ -226,9 +235,9 @@ export class ControloComponent implements OnInit {
           if (val == null) val = 0;
 
           if (val_perc_def == val) {
-            cor_total_def = "yellow";
-            cor_perc_def = "yellow";
-            if (cor_of != "red") cor_of = "yellow";
+           // cor_total_def = "yellow";
+           // cor_perc_def = "yellow";
+           // if (cor_of != "red") cor_of = "yellow";
 
           }
 
@@ -346,6 +355,8 @@ export class ControloComponent implements OnInit {
       if (res5[n][1].estado == 'S') estado.push("Pausa");
       if (res5[n][1].estado == 'E') estado.push("Execução");
       if (res5[n][1].estado == 'P') estado.push("Preparação");
+      if (res5[n][1].estado == 'R') estado.push("Em Edição");
+
       if (res5[n][1].estado == 'A') {
         estado.push("Anulado");
         cor_estado = "red";
@@ -408,10 +419,13 @@ export class ControloComponent implements OnInit {
       if (sorttab && sorttab.length > 0) {
         this.multiSortMeta = [];
         for (var v in sorttab) {
-          this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
+          //this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
+          this.dataTableComponent.sortField = sorttab[v].field;
+          this.dataTableComponent.sortOrder = sorttab[v].order;
         }
 
       }
+
 
     }
 
@@ -419,10 +433,14 @@ export class ControloComponent implements OnInit {
   }
 
   apaga() {
+    this.dataTableComponent.reset();
     this.input_pesquisa = "";
     this.multiSortMeta = [];
     this.AppGlobals.setfiltros("sorttabela", "limpar");
+    this.AppGlobals.setfiltros("input_pesquisa", null);
+    this.dataTableComponent.value = this.tabela;
     this.dataTableComponent.reset();
+
   }
 
   atualiza() {
@@ -688,7 +706,7 @@ export class ControloComponent implements OnInit {
 
 
   sortabela(event) {
-    this.AppGlobals.setfiltros("sorttabela", event.multisortmeta);
+    this.AppGlobals.setfiltros("sorttabela", event);
   }
 
   search(event) {
@@ -748,6 +766,21 @@ export class ControloComponent implements OnInit {
       this.pesquisa.ordenacao.splice(this.pesquisa.ordenacao.length - 1, 1)
     }
 
+  }
+
+  //mostra analise rápida sobre o utilizador e aquela ref/of/operacao
+  analiserapida(event, id, overlaypanel: OverlayPanel) {
+    /*var data = [];
+    this.ofservice.getANALISERAPIDA(data).subscribe(
+      response => {
+        console.log(response)
+      },
+      error => console.log(error));
+     this.listauser = [{user:"001",data:"Atual",valor:12},{user:"001",data:"1 Mês",valor:200},{user:"001",data:"3 Meses",valor:300}];
+     this.listaglobal = [{user:"002",data:"1 Mês",valor:255}];
+     */
+    //console.log(id)
+    //overlaypanel.toggle(event);
   }
 
 }

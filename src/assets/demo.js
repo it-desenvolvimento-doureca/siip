@@ -7,6 +7,43 @@
 jQuery.ajaxSetup({ cache: false });
 
 
+
+/*var username = getCookie("app_producao_versao");
+var version = "1.1.4";
+
+//verifica a versão nos cookies se for igual não faz nada se for diferente atualiza a página e os cookies
+if (username != null) {
+	if (username != version) {
+		location.reload(true);
+		setCookie("app_producao_versao", version);
+	}
+} else {
+	location.reload(true);
+	setCookie("app_producao_versao", version);
+
+}
+
+function setCookie(cname, cvalue) {
+	document.cookie = cname + "=" + cvalue + ";";
+}
+
+function getCookie(cname) {
+	var name = cname + "=";
+	var decodedCookie = decodeURIComponent(document.cookie);
+	var ca = decodedCookie.split(';');
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
+	}
+	return null;
+}
+*/
+
 $('.scrollup').click(function () {
 	$(".ui-datatable-scrollable-body").animate({ scrollTop: '-=100' });
 	return false;
@@ -16,11 +53,16 @@ $('.scrolldown').click(function () {
 	return false;
 });
 
-
-
-
+$('body').on('scroll', function (e) {
+	scroll(true);
+});
 
 $(window).bind("scroll", function () {
+	scroll(false);
+});
+
+
+function scroll(rightt) {
 	if ($(".tabelacontrolo thead ").length) {
 		if ($('#tabelacontroloclone').length == 0) {
 			var target = $('.tabelacontrolo .ui-widget-header  ');
@@ -41,6 +83,17 @@ $(window).bind("scroll", function () {
 		var offset = $(this).scrollTop();
 
 		if (offset >= tableOffset && $('#tabelacontroloclone').is(":hidden")) {
+
+			/*var cStyle = document.body.currentStyle || window.getComputedStyle(document.body, "");
+			hasVScroll = cStyle.overflow == "visible"
+				|| cStyle.overflowY == "visible"
+				|| (hasVScroll && cStyle.overflow == "auto")
+				|| (hasVScroll && cStyle.overflowY == "auto");
+				 && hasVScroll
+				*/
+			if (rightt) {
+				$('#tabelacontroloclone').css("right", "17px");
+			}
 			$('#tabelacontroloclone').show();
 			/*clone.children().width(function (i, val) {
 				return target_children.eq(i).width();
@@ -50,10 +103,7 @@ $(window).bind("scroll", function () {
 			$('#tabelacontroloclone').hide();
 		}
 	}
-});
-
-
-
+}
 
 
 

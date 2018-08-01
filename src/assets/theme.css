@@ -1,4 +1,21 @@
 @charset "UTF-8";
+.blink {
+    animation: blink 2s steps(5, start) infinite;
+    -webkit-animation: blink 1s steps(5, start) infinite;
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
 #tabelacontroloclone {
     position: fixed;
     top: 48px;
@@ -2016,7 +2033,7 @@ body .fc .fc-toolbar .fc-next-button .ui-icon {
 
 .ui-growl .ui-growl-message-warn {
     background-color: #fcf8e3;
-   /* color: #8a6d3b;*/
+    /* color: #8a6d3b;*/
 }
 
 .ui-growl .ui-growl-message-error {
@@ -3104,7 +3121,7 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
     position: fixed;
     right: 29px;
     text-indent: -999px;
-    background: url('../../assets/6t3jba.png') no-repeat;
+    background: url('../assets/6t3jba.png') no-repeat;
     cursor: pointer;
     z-index: 4;
 }
@@ -3117,7 +3134,7 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
     position: fixed;
     right: 29px;
     text-indent: -999px;
-    background: url('../../assets/6t3jba.png') no-repeat;
+    background: url('../assets/6t3jba.png') no-repeat;
     cursor: pointer;
     transform: rotate(180deg);
     z-index: 4;
@@ -3127,9 +3144,18 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
     width: 80%;
 }
 
-.load-3 .line:nth-last-child(1) {animation: loadingC .6s .1s linear infinite;}
-.load-3 .line:nth-last-child(2) {animation: loadingC .6s .2s linear infinite;}
-.load-3 .line:nth-last-child(3) {animation: loadingC .6s .3s linear infinite;}
+.load-3 .line:nth-last-child(1) {
+    animation: loadingC .6s .1s linear infinite;
+}
+
+.load-3 .line:nth-last-child(2) {
+    animation: loadingC .6s .2s linear infinite;
+}
+
+.load-3 .line:nth-last-child(3) {
+    animation: loadingC .6s .3s linear infinite;
+}
+
 .load-wrapp {
     float: left;
     width: 100%;
@@ -3138,8 +3164,13 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
     text-align: center;
 }
 
-.load-wrapp p {padding: 0 0 20px;}
-.load-wrapp:last-child {margin-right: 0;}
+.load-wrapp p {
+    padding: 0 0 20px;
+}
+
+.load-wrapp:last-child {
+    margin-right: 0;
+}
 
 .line {
     display: inline-block;
@@ -3150,7 +3181,17 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
 }
 
 @keyframes loadingC {
-    0 {transform: translate(0,0);}
-    50% {transform: translate(0,15px);}
-    100% {transform: translate(0,0);}
+    0 {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(0, 15px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+.pgrowlmsg .ui-growl {
+    z-index: 1048 !important;
 }

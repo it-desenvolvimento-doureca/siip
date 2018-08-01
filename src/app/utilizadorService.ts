@@ -24,6 +24,15 @@ export class utilizadorService {
             .catch(this.handleError);
     }
 
+    getversao() {
+        const url = webUrl.host + '/rest/siip/getVERSAO_APP/';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
+
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }

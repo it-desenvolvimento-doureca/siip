@@ -63,8 +63,14 @@ export class TipoPausaComponent implements OnInit {
           rp_of_para_lin.id_UTZ_CRIA = user;
           rp_of_para_lin.id_OP_CAB = id_op_cab;
           rp_of_para_lin.tipo_PARAGEM = item;
+          rp_of_para_lin.tipo_PARAGEM_M1 = item;
+          rp_of_para_lin.tipo_PARAGEM_M2 = item;
           rp_of_para_lin.des_PARAGEM = design;
+          rp_of_para_lin.des_PARAGEM_M1 = design;
+          rp_of_para_lin.des_PARAGEM_M2 = design;
           rp_of_para_lin.momento_PARAGEM = result[0][0].estado;
+          rp_of_para_lin.momento_PARAGEM_M1 = result[0][0].estado;
+          rp_of_para_lin.momento_PARAGEM_M2 = result[0][0].estado;
           rp_of_para_lin.estado = "S";
           this.RPOFPARALINService.create(rp_of_para_lin).subscribe(
             res => {

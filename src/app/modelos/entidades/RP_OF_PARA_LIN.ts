@@ -22,4 +22,12 @@ export class RP_OF_PARA_LIN {
     hora_INI_M2: string;
     data_FIM_M2: Date;
     hora_FIM_M2: string;
+
+    tipo_PARAGEM_M1: string;
+    des_PARAGEM_M1: string;
+    momento_PARAGEM_M1: string;
+
+    tipo_PARAGEM_M2: string;
+    des_PARAGEM_M2: string;
+    momento_PARAGEM_M2: string;
 }

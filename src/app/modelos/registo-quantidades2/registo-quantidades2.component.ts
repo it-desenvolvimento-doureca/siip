@@ -91,6 +91,7 @@ export class RegistoQuantidades2Component implements OnInit {
   @ViewChild('closewaiting') closewaiting: ElementRef;
   //@ViewChild('editarclick2') editarclick2: ElementRef;
   @ViewChild('divinput') divinput: ElementRef;
+  modoedicaoeditor = false;
 
 
   constructor(private route: ActivatedRoute, private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOPETIQUETAService: RPOFOPETIQUETAService, private elementRef: ElementRef, private confirmationService: ConfirmationService, private RPOFCABService: RPOFCABService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer, private RPCONFOPService: RPCONFOPService, private RPOFDEFLINService: RPOFDEFLINService, private router: Router, private RPOFOPLINService: RPOFOPLINService, location: Location) {
@@ -98,9 +99,10 @@ export class RegistoQuantidades2Component implements OnInit {
   };
 
   ngOnInit() {
+    var versionUpdate = (new Date()).getTime();
     var s = document.createElement("script");
     s.type = "text/javascript";
-    s.src = "assets/demo.js";
+    s.src = "assets/demo.js?v=" + versionUpdate;
     this.elementRef.nativeElement.appendChild(s);
     this.username = JSON.parse(localStorage.getItem('user'))["username"];
 
@@ -129,8 +131,10 @@ export class RegistoQuantidades2Component implements OnInit {
 
         if (urlarray[1].match("edicao")) {
           this.modoedicao = true;
+          this.modoedicaoeditor = true;
         } else {
           this.modoedicao = false;
+          this.modoedicaoeditor = false;
         }
       }
     } else {
@@ -142,13 +146,13 @@ export class RegistoQuantidades2Component implements OnInit {
 
   }
 
-  inicia(apagar = false) {
+  inicia(apagar = false, closewaiting = false) {
     this.ref = [];
     this.tabSets = [];
     this.operacao_temp = [];
     if (localStorage.getItem('id_op_cab')) {
       //preencher campos
-      this.carregaref(JSON.parse(localStorage.getItem('id_op_cab')), apagar);
+      this.carregaref(JSON.parse(localStorage.getItem('id_op_cab')), apagar, closewaiting);
 
     } else {
       this.router.navigate(['./home']);
@@ -156,7 +160,7 @@ export class RegistoQuantidades2Component implements OnInit {
   }
 
   //preencher campos
-  carregaref(id_op_cab, apagar) {
+  carregaref(id_op_cab, apagar, closewaiting) {
     this.RPOFOPLINService.getAllbyid(id_op_cab).subscribe(
       response => {
         for (var x in response) {
@@ -176,7 +180,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
         this.ref = this.ref.slice();
         this.ref_old = this.ref;
-        this.getetiquetas(this.i, apagar);
+        this.getetiquetas(this.i, apagar, closewaiting);
 
         if (this.ref.length > 1) {
           this.disabledrefanterior = false;
@@ -197,7 +201,8 @@ export class RegistoQuantidades2Component implements OnInit {
     var existe_etiqueta = false;
     if (nova) {
       this.display_etiqueta = this.num_etiqueta_nova;
-      if (this.etiquetas.find(item => item.num == this.num_etiqueta_nova)) existe_etiqueta = true;
+      if (this.etiquetas.find(item => ("0000000000" + item.num).substring(("0000000000" + item.num).length - 10) ==
+        ("0000000000" + this.num_etiqueta_nova).substring(("0000000000" + this.num_etiqueta_nova).length - 10))) existe_etiqueta = true;
     } else {
       this.display_etiqueta = this.num_etiqueta;
     }
@@ -320,8 +325,8 @@ export class RegistoQuantidades2Component implements OnInit {
         },
         error => {
           console.log(error);
-          this.simular(this.closewaiting);
-          this.inicia();
+          // this.simular(this.closewaiting);
+          this.inicia(false, true);
         });
 
     }, error => console.log(error));
@@ -352,7 +357,7 @@ export class RegistoQuantidades2Component implements OnInit {
         rp_of_op_etiqueta.quant_BOAS_M2 = 0;
         rp_of_op_etiqueta.quant_DEF_M2 = 0;
         //create
-        if (this.modoedicao && !this.utilizador) {
+        if (this.modoedicaoeditor) {
           rp_of_op_etiqueta.novo = true;
         }
 
@@ -376,20 +381,20 @@ export class RegistoQuantidades2Component implements OnInit {
             },
             error => {
               console.log(error);
-              this.simular(this.closewaiting);
-              this.inicia();
+              // this.simular(this.closewaiting);
+              this.inicia(false, true);
             });
 
         } else {
-          this.simular(this.closewaiting);
-          this.inicia();
+          //this.simular(this.closewaiting);
+          this.inicia(false, true);
         }
 
       },
       error => {
         console.log(error);
-        this.simular(this.closewaiting);
-        this.inicia();
+        //this.simular(this.closewaiting);
+        this.inicia(false, true);
       });
   }
 
@@ -405,16 +410,16 @@ export class RegistoQuantidades2Component implements OnInit {
           this.getdefeitosop(res, id, count1);
         } else {
           if (ultimo) {
-            this.simular(this.closewaiting);
+            //  this.simular(this.closewaiting);
             this.displaynovaetiqueta = false;
-            this.inicia();
+            this.inicia(false, true);
           }
         }
       },
       error => {
         console.log(error);
-        this.simular(this.closewaiting);
-        this.inicia();
+        //this.simular(this.closewaiting);
+        this.inicia(false, true);
       });
   }
 
@@ -452,7 +457,7 @@ export class RegistoQuantidades2Component implements OnInit {
                     if (!this.fechou) {
                       this.simular(this.closewaiting);
                       this.displaynovaetiqueta = false;
-                      this.inicia();
+                      //this.inicia(false, true);
                       this.fechou = true;
                     }
                   }
@@ -462,7 +467,7 @@ export class RegistoQuantidades2Component implements OnInit {
                 console.log(error);
                 if (ultimo) {
                   this.simular(this.closewaiting);
-                  this.inicia();
+                  //this.inicia(false, true);
                 }
               });
 
@@ -470,8 +475,8 @@ export class RegistoQuantidades2Component implements OnInit {
           }
         } else {
           if (!this.fechou) {
-            this.simular(this.closewaiting);
-            this.inicia();
+            // this.simular(this.closewaiting);
+            this.inicia(false, true);
             this.displaynovaetiqueta = false;
             this.fechou = true;
           }
@@ -480,7 +485,7 @@ export class RegistoQuantidades2Component implements OnInit {
       error => {
         console.log(error);
         if (ultimo) this.simular(this.closewaiting);
-        this.inicia();
+        this.inicia(false, true);
       });
 
   }
@@ -489,8 +494,8 @@ export class RegistoQuantidades2Component implements OnInit {
     this.RPOFLSTDEFService.create(def).subscribe(resp => {
       if (ultimo) {
         if (!this.fechou) {
-          this.simular(this.closewaiting);
-          this.inicia();
+          // this.simular(this.closewaiting);
+          this.inicia(false, true);
           this.fechou = true;
           this.displaynovaetiqueta = false;
         }
@@ -509,7 +514,7 @@ export class RegistoQuantidades2Component implements OnInit {
     }
   }
 
-  //verifica se famili tem defeitos
+  //verifica se familia tem defeitos
   verificadefeitos(id, tab, count3, total) {
     if (this.operacao_temp.indexOf(id) == -1) {
       this.operacao_temp.push(id);
@@ -539,17 +544,28 @@ export class RegistoQuantidades2Component implements OnInit {
 
           if (count3 == total) {
             //this.tabSets = this.tabSets_temp;
-
             if (this.tabSets.length > 0) this.tabSets[0].ative = "active";
           }
         } else {
           var index = (this.tabSets_temp.findIndex(item => item.id == id));
           this.tabSets_temp.splice(index, 1);
+          if (this.tabSets.length > 0) {
+            this.setAll(this.tabSets, "ative", "");
+            this.tabSets[0].ative = "active";
+          }
         }
 
       }, error => console.log(error));
     }
 
+  }
+
+  //alterar campo num array
+  setAll(array, campo, valor) {
+    var i, n = array.length;
+    for (var x in array) {
+      array[x][campo] = valor;
+    }
   }
 
 
@@ -570,72 +586,72 @@ export class RegistoQuantidades2Component implements OnInit {
 
 
   //atualiza totalcontrol
-  updatetotal(num) {
+  updatetotal(num, i, totaldefeitos, qttboas, versao_modif, totaldefeitos_ref, qttboas_ref) {
     localStorage.setItem('siip_edicao', 'true');
     this.qttboas = (num != '') ? num : 0;
-    this.totalcontrol = this.totaldefeitos * 1 + this.qttboas * 1;
+    this.totalcontrol = totaldefeitos * 1 + qttboas * 1;
     //ao alterar valor qtd. boas atualiza na BD
-    this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[this.i].id).subscribe(resp => {
+    this.RPOFOPLINService.getRP_OF_OP_LIN(this.ref[i].id).subscribe(resp => {
       var rp_lin = new RP_OF_OP_LIN();
       rp_lin = resp[0];
-      this.ref[this.i].qttboas = this.qttboas;
-      if (this.ref[this.i].comp) {
-        this.RPOFOPETIQUETAService.getAllbyid_eti(this.ref[this.i].id, this.ref[this.i].id_ref_etiq).subscribe(res => {
+      this.ref[i].qttboas = qttboas;
+      if (this.ref[i].comp) {
+        this.RPOFOPETIQUETAService.getAllbyid_eti(this.ref[i].id, this.ref[i].id_ref_etiq).subscribe(res => {
           var etiq = new RP_OF_OP_ETIQUETA();
           etiq = res[0];
 
-          if (this.modoedicao) {
+          if (this.modoedicaoeditor) {
 
-            if (res[0].versao_MODIF == this.versao_modif) {
-              etiq.quant_BOAS_M2 = this.qttboas;
-              etiq.quant_DEF_M2 = this.totaldefeitos;
+            if (res[0].versao_MODIF == versao_modif) {
+              etiq.quant_BOAS_M2 = qttboas;
+              etiq.quant_DEF_M2 = totaldefeitos;
             } else {
               etiq.quant_BOAS_M1 = etiq.quant_BOAS_M2;
               etiq.quant_DEF_M1 = etiq.quant_DEF_M2;
-              etiq.quant_BOAS_M2 = this.qttboas;
-              etiq.quant_DEF_M2 = this.totaldefeitos;
-              etiq.versao_MODIF = this.versao_modif;
+              etiq.quant_BOAS_M2 = qttboas;
+              etiq.quant_DEF_M2 = totaldefeitos;
+              etiq.versao_MODIF = versao_modif;
             }
           } else {
-            etiq.quant_BOAS = this.qttboas;
-            etiq.quant_DEF = this.totaldefeitos;
-            etiq.quant_BOAS_M1 = this.qttboas;
-            etiq.quant_DEF_M1 = this.totaldefeitos;
-            etiq.quant_BOAS_M2 = this.qttboas;
-            etiq.quant_DEF_M2 = this.totaldefeitos;
+            etiq.quant_BOAS = qttboas;
+            etiq.quant_DEF = totaldefeitos;
+            etiq.quant_BOAS_M1 = qttboas;
+            etiq.quant_DEF_M1 = totaldefeitos;
+            etiq.quant_BOAS_M2 = qttboas;
+            etiq.quant_DEF_M2 = totaldefeitos;
           }
 
 
           this.RPOFOPETIQUETAService.update(etiq).then(rest => {
             var temp_qtd_boas = 0;
-            this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[this.i].id).subscribe(result => {
+            this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[i].id).subscribe(result => {
               for (var n in result) {
                 temp_qtd_boas += result[n].quant_BOAS_M2;
               }
 
-              this.ref[this.i].qttboas_ref = temp_qtd_boas;
-              this.qttboas_ref = parseInt(this.ref[this.i].qttboas_ref);
-              this.totalcontrol_ref = this.totaldefeitos_ref + this.qttboas_ref;
+              this.ref[i].qttboas_ref = temp_qtd_boas;
+              this.qttboas_ref = parseInt(this.ref[i].qttboas_ref);
+              this.totalcontrol_ref = totaldefeitos_ref + qttboas_ref;
 
-              if (this.modoedicao) {
-                if (rp_lin.versao_MODIF == this.versao_modif) {
+              if (this.modoedicaoeditor) {
+                if (rp_lin.versao_MODIF == versao_modif) {
                   rp_lin.quant_BOAS_TOTAL_M2 = temp_qtd_boas;
-                  rp_lin.quant_DEF_TOTAL_M2 = this.totaldefeitos;
+                  rp_lin.quant_DEF_TOTAL_M2 = totaldefeitos;
                 } else {
                   rp_lin.quant_BOAS_TOTAL_M1 = rp_lin.quant_BOAS_TOTAL_M2;
                   rp_lin.quant_DEF_TOTAL_M1 = rp_lin.quant_DEF_TOTAL_M2;
                   rp_lin.quant_BOAS_TOTAL_M2 = temp_qtd_boas;
-                  rp_lin.quant_DEF_TOTAL_M2 = this.totaldefeitos;
-                  rp_lin.versao_MODIF = this.versao_modif;
+                  rp_lin.quant_DEF_TOTAL_M2 = totaldefeitos;
+                  rp_lin.versao_MODIF = versao_modif;
                 }
               } else {
                 rp_lin.quant_BOAS_TOTAL = temp_qtd_boas;
-                rp_lin.quant_DEF_TOTAL = this.totaldefeitos;
+                rp_lin.quant_DEF_TOTAL = totaldefeitos;
 
                 rp_lin.quant_BOAS_TOTAL_M1 = temp_qtd_boas;
-                rp_lin.quant_DEF_TOTAL_M1 = this.totaldefeitos;
+                rp_lin.quant_DEF_TOTAL_M1 = totaldefeitos;
                 rp_lin.quant_BOAS_TOTAL_M2 = temp_qtd_boas;
-                rp_lin.quant_DEF_TOTAL_M2 = this.totaldefeitos;
+                rp_lin.quant_DEF_TOTAL_M2 = totaldefeitos;
               }
 
               this.RPOFOPLINService.update(rp_lin);
@@ -648,9 +664,9 @@ export class RegistoQuantidades2Component implements OnInit {
 
       } else {
 
-        this.ref[this.i].totaldefeitos = this.totaldefeitos;
+        this.ref[i].totaldefeitos = this.totaldefeitos;
 
-        if (this.modoedicao) {
+        if (this.modoedicaoeditor) {
           if (rp_lin.versao_MODIF == this.versao_modif) {
             rp_lin.quant_BOAS_TOTAL_M2 = this.qttboas;
             rp_lin.quant_DEF_TOTAL_M2 = this.totaldefeitos;
@@ -681,7 +697,7 @@ export class RegistoQuantidades2Component implements OnInit {
   }
 
   //preenchar tabela etiquetas
-  getetiquetas(i, apagar = false) {
+  getetiquetas(i, apagar = false, closewaiting) {
     this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[i].id).subscribe(resp => {
       var ind = i;
       this.i = ind;
@@ -745,6 +761,7 @@ export class RegistoQuantidades2Component implements OnInit {
         this.getdefeitos(this.ref[ind].id, this.comp);
       }
 
+      if (closewaiting) this.simular(this.closewaiting);
 
     }, error => console.log(error));
   }
@@ -771,7 +788,7 @@ export class RegistoQuantidades2Component implements OnInit {
     this.i = this.i % this.ref.length;
 
     //this.getdefeitos(this.ref[this.i].id, this.comp);
-    this.getetiquetas(this.i);
+    this.getetiquetas(this.i, false, false);
     setTimeout(() => {
       if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
     }, 200);
@@ -785,7 +802,7 @@ export class RegistoQuantidades2Component implements OnInit {
     this.i = this.i - 1;
 
     //this.getdefeitos(this.ref[this.i].id, this.comp);
-    this.getetiquetas(this.i);
+    this.getetiquetas(this.i, false, false);
     setTimeout(() => {
       if (document.getElementById('inputFocous2')) document.getElementById('inputFocous2').focus();
     }, 200);
@@ -949,14 +966,14 @@ export class RegistoQuantidades2Component implements OnInit {
   menosqtdboas() {
     if (this.qttboas > 0) {
       this.qttboas--;
-      this.updatetotal(this.qttboas);
+      this.updatetotal(this.qttboas, this.i, this.totaldefeitos, this.qttboas, this.versao_modif, this.totaldefeitos_ref, this.qttboas_ref);
     }
   }
 
   //somar valor ao input qtd boas
   maisqtdboas() {
     this.qttboas++;
-    this.updatetotal(this.qttboas)
+    this.updatetotal(this.qttboas, this.i, this.totaldefeitos, this.qttboas, this.versao_modif, this.totaldefeitos_ref, this.qttboas_ref);
   }
 
   limpardados() {
@@ -1046,10 +1063,10 @@ export class RegistoQuantidades2Component implements OnInit {
     if (id_DEF_LIN == 0 && (valor == 0 || valor == "")) {
       //não faz nada
 
-    } else if (valor > 0 || (this.modoedicao && !this.utilizador)) {
+    } else if (valor > 0 || (this.modoedicaoeditor)) {
       var rp = new RP_OF_DEF_LIN();
 
-      if (this.modoedicao && !this.utilizador) {
+      if (this.modoedicaoeditor) {
         rp.versao_MODIF = this.versao_modif;
         rp.quant_DEF_M1 = valor;
         rp.quant_DEF_M2 = valor;
@@ -1106,7 +1123,7 @@ export class RegistoQuantidades2Component implements OnInit {
         this.ref[i].totaldefeitos = totaldefeitos;
         this.ref[i].totaldefeitos_ref = totaldefeitos2;
 
-        if (this.modoedicao) {
+        if (this.modoedicaoeditor) {
           if (resp[0].versao_MODIF == this.versao_modif) {
             rp_lin.quant_BOAS_TOTAL_M2 = this.ref[i].qttboas_ref;
             rp_lin.quant_DEF_TOTAL_M2 = this.ref[i].totaldefeitos_ref;
@@ -1129,7 +1146,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
       } else {
         this.ref[i].totaldefeitos = totaldefeitos;
-        if (this.modoedicao) {
+        if (this.modoedicaoeditor) {
           if (resp[0].versao_MODIF == this.versao_modif) {
             rp_lin.quant_BOAS_TOTAL_M2 = this.ref[i].qttboas;
             rp_lin.quant_DEF_TOTAL_M2 = this.ref[i].totaldefeitos;
@@ -1233,7 +1250,7 @@ export class RegistoQuantidades2Component implements OnInit {
     if (this.ref_etiqueta != num) {
       this.ref_etiqueta = num;
       //this.displayetiquetaslidas = false;
-      this.inicia();
+      this.inicia(false, true);
     }
 
   }
@@ -1316,7 +1333,17 @@ export class RegistoQuantidades2Component implements OnInit {
 
   }
   concluir() {
-    this.location.back();
+    if (localStorage.getItem('id_op_cab') && localStorage.getItem('siip_edicao') == 'true') {
+      this.RPOFDEFLINService.atualizatotais(localStorage.getItem('id_op_cab'), this.modoedicaoeditor).subscribe(resu => {
+        this.location.back();
+      }, error => {
+        this.location.back();
+        console.log(error)
+      });
+    } else {
+      this.location.back();
+    }
+
   }
 
   //quando um componente tem of, e foi inserido lista de defeitos por engano limpa dados

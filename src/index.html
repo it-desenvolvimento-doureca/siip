@@ -7,9 +7,9 @@
   <base href=".">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="-1" />
+  <meta http-equiv="Expires" content="0" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"> -->
   <link rel="stylesheet" type="text/css" href="assets/font-awesome.min.css" />
@@ -107,4 +107,11 @@
   });
 
 </script>
-<script src="assets/demo.js"></script>
+
+<script type="text/javascript" language="javascript">  
+  var versionUpdate = (new Date()).getTime();  
+  var script = document.createElement("script");  
+  script.type = "text/javascript";  
+  script.src = "assets/demo.js?v=" + versionUpdate;  
+  document.body.appendChild(script);  
+</script>  

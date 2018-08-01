@@ -15,10 +15,12 @@ export class RP_OF_CAB {
     nome_UTZ_CRIA: string;
     data_HORA_CRIA: Date;
     id_UTZ_MODIF: string;
+    id_UTZ_EDICAO: string;
     nome_UTZ_MODIF: string;
     data_HORA_MODIF: Date;
     estado: string;
+    estado_INICIAL: string;
     op_COD_ORIGEM: string;
     op_PREVISTA: string;
-    versao_MODIF : number;
+    versao_MODIF: number;
 }

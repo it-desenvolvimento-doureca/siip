@@ -99,6 +99,15 @@ export class RPOFDEFLINService {
       .catch(this.handleError);
   }
 
+
+  atualizatotais(id, modo) {
+    const url = webUrl.host + '/rest/siip/atualizartotais/' + id + '/' + modo;
+    return this.http
+      .get(url)
+      .map((res: Response) => res.json())
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
   private extractData(res: Response) {
     let body = res.json();
     return body;

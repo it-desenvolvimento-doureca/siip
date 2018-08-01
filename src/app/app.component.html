@@ -1,3 +1,8 @@
+<div *ngIf="semInternet">
+    <i class="fa fa-3x fa-wifi blink" style="color:red; position: fixed; z-index: 1000"></i>
+    <i class="fa fa-3x fa-exclamation blink" style="position: fixed; z-index: 1000;     color: black; left: 21px;font-size: 35px; top: 3px;"></i>
+</div>
+
 <div *ngIf="ishome('home') " class="top_text" style="color:black; position: sticky; top: 0; z-index: 800; background: #eeeeee; -webkit-ruby-position: before; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
     <nav class="navbar navbar-transparent navbar-absolute gradient" style="padding-top: 3px;">
         <div class="container-fluid" style="position: relative; width: 100%; padding: 0;">
@@ -7,16 +12,19 @@
                         <img src="assets/logo_load.png" style="max-height:42px;" />
                     </div>
                     <div class="versao" style="display: -webkit-inline-box; margin-left: 5px; margin-top: 8px; color: black;">
-                        <span> <b style="font-size: 12pt;">Sistema de Gestão Integrado de Informação da Doureca</b></span>
+                        <span>
+                            <b style="font-size: 12pt;">Sistema de Gestão Integrado de Informação da Doureca</b>
+                        </span>
                         <br>
                         <span style="font-size: 7pt; margin-top: -3px;position: absolute; left: 201px;">
-                    ({{modulo}} - {{versao}})
-                    </span>
+                            ({{modulo}} - {{versao}})
+                        </span>
                     </div>
                 </div>
                 <div class="col-md-12 col-lg-4 utz" style="float: left; text-align:center; padding: 0;">
                     <div style="font-size: 11pt; display: -webkit-inline-box; margin-left: 5px; margin-top: 7px; color: black;">
-                        <b style="vertical-align: middle;">Utilizador:</b><span style="vertical-align: middle;"> {{isnome()}}</span>
+                        <b style="vertical-align: middle;">Utilizador:</b>
+                        <span style="vertical-align: middle;"> {{isnome()}}</span>
                         <a title="Sair" *ngIf="!ishome('controlo') || !ishome('config')" (click)="logout()" style=" margin-left: 10px; float: right; cursor: pointer; ">
                             <i class="fa fa-window-close-o" style="font-size: 25px;" aria-hidden="true"></i>
                         </a>

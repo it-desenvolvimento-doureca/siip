@@ -114,7 +114,7 @@
               (click)="menosqtdboas()" class="btn btn-default">-</button>
           </span>
           <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number"
-            #box (ngModelChange)="updatetotal(box.value)" (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;"
+            #box (ngModelChange)="updatetotal(box.value,i,totaldefeitos,qttboas,versao_modif,totaldefeitos_ref,qttboas_ref)" (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;"
             min="0" style="text-align: center;" />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"

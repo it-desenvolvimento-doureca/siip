@@ -12,7 +12,7 @@ import { RP_OF_PREP_LIN } from "app/modelos/entidades/RP_OF_PREP_LIN";
 import { RPOFPREPLINService } from "app/modelos/services/rp-of-prep-lin.service";
 import { RP_OF_OP_FUNC } from "app/modelos/entidades/RP_OF_OP_FUNC";
 import { RPOPFUNCService } from "app/modelos/services/rp-op-func.service";
-import { AppGlobals } from 'webUrl';
+import { AppGlobals, webUrl } from 'webUrl';
 import { ofService } from 'app/ofService';
 import { RP_CONF_UTZ_PERF } from '../entidades/RP_CONF_UTZ_PERF';
 import { GEREVENTOService } from '../services/ger-evento.service';
@@ -51,11 +51,62 @@ export class LoginComponent implements OnInit {
     } else {
       localStorage.clear();
     }
-
+    var versionUpdate = (new Date()).getTime();
     var s = document.createElement("script");
     s.type = "text/javascript";
-    s.src = "assets/demo.js";
+    s.src = "assets/demo.js?v=" + versionUpdate;
     this.elementRef.nativeElement.appendChild(s);
+
+
+
+    //verifica a versão nos cookies se for igual não faz nada se for diferente atualiza a página e os cookies
+    this.verificaversao();
+
+  }
+  verificaversao() {
+    this.service.getversao().subscribe(
+      response => {
+        var count = Object.keys(response).length;
+        if (count > 0) {
+          var username = this.getCookie("app_producao_versao");
+          if (username != null) {
+            if (username != response[0].versao) {
+              window.location.reload(true);
+              this.setCookie("app_producao_versao", response[0].versao);
+            }
+          } else {
+            window.location.reload(true);
+            this.setCookie("app_producao_versao", response[0].versao);
+
+          }
+        }
+      },
+      error => {
+        console.log(error);
+      }
+
+    );
+  }
+
+
+  setCookie(cname, cvalue) {
+    document.cookie = cname + "=" + cvalue + ";";
+  }
+
+  getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return null;
   }
 
   //adiciona número ao input de login
@@ -78,7 +129,7 @@ export class LoginComponent implements OnInit {
 
   //verificar se utilizador existe
   userexists() {
-    if (this.operation != "" && this.operation != null) {
+    if (this.count > 3 && this.operation != "" && this.operation != null) {
       this.service.searchuser(this.operation).subscribe(
         response => {
           var count = Object.keys(response).length;
@@ -159,6 +210,7 @@ export class LoginComponent implements OnInit {
             switch (response[x][0].estado) {
               case "I":
                 this.router.navigate(['./operacao-em-curso']);
+                this.verificaversao();
                 break;
               case "P":
                 this.displayprep = true;
@@ -168,6 +220,7 @@ export class LoginComponent implements OnInit {
                 break;
               case "E":
                 this.router.navigate(['./operacao-em-curso']);
+                this.verificaversao();
                 break;
 
             }
@@ -202,6 +255,7 @@ export class LoginComponent implements OnInit {
                         case "O":
                           localStorage.setItem('perfil', JSON.stringify("O"));
                           this.router.navigate(['./nova-operacao']);
+                          this.verificaversao();
                           break;
                         case "G":
                           localStorage.setItem('perfil', JSON.stringify("G"));
@@ -226,6 +280,7 @@ export class LoginComponent implements OnInit {
                     localStorage.setItem('perfil', JSON.stringify("O"));
                     this.service__utz.create(conf_utiliz).then(() => {
                       this.router.navigate(['./nova-operacao']);
+                      this.verificaversao();
                       this.verifica(id, nome);
                     });
 
@@ -240,6 +295,7 @@ export class LoginComponent implements OnInit {
                           this.isHidden3 = false;
                           break;
                         case "A":
+                          localStorage.setItem('sec_num_user', JSON.stringify("ADMIN"));
                           this.isHidden2 = false;
                           break;
                       }
@@ -296,18 +352,21 @@ export class LoginComponent implements OnInit {
 
   adminarea() {
     this.router.navigate(['./config']);
+    this.verificaversao();
   }
 
   //reencaminha para nova operação
   novaoperacao() {
     localStorage.setItem('perfil', JSON.stringify("O"));
     this.router.navigate(['./nova-operacao']);
+    this.verificaversao();
   }
 
   //reencaminha para controlo
   controlo() {
     localStorage.setItem('perfil', JSON.stringify("G"));
     this.router.navigate(['./controlo']);
+    this.verificaversao();
   }
   //fecahar popup pausa
   cancelar() {
@@ -512,6 +571,7 @@ export class LoginComponent implements OnInit {
   pausa() {
     this.AppGlobals.setlogin_pausa(true);
     this.router.navigate(['./pausa']);
+    this.verificaversao();
   }
 
   //CONCLUIR TRABALHO

@@ -241,7 +241,12 @@ export class NovaOperacaoComponent implements OnInit {
                     var count1 = Object.keys(response1).length;
                     if (count1 > 0) {
                         if (response != null) {
-                            referencias.push({ codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+                            var perc = null;
+                            if (response.ZPAVAL != null) {
+                                perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
+                            }
+                            referencias.push({ perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
                             this.referencias = referencias.slice();
                         }
                         this.get_filhos(ref, referencias);
@@ -571,7 +576,7 @@ export class NovaOperacaoComponent implements OnInit {
             res => {
 
                 if (estado == "P" && !comp) {
-                    this.iniciapreparacao(res.id_OP_CAB);
+                    this.iniciapreparacao(res.id_OP_CAB, date);
                 }
             },
             error => console.log(error));
@@ -652,9 +657,9 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //cria tabela preparação
-    iniciapreparacao(id_OP_CAB) {
+    iniciapreparacao(id_OP_CAB, date) {
         var prep = new RP_OF_PREP_LIN();
-        var date = new Date();
+        //var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         prep.id_OP_CAB = id_OP_CAB;
         prep.data_INI = date;

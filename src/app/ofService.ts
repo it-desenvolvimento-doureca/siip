@@ -8,6 +8,7 @@ import { webUrl } from "webUrl";
 
 @Injectable()
 export class ofService {
+    private headers = new Headers({ 'Content-Type': 'application/json' });
 
     constructor(private http: Http) { }
 
@@ -44,19 +45,26 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-
-    getAllOPNOTIN(data: String) {
-        const url = webUrl.host + '/rest/demo/allopNOTIN/' + data + '';
+    getANALISERAPIDA(data) {
+        const url = webUrl.host + '/rest/siip/getANALISERAPIDA';
         return this.http
-            .get(url)
+            .post(url, JSON.stringify(data), { headers: this.headers })
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    getAllFAMNOTIN(data: String) {
-        const url = webUrl.host + '/rest/demo/allfamNOTIN/' + data + '';
+    getAllOPNOTIN(data) {
+        const url = webUrl.host + '/rest/demo/allopNOTIN';
         return this.http
-            .get(url)
+            .post(url, JSON.stringify(data), { headers: this.headers })
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    getAllFAMNOTIN(data) {
+        const url = webUrl.host + '/rest/demo/allfamNOTIN/';
+        return this.http
+            .post(url, JSON.stringify(data), { headers: this.headers })
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
@@ -148,6 +156,22 @@ export class ofService {
 
     atualizaropenum(id) {
         const url = webUrl.host + '/rest/siip/atualizaropenum/' + id;
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    verificaopnum(id) {
+        const url = webUrl.host + '/rest/siip/verificaopnum/' + id;
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    atualizaestado(id, user, estado) {
+        const url = webUrl.host + '/rest/siip/atualizarestado/' + id + '/' + user + '/' + estado;
         return this.http
             .get(url)
             .map((res: Response) => res.json())

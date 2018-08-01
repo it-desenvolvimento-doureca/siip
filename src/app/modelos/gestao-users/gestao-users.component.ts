@@ -555,18 +555,19 @@ export class GestaoUsersComponent implements OnInit {
   preenche_op() {
     this.listallop = [];
     this.listaop = [];
-    var data = "";
+    var data = [];
     var control = false;
     this.op_service.getAll().subscribe(
       response => {
         for (var x in response) {
           this.listaop.push({ field: response[x].id_OP.trim() + " - " + response[x].nome_OP, id: response[x].id_CONF_OP_NPREV });
-          if (control) data += ","
+         /*/ if (control) data += ","
           data += response[x].id_OP.trim();
-          control = true;
+          control = true;*/
+          data.push(response[x].id_OP.trim())
         }
         this.listaop = this.listaop.slice();
-        if (this.listaop.length == 0) data = "null";
+        if (this.listaop.length == 0) data = null;
 
         this.ofservice.getAllOPNOTIN(data).subscribe(
           response => {
@@ -590,18 +591,19 @@ export class GestaoUsersComponent implements OnInit {
   preenche_famcomp() {
     this.listallfam = [];
     this.listafam = [];
-    var data = "";
+    var data = [];
     var control = false;
     this.RPCONFFAMILIACOMPService.getAll().subscribe(
       response => {
         for (var x in response) {
           this.listafam.push({ field: response[x].cod_FAMILIA_COMP.trim() + " - " + response[x].nome_FAMILIA_COMP, id: response[x].cod_FAMILIA_COMP });
-          if (control) data += ","
+          /*if (control) data += ","
           data += response[x].cod_FAMILIA_COMP.trim();
-          control = true;
+          control = true;*/
+          data.push(response[x].cod_FAMILIA_COMP.trim())
         }
         this.listafam = this.listafam.slice();
-        if (this.listafam.length == 0) data = "null";
+        if (this.listafam.length == 0) data = null;
 
         this.ofservice.getAllFAMNOTIN(data).subscribe(
           response => {

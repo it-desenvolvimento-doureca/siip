@@ -10,6 +10,7 @@ export class AppComponent {
   title = 'app works!';
   versao = "versão 1.0.1";
   modulo = "Gestão de Registos de Produção";
+  semInternet: boolean;
 
   @HostListener('document:click', ['$event'])
   clickout(event) {
@@ -24,6 +25,15 @@ export class AppComponent {
   }
 
   constructor(private router: Router) {
+    this.semInternet = false;
+
+    setInterval(() => {
+      if (navigator.onLine) {
+        this.semInternet = false;
+      } else {
+        this.semInternet = true;
+      }
+    }, 2000);
 
     setInterval(() => {
       this.time();
