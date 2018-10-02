@@ -1,5 +1,5 @@
 export class RP_OF_LST_DEF {
-    ID_LST_DEF: number;
+    id_LST_DEF: number;
     id_OP_LIN: number;
     cod_DEF: string;
     desc_DEF: string;

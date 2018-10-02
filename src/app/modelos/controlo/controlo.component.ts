@@ -45,7 +45,6 @@ export class ControloComponent implements OnInit {
   pesquisa = null;
   num_rows; listauser: any[];
   listaglobal: any[];
-  ;
   atualizacao: boolean = true;
   count: any = 0;
   dados_old: any[];

@@ -834,9 +834,12 @@ export class RegistoQuantidades2Component implements OnInit {
           this.RPOFOPETIQUETAService.getAllbyid_eti(id, id_ref_etiq).subscribe(res => {
             var etiq = new RP_OF_OP_ETIQUETA();
             etiq = res[0];
-            etiq.quant_BOAS = this.ref[i].qttboas;
-            etiq.quant_DEF = totaldefeitos;
-            etiq.versao_MODIF = this.versao_modif;
+
+            if (!this.modoedicaoeditor) {
+              etiq.quant_BOAS = this.ref[i].qttboas;
+              etiq.quant_DEF = totaldefeitos;
+              etiq.versao_MODIF = this.versao_modif;
+            }
 
             etiq.quant_BOAS_M1 = this.ref[i].qttboas;
             etiq.quant_DEF_M1 = totaldefeitos;
@@ -1179,9 +1182,13 @@ export class RegistoQuantidades2Component implements OnInit {
         this.RPOFOPETIQUETAService.getAllbyid_eti(id, id_ref_etiq).subscribe(res => {
           var etiq = new RP_OF_OP_ETIQUETA();
           etiq = res[0];
-          etiq.quant_BOAS = this.ref[i].qttboas;
 
-          etiq.quant_DEF = totaldefeitos;
+          if (!this.modoedicaoeditor) {
+
+            etiq.quant_BOAS = this.ref[i].qttboas;
+
+            etiq.quant_DEF = totaldefeitos;
+          }
 
           etiq.quant_BOAS_M1 = this.ref[i].qttboas;
           etiq.quant_DEF_M1 = totaldefeitos;
