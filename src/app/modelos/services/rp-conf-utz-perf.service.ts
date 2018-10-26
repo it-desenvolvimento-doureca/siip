@@ -16,7 +16,7 @@ export class RPCONFUTZPERFService {
 
     create(data: RP_CONF_UTZ_PERF) {
         return this.http
-            .post(webUrl.host+'/rest/siip/createRP_CONF_UTZ_PERF', JSON.stringify(data), { headers: this.headers })
+            .post(webUrl.host + '/rest/siip/createRP_CONF_UTZ_PERF', JSON.stringify(data), { headers: this.headers })
             .toPromise()
             .then(res => res.json().data)
             .catch(this.handleError);
@@ -24,7 +24,7 @@ export class RPCONFUTZPERFService {
 
     delete(id) {
         return this.http
-            .delete(webUrl.host+'/rest/siip/deleteRP_CONF_UTZ_PERF/' + id + '')
+            .delete(webUrl.host + '/rest/siip/deleteRP_CONF_UTZ_PERF/' + id + '')
             .toPromise()
             .then(res => res)
             .catch(this.handleError);
@@ -32,7 +32,7 @@ export class RPCONFUTZPERFService {
 
 
     getAll(): Observable<RP_CONF_UTZ_PERF[]> {
-        const url = webUrl.host+'/rest/siip/getRP_CONF_UTZ_PERF';
+        const url = webUrl.host + '/rest/siip/getRP_CONF_UTZ_PERF';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -40,7 +40,7 @@ export class RPCONFUTZPERFService {
     }
 
     getbyid(id): Observable<RP_CONF_UTZ_PERF[]> {
-        const url = webUrl.host+'/rest/siip/getRP_CONF_UTZ_PERFid/' + id + '';
+        const url = webUrl.host + '/rest/siip/getRP_CONF_UTZ_PERFid/' + id + '';
         return this.http
             .get(url)
             .map(this.extractData)
@@ -49,11 +49,19 @@ export class RPCONFUTZPERFService {
 
 
     getSEC(id): Observable<RP_CONF_CHEF_SEC[]> {
-        const url = webUrl.host+'/rest/siip/getRP_CONF_CHEF_SECbyidUSER/' + id + '';
+        const url = webUrl.host + '/rest/siip/getRP_CONF_CHEF_SECbyidUSER/' + id + '';
         return this.http
             .get(url)
             .map(this.extractData)
             .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    update(data: RP_CONF_UTZ_PERF) {
+        return this.http
+            .put(webUrl.host + '/rest/siip/updateRP_CONF_UTZ_PERF', JSON.stringify(data), { headers: this.headers })
+            .toPromise()
+            .then(res => res.json().data)
+            .catch(this.handleError);
     }
 
     private extractData(res: Response) {

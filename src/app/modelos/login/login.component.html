@@ -82,8 +82,8 @@
     ***********EXEMPLO HREF
     <a routerLink="/teste">Heroes</a>-->
 
-<p-dialog [(visible)]="display" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-    [draggable]="false">
+<p-dialog [(visible)]="display" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
+    [dismissableMask]="true" [draggable]="false">
     <div style="text-align:center;">
         <h1> Qual o perfil de utilização pretendido? </h1>
     </div>
@@ -97,8 +97,8 @@
 </p-dialog>
 
 <!-- POPUP LOGIN ADMIN -->
-<p-dialog [(visible)]="display2" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-    [draggable]="false">
+<p-dialog [(visible)]="display2" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
+    [dismissableMask]="true" [draggable]="false">
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center; border: none;">
         <button type="button" pButton routerLink="/config" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
         <button type="button" pButton routerLink="/controlo" label="CONTROLO" style="float: none; width: auto;"></button>
@@ -107,14 +107,15 @@
 
 <!-- Preparação em curso -->
 
-<p-dialog [(visible)]="displayprep" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-    [draggable]="false">
+<p-dialog [(visible)]="displayprep" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
+    [dismissableMask]="true" [draggable]="false">
     <div style="text-align:center;">
         <h1>Que operação pretende fazer?</h1>
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-            <button type="button" pButton (click)="finalizarprep()" label="FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO" style="float: none; width: auto;"></button>
+            <button type="button" pButton (click)="finalizarprep()" label="FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO"
+                style="float: none; width: auto;"></button>
             <button type="button" pButton (click)="pausa()" label="FAZER PAUSA NA PREPARAÇÃO" style="float: none; width: auto;"></button>
             <button type="button" pButton (click)="concluir()" label="CONCLUIR TRABALHO" style="float: none; width: auto;"></button>
         </div>
@@ -123,8 +124,8 @@
 
 <!-- Pausa em curso -->
 
-<p-dialog [(visible)]="displaypausa" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-    [draggable]="false">
+<p-dialog [(visible)]="displaypausa" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
+    [dismissableMask]="true" [draggable]="false">
     <div style="text-align:center;">
         <h1>ESTÁ EM PAUSA. PRETENDE RETOMAR O TRABALHO?</h1>
     </div>
@@ -134,4 +135,69 @@
             <button type="button" pButton (click)="cancelar()" label="NÃO" style="float: none; width: auto;"></button>
         </div>
     </p-footer>
+</p-dialog>
+
+<!-- Password LOGIN-->
+<p-dialog header="Admin Login" [(visible)]="displayPasswordADMIN" modal="modal" min-width="600" [responsive]="true"
+    [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div style="display: inline-grid;">
+        <div class="col-md-9 col-sm-12 col-lg-6 phone loginadicional loginadicional22" style="padding: 0px; text-align: -webkit-center; display: table; margin: 0 auto;">
+            <div class="row1">
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-10">
+                    <div class="num-pad">
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('1')" label="1" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('2')" label="2" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('3')" label="3" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('4')" label="4" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('5')" label="5" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('6')" label="6" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('7')" label="7" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('8')" label="8" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('9')" label="9" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num" (click)="append2('0')" label="0" pButton></button>
+                        </div>
+                        <div class="span4">
+                            <button type="button" class="num num1" (click)="undo2()" label="APAGAR" pButton></button>
+                        </div>
+                        <div class="span4" style="position: absolute; right: -51px; height: 100%;">
+                            <button type="button" class="num num1" style="height: 100%; width: 90px !important; background-color: #058605 !important;"
+                                (click)="continuar()" label="OK" pButton></button>
+                        </div>
+                        <div class="span4" style="position: absolute; right: -151px; height: 100%;">
+                            <button type="button" class="num num1" style="height: 100%; width: 110px !important; background-color: red !important;"
+                                (click)="displayPasswordADMIN = false" label="FECHAR" pButton></button>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix">
+            </div>
+            <div class="col-md-12 col-sm-12 col-lg-12 phone loginadicional" style="padding: 0px; text-align: -webkit-center; margin-left: 48px;">
+                <input [ngClass]="{'ippassworderrada': passworderrada}" style="margin: 0;width: 100%;" readonly type="password"
+                    name="name" id="telNumber2" #box class="form-control tel" value="{{ operation2 }}" maxlength="4" />
+            </div>
+        </div>
+    </div>
 </p-dialog>

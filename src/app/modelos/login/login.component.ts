@@ -39,6 +39,10 @@ export class LoginComponent implements OnInit {
   isHidden2: boolean = true;
   isHidden3: boolean = true;
   displayprep: boolean = false;
+  displayPasswordADMIN: boolean;
+  operation2: string;
+  password: string = "";
+  passworderrada: boolean;
   constructor(private GEREVENTOService: GEREVENTOService, private ofService: ofService, private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
 
   }
@@ -127,6 +131,12 @@ export class LoginComponent implements OnInit {
 
   }
 
+  //adiciona número ao input de login
+  append2(element: string) {
+    this.passworderrada = false;
+    this.operation2 += element;
+  }
+
   //verificar se utilizador existe
   userexists() {
     if (this.count > 3 && this.operation != "" && this.operation != null) {
@@ -164,6 +174,13 @@ export class LoginComponent implements OnInit {
 
   }
 
+  //Tecla de limpar número
+  undo2() {
+    this.passworderrada = false;
+    if (this.operation2 != '') {
+      this.operation2 = this.operation2.slice(0, -1);
+    }
+  }
 
   //Tecla de limpar número
   undo() {
@@ -265,6 +282,7 @@ export class LoginComponent implements OnInit {
                         case "A":
                           localStorage.setItem('perfil', JSON.stringify("A"));
                           localStorage.setItem('sec_num_user', JSON.stringify("ADMIN"));
+                          this.password = response[x].password;
                           this.adminlogin();
                           break;
                       }
@@ -296,11 +314,12 @@ export class LoginComponent implements OnInit {
                           break;
                         case "A":
                           localStorage.setItem('sec_num_user', JSON.stringify("ADMIN"));
+                          this.password = response[x].password;
                           this.isHidden2 = false;
                           break;
                       }
-                      this.display = true;
                     }
+                    this.abrirpopupdisplay();
                   }
 
                   localStorage.setItem('access', JSON.stringify(dataacess));
@@ -330,24 +349,48 @@ export class LoginComponent implements OnInit {
     });
   }
 
+
+  abrirpopupdisplay() {
+    if (this.password != "" && this.password != null) {
+      if (JSON.parse(localStorage.getItem('sec_num_user')) != null && JSON.parse(localStorage.getItem('sec_num_user')) == "ADMIN") {
+        this.displayPasswordADMIN = true;
+        this.operation2 = "";
+      } else {
+        this.display = true;
+      }
+    } else {
+      this.display = true;
+    }
+  }
+
+  continuar() {
+    if (this.operation2 == this.password) {
+      this.displayPasswordADMIN = false;
+      this.display = true;
+    } else {
+      this.passworderrada = true;
+    }
+  }
+
   //popupadministratoa
   adminlogin() {
-    this.display = true;
     this.display2 = false;
     this.isHidden1 = false;
     this.isHidden2 = false;
     this.isHidden3 = false;
     localStorage.setItem('perfil', JSON.stringify("G"));
+
+    this.abrirpopupdisplay();
   }
 
   //popupadministratoa
   chefelogin() {
-    this.display = true;
     this.display2 = false;
     this.isHidden1 = false;
     this.isHidden2 = true;
     this.isHidden3 = false;
     localStorage.setItem('perfil', JSON.stringify("A"));
+    this.abrirpopupdisplay();
   }
 
   adminarea() {
@@ -831,10 +874,33 @@ export class LoginComponent implements OnInit {
   @HostListener('window:keydown', ['$event'])
   doSomething(event) {
 
+
     if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)) {
-      this.append(event.key)
+      if (this.displayPasswordADMIN) {
+        this.append2(event.key)
+      } else {
+        this.append(event.key)
+      }
     } else if (event.keyCode == 8) {
-      this.undo();
+      if (this.displayPasswordADMIN) {
+        this.undo2();
+      } else {
+        this.undo();
+      }
+    } else if (event.keyCode == 13) {
+
+      if (this.displayPasswordADMIN) {
+        if (event.target.localName == "button") {
+          this.continuar();
+          return false;
+        } else {
+          this.continuar();
+        }
+      } else {
+        if (event.target.localName == "button") {
+          return false;
+        }
+      }
     }
 
 

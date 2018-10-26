@@ -507,7 +507,7 @@ export class GestaoUsersComponent implements OnInit {
               this.brand1.push({ label: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ, value: { no: response[x].id_UTZ.trim(), nome: response[x].nome_UTZ } });
               break;
             case "A":
-              this.list5.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
+              this.list5.push({ password: response[x].password, nome_UTZ: response[x].nome_UTZ, id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
               break;
             case "E":
               this.list7.push({ id: response[x].id_CONF_UTZ_PERF, no: response[x].id_UTZ.trim(), field: response[x].id_UTZ.trim() + " - " + response[x].nome_UTZ });
@@ -561,9 +561,9 @@ export class GestaoUsersComponent implements OnInit {
       response => {
         for (var x in response) {
           this.listaop.push({ field: response[x].id_OP.trim() + " - " + response[x].nome_OP, id: response[x].id_CONF_OP_NPREV });
-         /*/ if (control) data += ","
-          data += response[x].id_OP.trim();
-          control = true;*/
+          /*/ if (control) data += ","
+           data += response[x].id_OP.trim();
+           control = true;*/
           data.push(response[x].id_OP.trim())
         }
         this.listaop = this.listaop.slice();
@@ -620,6 +620,19 @@ export class GestaoUsersComponent implements OnInit {
       },
       error => console.log(error));
 
+  }
+
+  atualizaPassword(tab) {
+    
+    var conf_utiliz = new RP_CONF_UTZ_PERF;
+    conf_utiliz.id_UTZ = tab.no;
+    conf_utiliz.id_CONF_UTZ_PERF = tab.id;
+    conf_utiliz.perfil = "A";
+    conf_utiliz.nome_UTZ = tab.nome_UTZ;
+    conf_utiliz.password = tab.password;
+    this.conf_service.update(conf_utiliz).then(() => {
+
+    });
   }
 
 }

@@ -21,6 +21,7 @@ import { AppGlobals } from 'webUrl';
 export class TipoPausaComponent implements OnInit {
   estado: any = [];
   pausas: any[];
+  display_alerta: boolean;
   constructor(private AppGlobals: AppGlobals, private RPOPFUNCService: RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
 
   ngOnInit() {
@@ -49,48 +50,55 @@ export class TipoPausaComponent implements OnInit {
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         this.estado.push('T');
         this.RPOFOPCABService.getdataof(id_of, user, this.estado).subscribe(result => {
-          var id_op_cab = result[0][2].id_OP_CAB;
-          var rp_of_para_lin = new RP_OF_PARA_LIN();
-          rp_of_para_lin.data_INI = date;
-          rp_of_para_lin.hora_INI = time;
+          if (result[0][0].estado != "S") {
 
-          rp_of_para_lin.data_INI_M1 = date;
-          rp_of_para_lin.hora_INI_M1 = time;
+            var id_op_cab = result[0][2].id_OP_CAB;
+            var rp_of_para_lin = new RP_OF_PARA_LIN();
+            rp_of_para_lin.data_INI = date;
+            rp_of_para_lin.hora_INI = time;
 
-          rp_of_para_lin.data_INI_M2 = date;
-          rp_of_para_lin.hora_INI_M2 = time;
+            rp_of_para_lin.data_INI_M1 = date;
+            rp_of_para_lin.hora_INI_M1 = time;
 
-          rp_of_para_lin.id_UTZ_CRIA = user;
-          rp_of_para_lin.id_OP_CAB = id_op_cab;
-          rp_of_para_lin.tipo_PARAGEM = item;
-          rp_of_para_lin.tipo_PARAGEM_M1 = item;
-          rp_of_para_lin.tipo_PARAGEM_M2 = item;
-          rp_of_para_lin.des_PARAGEM = design;
-          rp_of_para_lin.des_PARAGEM_M1 = design;
-          rp_of_para_lin.des_PARAGEM_M2 = design;
-          rp_of_para_lin.momento_PARAGEM = result[0][0].estado;
-          rp_of_para_lin.momento_PARAGEM_M1 = result[0][0].estado;
-          rp_of_para_lin.momento_PARAGEM_M2 = result[0][0].estado;
-          rp_of_para_lin.estado = "S";
-          this.RPOFPARALINService.create(rp_of_para_lin).subscribe(
-            res => {
-              for (var x in result) {
-                this.estados(result[x][1], user, nome, date);
+            rp_of_para_lin.data_INI_M2 = date;
+            rp_of_para_lin.hora_INI_M2 = time;
 
-                if (result[x][1].id_OF_CAB_ORIGEM == null) {
-                  this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date);
+            rp_of_para_lin.id_UTZ_CRIA = user;
+            rp_of_para_lin.id_OP_CAB = id_op_cab;
+            rp_of_para_lin.tipo_PARAGEM = item;
+            rp_of_para_lin.tipo_PARAGEM_M1 = item;
+            rp_of_para_lin.tipo_PARAGEM_M2 = item;
+            rp_of_para_lin.des_PARAGEM = design;
+            rp_of_para_lin.des_PARAGEM_M1 = design;
+            rp_of_para_lin.des_PARAGEM_M2 = design;
+            rp_of_para_lin.momento_PARAGEM = result[0][0].estado;
+            rp_of_para_lin.momento_PARAGEM_M1 = result[0][0].estado;
+            rp_of_para_lin.momento_PARAGEM_M2 = result[0][0].estado;
+            rp_of_para_lin.estado = "S";
+            this.RPOFPARALINService.create(rp_of_para_lin).subscribe(
+              res => {
+                for (var x in result) {
+                  this.estados(result[x][1], user, nome, date);
+
+                  if (result[x][1].id_OF_CAB_ORIGEM == null) {
+                    this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date);
+                  }
+
                 }
 
-              }
-
-            },
-            error => console.log(error));
+              },
+              error => console.log(error));
+          } else {
+            //se o utilizador já se encontrar em pausa
+            this.display_alerta = true;
+          }
 
         }, error => console.log(error));
 
       }
     });
   }
+
 
   backClicked() {
     this._location.back();

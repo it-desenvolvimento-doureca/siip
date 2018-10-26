@@ -3195,3 +3195,15 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
 .pgrowlmsg .ui-growl {
     z-index: 1048 !important;
 }
+
+.mensagemdialog>div {
+    top: 0px !important;
+}
+
+.ippassworderrada {
+    border: 1px solid red !important;
+}
+
+.loginadicional22 .num {
+    color: black !important;
+}

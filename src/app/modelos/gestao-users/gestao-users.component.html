@@ -76,6 +76,11 @@
             <p-dataTable scrollable="true" scrollHeight="200px" [value]="list5" selectionMode="single" (onRowSelect)="onRowSelect5($event)"
               dataKey="no">
               <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
+              <p-column field="password" header="Password Administrador" [sortable]="true" [style]="{'width':'42%'}">
+                <ng-template let-op="rowData" pTemplate="body" >
+                  <input type="password" (change)="atualizaPassword(op)"pInputText size="100" placeholder="Password" class="form-control" [(ngModel)]="op['password']" [ngModelOptions]="{standalone: true}">
+                </ng-template>
+              </p-column>
             </p-dataTable>
           </div>
           <div style="height: 250px;">

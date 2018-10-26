@@ -97,6 +97,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   btdisabled3: boolean;
   estado_INICIAL: any;
   verpausas: boolean = true;
+  display_alerta: boolean;
 
   constructor(private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
@@ -372,6 +373,25 @@ export class OperacaoEmCursoComponent implements OnInit {
     });
   }
 
+
+  validaconclusao(estado, perfil) {
+    this.RPOFCABService.getof(this.id_of_cab).subscribe(res => {
+      var count = Object.keys(res).length;
+
+      if (count > 0) {
+        if (res[0].estado == "C") {
+          this.display_alerta = true;
+        } else {
+          this.createfile(estado, perfil);
+        }
+      } else {
+        this.createfile(estado, perfil);
+      }
+    }, error => {
+      this.createfile(estado, perfil);
+    });
+
+  }
 
   // ao clicar no botão concluir
   createfile(estado, perfil) {
@@ -1350,7 +1370,8 @@ export class OperacaoEmCursoComponent implements OnInit {
     var dados = [{ VERSAO_MODIF: (this.versao_modif + 1), ID_OF_CAB: this.id_of_cab, ID_UTZ_MODIF: user, ESTADO: "A", DATA_HORA_MODIF: data, PERFIL_MODIF: 'E', NOME_UTZ_MODIF: nome }];
     this.display_alerta_opnum = false;
     this.RPOFCABService.updateEstados(dados).subscribe(res => {
-      if (this.estado_val == "C") this.ficheiroteste('A');
+      //if (this.estado_val == "C") 
+      this.ficheiroteste('A');
       window.location.reload();
     });
   }

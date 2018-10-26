@@ -601,10 +601,13 @@ export class RegistoQuantidades2Component implements OnInit {
           etiq = res[0];
 
           if (this.modoedicaoeditor) {
+            var vv = 0;
+            if (res[0].versao_MODIF != null) vv = res[0].versao_MODIF;
 
-            if (res[0].versao_MODIF == versao_modif) {
+            if (vv == versao_modif) {
               etiq.quant_BOAS_M2 = qttboas;
               etiq.quant_DEF_M2 = totaldefeitos;
+              if (res[0].versao_MODIF == null) etiq.versao_MODIF = 0;
             } else {
               etiq.quant_BOAS_M1 = etiq.quant_BOAS_M2;
               etiq.quant_DEF_M1 = etiq.quant_DEF_M2;

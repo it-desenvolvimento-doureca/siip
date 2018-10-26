@@ -17,3 +17,20 @@
 
 
 <p-confirmDialog header="Confirmação" width="425"></p-confirmDialog>
+
+<!--popup alerta-->
+<p-dialog header="Alerta" [closable]="false" [(visible)]="display_alerta" class="novoop" modal="modal" width="700"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="text-align: center;">
+        Não é possível entrar em pausa, o utilizador atual já se encontra em Pausa!
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" routerLink="/home" label="OK"></button>
+    </div>
+  </p-footer>
+</p-dialog>
