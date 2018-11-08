@@ -412,25 +412,28 @@ export class NovaOperacaoComponent implements OnInit {
 
     iniciartrab() {
         if (this.num_of != "" && this.selected != "" && this.selectedmaq != "") {
+            if (this.referencias.length == 0) {
+                this.display_sem_referencias = true;
+            } else {
+                //verifica se existe alguma of com a mesma operação em execução 
+                this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM).subscribe(
+                    response => {
+                        var c = Object.keys(response).length;
+                        //se existir e não for mão de obra
+                        if (c > 0 && this.MAQ_NUM_ORIG != "000") {
+                            if (response[0].estado == "P") {
+                                this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque o utilizador " + response[0].nome_UTZ_CRIA + " está em Preparação desse trabalho.";
+                            } else if (response[0].estado == "E") {
+                                this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque já se encontra em Execução! Solicite a " + response[0].nome_UTZ_CRIA + " que o(a) adicione à operação.";
+                            }
 
-            //verifica se existe alguma of com a mesma operação em execução 
-            this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM).subscribe(
-                response => {
-                    var c = Object.keys(response).length;
-                    //se existir e não for mão de obra
-                    if (c > 0 && this.MAQ_NUM_ORIG != "000") {
-                        if (response[0].estado == "P") {
-                            this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque o utilizador " + response[0].nome_UTZ_CRIA + " está em Preparação desse trabalho.";
-                        } else if (response[0].estado == "E") {
-                            this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque já se encontra em Execução! Solicite a " + response[0].nome_UTZ_CRIA + " que o(a) adicione à operação.";
+                            this.display_op_em_curso = true;
+                        } else {
+                            this.display3 = true;
                         }
-
-                        this.display_op_em_curso = true;
-                    } else {
-                        this.display3 = true;
-                    }
-                },
-                error => console.log(error));
+                    },
+                    error => console.log(error));
+            }
         } else {
             this.campo = "Operação";
             this.display_campos_obrigatorios = true;

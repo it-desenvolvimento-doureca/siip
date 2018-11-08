@@ -102,6 +102,7 @@ input:read-only {
 
 .checkbox label input[type="checkbox"]:disabled+.cr, .radio label input[type="radio"]:disabled+.cr {
   opacity: .5;
+  cursor: no-drop;
 }
 
 .radio .cr .cr-icon {

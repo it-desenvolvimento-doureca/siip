@@ -1,8 +1,8 @@
 <div class="row wrapper fundo_style" [style.background]="cor_fundo">
   <div class="col-md-12 nopadding" style="display: initial; text-align: center;  padding-right:0;">
     <div class="col-md-2 col-md-offset-2 nopadding col-sm-3" style="display: initial;  float: left;">
-      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()" [(disabled)]="disabledrefanterior"
-        style="width: auto; height: 60px; float: left;" label="Referência Anterior"></button>
+      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()"
+        [(disabled)]="disabledrefanterior" style="width: auto; height: 60px; float: left;" label="Referência Anterior"></button>
     </div>
     <div class="col-md-8 nopadding col-sm-6" style="display: initial;  float: left;">
       <h6 style="font-size: 1.2vw;">
@@ -17,8 +17,9 @@
       </h5>
     </div>
     <div class="col-md-2  nopadding col-sm-3" style="display: initial;  float: left;  padding-right:0;">
-      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton (click)="nextItem()"
-        [(disabled)]="disabledrefseguinte" style="width: auto; height: 60px; float: right; margin-right: 0" label="Referência Seguinte"></button>
+      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton
+        (click)="nextItem()" [(disabled)]="disabledrefseguinte" style="width: auto; height: 60px; float: right; margin-right: 0"
+        label="Referência Seguinte"></button>
     </div>
   </div>
   <div class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 10px 0 0 0; text-align: center; float: left; padding: 0;">
@@ -28,18 +29,20 @@
           <h6>Nº Etiqueta:</h6>
         </label>
         <div class="icon-addon " style="width: 100%;">
-          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null || !modoedicao" [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}"
-            (keyup.enter)="pesquisaetiqueta()" class="form-control" type="number" #num (ngModelChange)="num_etiqueta=num.value"
-            style="text-align: center; width:19%; display: inline; margin-left: 10px;" min="0" />
+          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null || !modoedicao" [(ngModel)]="num_etiqueta"
+            [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()" class="form-control" type="number"
+            #num (ngModelChange)="num_etiqueta=num.value" style="text-align: center; width:19%; display: inline; margin-left: 10px;"
+            min="0" />
         </div>
         <span class="input-group-btn" style="width: 10%; display: inline;">
-          <button [disabled]="num_lote!='' && num_lote != null" (click)="pesquisaetiqueta()" class="btn {{bt_class}}" type="button"
-            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: -10px;">
+          <button [disabled]="num_lote!='' && num_lote != null" (click)="pesquisaetiqueta()" class="btn {{bt_class}}"
+            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: -10px;">
             <i *ngIf="refresh" class="fa fa-refresh"></i>
             <i *ngIf="spinner" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
             <span class="sr-only">Loading...</span>
           </button>
-          <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button"
+            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
           <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()" class="btn btn-primary"
@@ -54,8 +57,8 @@
             <h6 style="top: 5px; left: 6px; position: relative;">Total Etiq.:</h6>
           </label>
           <div *ngIf="num_lote!='' && num_lote != null" class="icon-addon " style="width: 30%; margin-left: 4px; position: absolute;">
-            <input readonly [(ngModel)]="qtdetiquetas" [ngModelOptions]="{standalone: true}" class="form-control" type="text" style=" text-align: center; display: inline; margin-left: 4px; position: relative;"
-              min="0" />
+            <input readonly [(ngModel)]="qtdetiquetas" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
+              style=" text-align: center; display: inline; margin-left: 4px; position: relative;" min="0" />
           </div>
           <h6 style="display: initial; position: absolute; margin-top: 7px; margin-left: 97px;">Nº OF Componente/Lote:
             <span style="font-weight: 300">{{num_lote}}</span>
@@ -72,8 +75,8 @@
       <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
         <label class="control-label " for="name">Quant. Boas Ref.</label>
         <div class="input-group">
-          <input [(ngModel)]="qttboas_ref" readonly class="form-control" type="number" #box style="text-align: center;" min="0" style="text-align: center;"
-          />
+          <input [(ngModel)]="qttboas_ref" readonly class="form-control" type="number" #box style="text-align: center;"
+            min="0" style="text-align: center;" />
         </div>
       </div>
       <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style="float: left; max-width: 5%;">
@@ -92,8 +95,7 @@
       </div>
       <div class="col-md-2 col-md-offset-2 col-sm-2  nopadding nopadding" style="float: left;">
         <label class="control-label " for="name">Total Cont. Ref.</label>
-        <input class="form-control {{corfundo_ref}}" type="text" readonly style="text-align: center;" value="{{totalcontrol_ref}}"
-        />
+        <input class="form-control {{corfundo_ref}}" type="text" readonly style="text-align: center;" value="{{totalcontrol_ref}}" />
       </div>
       <div class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
         <label class="control-label " for="name">Quant. OF</label>
@@ -113,9 +115,9 @@
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
               (click)="menosqtdboas()" class="btn btn-default">-</button>
           </span>
-          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas" type="number"
-            #box (ngModelChange)="updatetotal(box.value,i,totaldefeitos,qttboas,versao_modif,totaldefeitos_ref,qttboas_ref)" (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;"
-            min="0" style="text-align: center;" />
+          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas"
+            type="number" #box (ngModelChange)="updatetotal(box.value,i,totaldefeitos,qttboas,versao_modif,totaldefeitos_ref,qttboas_ref)"
+            (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;" min="0" style="text-align: center;" />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
             <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
               (click)="maisqtdboas()" class="btn btn-default">+</button>
@@ -177,7 +179,8 @@
       </div>
       <div class="row divider_row " style="padding: 0;" *ngFor="let et of etiquetas">
         <div class="col-md-6 col-sm-6 col-xs-6 text-center" style="padding: 0;">
-          <a [ngClass]="{'bold_num': num_etiqueta == et.num}" (click)="onRowSelect(et.num)" style="cursor: pointer"> {{et.num}}</a>
+          <a [ngClass]="{'bold_num': num_etiqueta == et.num}" (click)="onRowSelect(et.num)" style="cursor: pointer">
+            {{et.num}}</a>
         </div>
         <div class="col-md-6 col-sm-6 col-xs-6" style="padding: 0;">
           <span [ngClass]="{'bold_num': num_etiqueta == et.num}"> {{et.qtt}} </span>
@@ -229,7 +232,8 @@
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bhoechie-tab-container" style="margin-bottom: 6px; margin-top: 0; margin-left: 0;">
         <div *ngIf="tabSets.length > 0" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 bhoechie-tab-menu">
           <div class="list-group">
-            <a style="color:black; font-size: 0.9vw; cursor: pointer;" *ngFor="let tab of tabSets" (click)="setactive(tab)" class="list-group-item {{tab.ative}}">
+            <a style="color:black; font-size: 0.9vw; cursor: pointer;" *ngFor="let tab of tabSets" (click)="setactive(tab)"
+              class="list-group-item {{tab.ative}}">
               {{tab.label}}
               <b> ({{getdef(tab.id)}})</b>
             </a>
@@ -244,16 +248,16 @@
                 <span [hidden]="item.obs == null || item.obs == ''">*</span>{{ item.cod }} - {{ item.des }}</label>
               <div class="input-group" style="width: 92%;">
                 <span class="input-group-btn">
-                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
-                    class="btn btn-default">-</button>
+                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;"
+                    (click)="menos(item.cod,item)" class="btn btn-default">-</button>
                 </span>
                 <input tabindex="{{item.pos}}" (blur)="blurText($event)" (click)="selectText($event)" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)"
                   id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
-                  name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number" min="0"
-                  style="text-align: center;" [disabled]="!modoedicao">
+                  name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number"
+                  min="0" style="text-align: center;" [disabled]="!modoedicao">
                 <span class="input-group-btn">
-                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)"
-                    class="btn btn-default">+</button>
+                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;"
+                    (click)="mais(item.cod,item)" class="btn btn-default">+</button>
                 </span>
               </div>
             </div>
@@ -278,7 +282,8 @@
           <h5> Verificações Adicionais </h5>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]"
+                [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -287,7 +292,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]"
+                [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -296,7 +302,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]"
+                [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -305,7 +312,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left; ">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]"
+                [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -319,6 +327,9 @@
         <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding" style="float: right; text-align: center; /*bottom: 10px;*/ position: absolute; display: inline-block; right: 0;">
           <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton style="width: 70%; height: 60px;"
             label="CONCLUIR / SAIR"></button>
+          <button [hidden]="mostrabtadcionadefeitos" type="button" title="Atualizar Lista Defeitos" pButton icon="fa-refresh"
+            style="width: 12%; height: 60px; position: absolute;" class="ui-button-warning" (click)="showMessage()"
+            label=" "></button>
           <!--<button type="button" class="form-control btn btn-success ui-button-secondary" (click)="gravar()" pButton style="width: 48%; height: 60px; float: left;"
           label="Gravar"></button>-->
         </div>
@@ -330,8 +341,8 @@
 </div>
 <button #editarclick2 id="editarclick2" data-toggle="modal" [hidden]="true"></button>
 
-<button type="button" [hidden]="true" #dialogwaiting data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#myModal"
-  class="btn btn-success">Show dialog</button>
+<button type="button" [hidden]="true" #dialogwaiting data-toggle="modal" data-backdrop="static" data-keyboard="false"
+  data-target="#myModal" class="btn btn-success">Show dialog</button>
 
 
 <div id="myModal" class="modal" role="dialog">
@@ -367,7 +378,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel()" label="Cancelar"></button>
+      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel()"
+        label="Cancelar"></button>
       <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
     </div>
   </p-footer>
@@ -375,14 +387,15 @@
 
 
 <!-- POPUP OBS REFE-->
-<p-dialog class="popupref" header="Observações da Referência: {{ref_desg}}" [(visible)]="displayDialog2" modal="modal" [responsive]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog class="popupref" header="Observações da Referência: {{ref_desg}}" [(visible)]="displayDialog2" modal="modal"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12">
         <label for="vin">Observação</label>
       </div>
-      <textarea [disabled]="!modoedicao" pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obs_ref"></textarea>
+      <textarea [disabled]="!modoedicao" pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;"
+        [(ngModel)]="obs_ref"></textarea>
     </div>
   </div>
   <p-footer>
@@ -412,13 +425,13 @@
 </p-dialog>
 
 <!-- POPUP Editar Etiquestas Lidas -->
-<p-dialog header="Editar Etiquestas Lidas" [(visible)]="displayetiquetaslidas" [modal]="true" [responsive]="true" [dismissableMask]="true"
-  [draggable]="false">
+<p-dialog header="Editar Etiquestas Lidas" [(visible)]="displayetiquetaslidas" [modal]="true" [responsive]="true"
+  [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12" style="text-align: center;">
-        <p-dataTable [value]="etiquetas" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="num" scrollable="true"
-          scrollHeight="200px" [rows]="10">
+        <p-dataTable [value]="etiquetas" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="num"
+          scrollable="true" scrollHeight="200px" [rows]="10">
           <p-header>ETIQUETA(S)</p-header>
           <p-column field="num" header="Número" [sortable]="true" [style]="{'width':'15%'}"></p-column>
           <p-column field="qtt" header="Quantidade" [style]="{'width':'50%'}"></p-column>
@@ -434,8 +447,8 @@
 </p-dialog>
 
 <!-- POPUP Adicionar Etiquestas  -->
-<p-dialog header="Adicionar Novas Etiquetas" [(visible)]="displaynovaetiqueta" [modal]="true" [responsive]="true" [dismissableMask]="true"
-  [draggable]="false">
+<p-dialog header="Adicionar Novas Etiquetas" [(visible)]="displaynovaetiqueta" [modal]="true" [responsive]="true"
+  [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12" style="text-align: center;">
@@ -444,9 +457,9 @@
             <h6>Nº Etiqueta:</h6>
           </label>
           <div class="icon-addon " style="width: 100%;">
-            <input id="inputFocous" [(ngModel)]="num_etiqueta_nova" [ngModelOptions]="{standalone: true}" #inputFocous (keyup.enter)="pesquisaetiqueta(true)"
-              class="form-control" type="number" (ngModelChange)="num_etiqueta_nova=inputFocous.value" style="text-align: center; width:48%; display: inline; margin-left: 10px;"
-              min="0" />
+            <input id="inputFocous" [(ngModel)]="num_etiqueta_nova" [ngModelOptions]="{standalone: true}" #inputFocous
+              (keyup.enter)="pesquisaetiqueta(true)" class="form-control" type="number" (ngModelChange)="num_etiqueta_nova=inputFocous.value"
+              style="text-align: center; width:48%; display: inline; margin-left: 10px;" min="0" />
           </div>
           <span class="input-group-btn" style="width: 10%; display: inline;">
             <button (click)="pesquisaetiqueta(true)" class="btn {{bt_class1}}" type="button" style=" width: 15%; opacity: 1; line-height: 0; height: 41.8px; margin-top: -5px; margin-left: -10px;">
@@ -471,3 +484,40 @@
 </p-dialog>
 
 <p-confirmDialog header="Apagar" icon="fa fa-trash" width="425"></p-confirmDialog>
+
+<!-- Adicionar Defeitos -->
+<p-dialog class="mensagemdialog" header="Adicionar Defeitos" [(visible)]="displaypopupnovosdefeitos" [modal]="true"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-12" style="text-align: center;">
+        <p-dataTable [value]="listanovosdefeitos" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="num"
+          scrollable="true" scrollHeight="200px" [rows]="10" [style]="{'font-size':'12px'}">
+          <p-header>DEFEITOS</p-header>
+          <p-column field="CHECK" header="" [style]="{'width':'15%'}">
+            <ng-template let-col let-row="rowData" pTemplate="body">
+              <div class="checkbox col-md-3 col-sm-6 nopadding" style="display: contents;">
+                <label style="font-size: 1.5em">
+                  <input [disabled]="row['disabled']" type="checkbox" value="" [(ngModel)]="row['CHECK']"
+                    [ngModelOptions]="{standalone: true}">
+                  <span class="cr">
+                    <i class="cr-icon fa fa-check"></i>
+                  </span>
+                </label>
+              </div>
+            </ng-template>
+
+          </p-column>
+          <p-column [sortable]="true" [filter]="true" field="QUACOD" header="QUACOD" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+          <p-column [sortable]="true" [filter]="true" field="QUALIB" header="QUALIB" [style]="{'width':'50%'}"></p-column>
+        </p-dataTable>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="displaypopupnovosdefeitos = false" label="Fechar"></button>
+      <button type="button" pButton icon="fa-check" class="ui-button-success" (click)="inserirDEFEITOS()" label="Guardar"></button>
+    </div>
+  </p-footer>
+</p-dialog>

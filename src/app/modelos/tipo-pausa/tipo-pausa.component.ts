@@ -22,6 +22,7 @@ export class TipoPausaComponent implements OnInit {
   estado: any = [];
   pausas: any[];
   display_alerta: boolean;
+  mensagem_alerta: string;
   constructor(private AppGlobals: AppGlobals, private RPOPFUNCService: RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
 
   ngOnInit() {
@@ -50,7 +51,7 @@ export class TipoPausaComponent implements OnInit {
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         this.estado.push('T');
         this.RPOFOPCABService.getdataof(id_of, user, this.estado).subscribe(result => {
-          if (result[0][0].estado != "S") {
+          if (result[0][0].estado != "S" && result[0][0].estado != "C" && result[0][0].estado != "A") {
 
             var id_op_cab = result[0][2].id_OP_CAB;
             var rp_of_para_lin = new RP_OF_PARA_LIN();
@@ -88,8 +89,12 @@ export class TipoPausaComponent implements OnInit {
 
               },
               error => console.log(error));
+          } else if (result[0][0].estado != "C") {
+            this.mensagem_alerta = "Não é possível entrar em pausa, o utilizador atual já concluiu o Trabalho!";
+            this.display_alerta = true;
           } else {
             //se o utilizador já se encontrar em pausa
+            this.mensagem_alerta = "Não é possível entrar em pausa, o utilizador atual já se encontra em Pausa!";
             this.display_alerta = true;
           }
 

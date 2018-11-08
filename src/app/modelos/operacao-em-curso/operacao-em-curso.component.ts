@@ -764,7 +764,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   //verificar enventos
   verifica(of, assunto, mensagem, utilizador) {
-    var dados = "{of:" + of + ",assunto:" + assunto + ",mensagem:" + mensagem + ",utilizador:" + utilizador + "}"
+    var dados = "{of::" + of + ",assunto::" + assunto + ",mensagem::" + mensagem + ",utilizador::" + utilizador + "}"
     var data = [{ MODULO: 4, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {
@@ -1370,8 +1370,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     var dados = [{ VERSAO_MODIF: (this.versao_modif + 1), ID_OF_CAB: this.id_of_cab, ID_UTZ_MODIF: user, ESTADO: "A", DATA_HORA_MODIF: data, PERFIL_MODIF: 'E', NOME_UTZ_MODIF: nome }];
     this.display_alerta_opnum = false;
     this.RPOFCABService.updateEstados(dados).subscribe(res => {
-      //if (this.estado_val == "C") 
-      this.ficheiroteste('A');
+      if (this.estado_val == "C" || this.estado_val == "M") this.ficheiroteste('A');
       window.location.reload();
     });
   }

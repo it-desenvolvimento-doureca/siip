@@ -185,3 +185,19 @@
     </div>
   </p-footer>
 </p-dialog>
+
+
+<!--POPUP- Sem Refrencias -->
+<p-dialog [(visible)]="display_sem_referencias" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
+  <div style="text-align:center;">
+    <p>
+      O Produto não tem Família!
+    </p>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton (click)="display_sem_referencias = false" label="OK" style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>

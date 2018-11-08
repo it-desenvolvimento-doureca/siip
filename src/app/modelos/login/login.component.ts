@@ -340,7 +340,7 @@ export class LoginComponent implements OnInit {
 
   //verificar enventos
   verifica(id, utilizador) {
-    var dados = "{id:" + id + ",utilizador:" + utilizador + "}"
+    var dados = "{id::" + id + ",utilizador::" + utilizador + "}"
     var data = [{ MODULO: 4, MOMENTO: "Utilizador Não Existe nos Acessos", PAGINA: "Login", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {

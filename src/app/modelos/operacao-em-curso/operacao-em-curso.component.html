@@ -27,15 +27,17 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Início</label>
-                <input (change)="atualizartempofunc('data_ini')" style="display: -webkit-box; height: 44.4px;" class="form-control"
-                  [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
+                <input (ngModelChange)="atualizartempofunc('data_ini')" (change)="atualizartempofunc('data_ini')" style="display: -webkit-box; height: 44.4px;"
+                  class="form-control" [(ngModel)]="data_ini" type="date" [ngModelOptions]="{standalone: true}"
+                  [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Hora Início</label>
-                <input (change)="atualizartempofunc('hora_ini')" class="form-control" [(ngModel)]="hora_ini" step='1'
-                  min="00:00:00" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" />
+                <input (ngModelChange)="atualizartempofunc('hora_ini')" (change)="atualizartempofunc('hora_ini')" class="form-control"
+                  [(ngModel)]="hora_ini" step='1' min="00:00:00" type="time" [ngModelOptions]="{standalone: true}"
+                  [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" />
               </div>
             </div>
           </div>
@@ -43,17 +45,19 @@
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
               <div class="form-group">
                 <label class="control-label ">Data Fim</label>
-                <input (change)="atualizartempofunc('data_fim')" [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}"
-                  class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim" min="{{data_ini}}"
-                  type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
+                <input (ngModelChange)="atualizartempofunc('data_fim')" (change)="atualizartempofunc('data_fim')"
+                  [ngClass]="{'cor_trasparent': (data_fim == '' || data_fim == null) && !modoedicao}" class="form-control"
+                  style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim" min="{{data_ini}}" type="date"
+                  [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
             </div>
             <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
               <div class="form-group">
                 <label class="control-label ">Hora Fim</label>
-                <input (change)="atualizartempofunc('hora_fim')" [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}"
-                  class="form-control" [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;" step='1'
-                  min="00:00:00" type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
+                <input (ngModelChange)="atualizartempofunc('hora_fim')" (change)="atualizartempofunc('hora_fim')"
+                  [ngClass]="{'cor_trasparent': (hora_fim == '' || hora_fim == null )&& !modoedicao}" class="form-control"
+                  [(ngModel)]="hora_fim" style="display: -webkit-box; height: 44.4px;" step='1' min="00:00:00" type="time"
+                  [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" />
               </div>
               <button (click)="gravar_utilizadores()" [hidden]="!modoedicao || disableEditar" style="position: absolute; right: -29px; height: 44px; top: 24px; width: 42px;"
                 pButton type="button" icon="fa-save" iconPos="left"></button>
@@ -65,18 +69,19 @@
               <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
                 <div class="form-group">
                   <label class="control-label ">Data Início Preparação</label>
-                  <input (change)="atualizartempofunc('data_ini_preparacao')" style="display: -webkit-box; height: 44.4px;"
-                    class="form-control" [(ngModel)]="data_ini_preparacao" type="date" [ngModelOptions]="{standalone: true}"
-                    [disabled]="disableEditar" [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null ) && disableEditar}"
+                  <input (ngModelChange)="atualizartempofunc('data_ini_preparacao')" (change)="atualizartempofunc('data_ini_preparacao')"
+                    style="display: -webkit-box; height: 44.4px;" class="form-control" [(ngModel)]="data_ini_preparacao"
+                    type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null ) && disableEditar}"
                     required />
                 </div>
               </div>
               <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
                 <div class="form-group">
                   <label class="control-label ">Hora Início Preparação</label>
-                  <input (change)="atualizartempofunc('hora_ini_preparacao')" class="form-control" [(ngModel)]="hora_ini_preparacao"
-                    type="time" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;"
-                    step='1' min="00:00:00" [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null ) && disableEditar}"
+                  <input (ngModelChange)="atualizartempofunc('hora_ini_preparacao')" (change)="atualizartempofunc('hora_ini_preparacao')"
+                    class="form-control" [(ngModel)]="hora_ini_preparacao" type="time" [ngModelOptions]="{standalone: true}"
+                    [disabled]="disableEditar" style="display: -webkit-box; height: 44.4px;" step='1' min="00:00:00"
+                    [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null ) && disableEditar}"
                     required />
                 </div>
               </div>
@@ -86,7 +91,8 @@
               <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
                 <div class="form-group">
                   <label class="control-label ">Data Fim Preparação</label>
-                  <input (change)="atualizartempofunc('data_fim_preparacao')" [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) && disableEditar }"
+                  <input (ngModelChange)="atualizartempofunc('data_fim_preparacao')" (change)="atualizartempofunc('data_fim_preparacao')"
+                    [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) && disableEditar }"
                     class="form-control" style="display: -webkit-box; height: 44.4px;" [(ngModel)]="data_fim_preparacao"
                     min="{{data_ini_preparacao}}" type="date" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
                     required />
@@ -95,7 +101,8 @@
               <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
                 <div class="form-group">
                   <label class="control-label ">Hora Fim Preparação</label>
-                  <input (change)="atualizartempofunc('hora_fim_preparacao')" [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null ) && disableEditar}"
+                  <input (ngModelChange)="atualizartempofunc('hora_fim_preparacao')" (change)="atualizartempofunc('hora_fim_preparacao')"
+                    [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null ) && disableEditar}"
                     class="form-control" [(ngModel)]="hora_fim_preparacao" style="display: -webkit-box; height: 44.4px;"
                     type="time" step='1' min="00:00:00" [ngModelOptions]="{standalone: true}" [disabled]="disableEditar"
                     required />

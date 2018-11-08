@@ -21,6 +21,7 @@ import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
 @Component({
   selector: 'app-registo-quantidades2',
   templateUrl: './registo-quantidades2.component.html',
+  //host: { '(window:keydown)': 'hotkeys($event)' },
   styleUrls: ['./registo-quantidades2.component.css']
 })
 
@@ -92,6 +93,11 @@ export class RegistoQuantidades2Component implements OnInit {
   //@ViewChild('editarclick2') editarclick2: ElementRef;
   @ViewChild('divinput') divinput: ElementRef;
   modoedicaoeditor = false;
+  listanovosdefeitos: any;
+  displaypopupnovosdefeitos: boolean;
+  temp_id_OP_SEC: any[];
+  estado: any;
+  mostrabtadcionadefeitos: boolean;
 
 
   constructor(private route: ActivatedRoute, private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOPETIQUETAService: RPOFOPETIQUETAService, private elementRef: ElementRef, private confirmationService: ConfirmationService, private RPOFCABService: RPOFCABService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer, private RPCONFOPService: RPCONFOPService, private RPOFDEFLINService: RPOFDEFLINService, private router: Router, private RPOFOPLINService: RPOFOPLINService, location: Location) {
@@ -106,6 +112,12 @@ export class RegistoQuantidades2Component implements OnInit {
     this.elementRef.nativeElement.appendChild(s);
     this.username = JSON.parse(localStorage.getItem('user'))["username"];
 
+    var access = JSON.parse(localStorage.getItem('access'));
+    this.mostrabtadcionadefeitos = true;;
+
+    if (access.find(item => item === "A")) {
+      this.mostrabtadcionadefeitos = false;
+    }
 
     var id;
     var sub = this.route
@@ -171,6 +183,7 @@ export class RegistoQuantidades2Component implements OnInit {
             comp = false;
             cor_fundo = "rgba(254, 188, 89, 0.2)"
           }
+
           this.ref.push({
             qtd_etiqueta: null, id_ref_etiq: null, etiqueta: null, comp: comp, of_num: response[x][1].of_NUM, ref_NUM: response[x][0].ref_NUM, design: response[x][0].ref_NUM + " - " + response[x][0].ref_DES, id: response[x][0].id_OP_LIN, op: response[x][0].id_OP_CAB,
             qttboas: response[x][0].quant_BOAS_TOTAL_M2, totaldefeitos: response[x][0].quant_DEF_TOTAL_M2, qtdof: response[x][0].quant_OF, cor_fundo: cor_fundo,
@@ -363,6 +376,7 @@ export class RegistoQuantidades2Component implements OnInit {
 
         var count1 = Object.keys(response).length;
         var op_cod = [];
+        this.temp_id_OP_SEC = [];
         if (count1 > 0) {
           var ult = false;
 
@@ -429,48 +443,59 @@ export class RegistoQuantidades2Component implements OnInit {
       resultdef => {
         var count = Object.keys(resultdef).length;
         if (count == 0) {
+
           for (var x in res) {
             //getdefeitos
             if (parseInt(x) + 1 == count1) ultimo = true;
-            this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
-              result => {
+            if (this.temp_id_OP_SEC.indexOf(res[x].id_OP_SEC) == -1) {
+              this.temp_id_OP_SEC.push(res[x].id_OP_SEC);
+              this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
+                result => {
+                  var count = Object.keys(result).length;
+                  if (count > 0) {
+                    //inserir em RP_OF_DEF_LIN
+                    var ult = false;
+                    for (var y in result) {
+                      if (result[y].QUACOD.substring(2, 4) != '00') {
+                        var def = new RP_OF_LST_DEF();
+                        def.cod_DEF = result[y].QUACOD;
+                        def.desc_DEF = result[y].QUALIB;
+                        def.id_OP_LIN = id;
+                        def.id_UTZ_CRIA = this.username
+                        def.data_HORA_MODIF = new Date();
+                        if (parseInt(y) + 1 == count && ultimo) ult = true;
+                        this.inserRPOFLSTDEF(def, ult);
+                      }
+                    }
 
-                var count = Object.keys(result).length;
-                if (count > 0) {
-                  //inserir em RP_OF_DEF_LIN
-                  var ult = false;
-                  for (var y in result) {
-                    if (result[y].QUACOD.substring(2, 4) != '00') {
-                      var def = new RP_OF_LST_DEF();
-                      def.cod_DEF = result[y].QUACOD;
-                      def.desc_DEF = result[y].QUALIB;
-                      def.id_OP_LIN = id;
-                      def.id_UTZ_CRIA = this.username
-                      def.data_HORA_MODIF = new Date();
-                      if (parseInt(y) + 1 == count && ultimo) ult = true;
-                      this.inserRPOFLSTDEF(def, ult);
+                  } else {
+                    if (ultimo) {
+                      if (!this.fechou) {
+                        this.simular(this.closewaiting);
+                        this.displaynovaetiqueta = false;
+                        //this.inicia(false, true);
+                        this.fechou = true;
+                      }
                     }
                   }
-
-                } else {
+                },
+                error => {
+                  console.log(error);
                   if (ultimo) {
-                    if (!this.fechou) {
-                      this.simular(this.closewaiting);
-                      this.displaynovaetiqueta = false;
-                      //this.inicia(false, true);
-                      this.fechou = true;
-                    }
+                    this.simular(this.closewaiting);
+                    //this.inicia(false, true);
                   }
-                }
-              },
-              error => {
-                console.log(error);
-                if (ultimo) {
+                });
+            } else {
+              if (ultimo) {
+                if (!this.fechou) {
                   this.simular(this.closewaiting);
+                  this.displaynovaetiqueta = false;
                   //this.inicia(false, true);
+                  this.fechou = true;
                 }
-              });
-
+              }
+            }
 
           }
         } else {
@@ -1441,5 +1466,155 @@ export class RegistoQuantidades2Component implements OnInit {
     }
   }
 
+  getdefeitosPOPUP(res, x, id_OP_LIN) {
+
+    this.listanovosdefeitos = [];
+    this.service.defeitos(res[x].id_OP_SEC.trim()).subscribe(
+      result => {
+
+        var count = Object.keys(result).length;
+        if (count > 0) {
+          //inserir em RP_OF_LST_DEF
+          for (var y in result) {
+            if (result[y].QUACOD.substring(2, 4) != '00') {
+              var disabled = false;
+              for (var t in this.tabSets) {
+                for (var z in this.tabSets[t].defeitos) {
+                  if (this.tabSets[t].defeitos[z].cod == result[y].QUACOD) {
+                    disabled = true;
+                  }
+                }
+              }
+              if (!disabled) {
+                this.listanovosdefeitos.push({
+                  disabled: disabled,
+                  CHECK: true,
+                  QUACOD: result[y].QUACOD,
+                  QUALIB: result[y].QUALIB
+                })
+              }
+            }
+          }
+          this.listanovosdefeitos = this.listanovosdefeitos.slice();
+          //this.displaypopupnovosdefeitos = true;
+          this.showMessage1();
+
+        }
+      },
+      error => {
+        console.log(error);
+        if (this.closewaiting) this.simular(this.closewaiting);
+      });
+
+  }
+
+  //ao clicar nas teclas 
+  hotkeys(event) {
+    var access = JSON.parse(localStorage.getItem('access'));
+    if (event.keyCode == 78 && event.ctrlKey && event.altKey && access.find(item => item === "A")) {
+      this.showMessage();
+    }
+  }
+
+  showMessage1() {
+    this.confirmationService.confirm({
+      message: 'Tem a certeza que pretende atualizar lista de defeitos?',
+      header: 'Info',
+      icon: 'fa fa-refresh',
+      accept: () => {
+        this.inserirDEFEITOS();
+      }
+    });
+  }
+
+  showMessage() {
+    //this.simular(this.dialogwaiting);
+    this.temp_id_OP_SEC = [];
+    if (this.comp) {
+      this.RPOFOPETIQUETAService.getbyid_op_lin(this.ref[this.i].id).subscribe(res => {
+        this.index = 0;
+        var cod = null;
+        var count = Object.keys(res).length;
+        if (count > 0) {
+          if (res[0].op_COD_ORIGEM != null && res[0].op_COD_ORIGEM != "") {
+            //cod = res[0].op_COD_ORIGEM;
+            cod = res[0].op_COD_FAM.split(',');
+            for (var x in cod) {
+              this.listafamilias(cod[x], this.ref[this.i].id);
+            }
+          }
+
+        }
+      }, error => { console.log(error); if (this.closewaiting) this.simular(this.closewaiting); });
+
+
+
+    } else {
+      this.RPOFOPLINService.getRP_OF_OP_LINOp(this.ref[this.i].id).subscribe(res => {
+        this.index = 0;
+        var cod = null;
+        //alterar
+        /*console.log(this.ref[this.i].id)
+        console.log(cod)*/
+        cod = res[0].op_COD.split(',');
+        for (var x in cod) {
+          this.listafamilias(cod[x], this.ref[this.i].id);
+        }
+
+      }, error => console.log(error));
+
+    }
+  }
+
+  listafamilias(op_cod, id_OP_LIN) {
+    if (op_cod != "") {
+      this.RPCONFOPService.getAllbyid(op_cod).subscribe(
+        res => {
+          var count1 = Object.keys(res).length;
+          if (count1 > 0) {
+            //adicionar a lista de defeitos a partir da lista de familias
+            var ult = false;
+            for (var x in res) {
+              if (this.temp_id_OP_SEC.indexOf(res[x].id_OP_SEC.trim()) == -1) {
+                this.temp_id_OP_SEC.push(res[x].id_OP_SEC.trim());
+
+                this.getdefeitosPOPUP(res, x, id_OP_LIN);
+              }
+            }
+          }
+        },
+        error => {
+          console.log(error);
+          if (this.closewaiting) this.simular(this.closewaiting);
+        });
+    }
+  }
+
+  inserirDEFEITOS() {
+    this.simular(this.dialogwaiting);
+    if (this.listanovosdefeitos.length > 0) {
+
+      //inserir em RP_OF_LST_DEF
+      for (var y in this.listanovosdefeitos) {
+        if (this.listanovosdefeitos[y].CHECK && this.listanovosdefeitos[y].QUACOD.substring(2, 4) != '00') {
+          var def = new RP_OF_LST_DEF();
+          def.cod_DEF = this.listanovosdefeitos[y].QUACOD;
+          def.desc_DEF = this.listanovosdefeitos[y].QUALIB;
+          def.id_OP_LIN = this.ref[this.i].id;
+          def.id_UTZ_CRIA = this.username
+          def.data_HORA_MODIF = new Date();
+          this.RPOFLSTDEFService.create(def).subscribe(resp => {
+          });
+        }
+      }
+      this.getetiquetas(this.i, false, false);
+      if (this.closewaiting) this.simular(this.closewaiting);
+      this.displaypopupnovosdefeitos = false;
+    } else {
+      this.getetiquetas(this.i, false, false);
+      if (this.closewaiting) this.simular(this.closewaiting);
+    }
+
+  }
 
 }
