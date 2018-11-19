@@ -98,6 +98,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   estado_INICIAL: any;
   verpausas: boolean = true;
   display_alerta: boolean;
+  temp_confirma = true;
 
   constructor(private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
@@ -306,7 +307,7 @@ export class OperacaoEmCursoComponent implements OnInit {
                       rpofopfunc.id_UTZ_CRIA = code_login;
                       rpofopfunc.nome_UTZ_CRIA = nome;
                       rpofopfunc.perfil_CRIA = "O";
-                      rpofopfunc.estado = response[x][1].estado;
+                      rpofopfunc.estado = 'E';//response[x][0].estado;
                       this.RPOPFUNCService.create(rpofopfunc).subscribe(
                         res => {
                         },
@@ -413,20 +414,23 @@ export class OperacaoEmCursoComponent implements OnInit {
       this.confirmationService.confirm({
         message: 'Confirma que os dados foram validados? O trabalho será finalizado.',
         accept: () => {
-          var date = new Date();
-          var user = JSON.parse(localStorage.getItem('user'))["username"];
-          var nome = JSON.parse(localStorage.getItem('user'))["name"];
-          var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-          this.terminadisabled = true;
-          var num_count = 0;
-          var total = this.id_op_cab_lista.length;
-          for (var x in this.id_op_cab_lista) {
-            num_count++;
+          if (this.temp_confirma) {
+            this.temp_confirma = false;
+            var date = new Date();
+            var user = JSON.parse(localStorage.getItem('user'))["username"];
+            var nome = JSON.parse(localStorage.getItem('user'))["name"];
+            var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            this.terminadisabled = true;
+            var num_count = 0;
+            var total = this.id_op_cab_lista.length;
+            for (var x in this.id_op_cab_lista) {
+              num_count++;
 
-            if (this.count > 1) {
-              this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false, num_count, total, estado, perfil, this.id_op_cab);
-            } else {
-              this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true, num_count, total, estado, perfil, this.id_op_cab);
+              if (this.count > 1) {
+                this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, false, num_count, total, estado, perfil, this.id_op_cab);
+              } else {
+                this.estados(this.id_op_cab_lista[x].id, user, nome, date, time, this.id_op_cab_lista[x].comp, true, num_count, total, estado, perfil, this.id_op_cab);
+              }
             }
           }
         }
@@ -446,103 +450,108 @@ export class OperacaoEmCursoComponent implements OnInit {
 
     this.RPOFOPCABService.getbyid(id_op_cab, id_op_cab).subscribe(result => {
 
-      var rp_of_op_cab = new RP_OF_OP_CAB();
-      var rp_of_op_func = new RP_OF_OP_FUNC();
-      rp_of_op_cab = result[0][0];
-      rp_of_op_func = result[0][2];
-      //estado rp_of_cab
-      var rp_of_cab = new RP_OF_CAB();
-      rp_of_cab = result[0][1];
-      rp_of_cab.id_UTZ_MODIF = user;
-      rp_of_cab.nome_UTZ_MODIF = nome;
-      rp_of_cab.data_HORA_MODIF = date;
-      rp_of_cab.estado = estado;
-      if (estado == "M") rp_of_cab.versao_MODIF = (this.versao_modif + 1);
+      if (result[0][1].estado != 'C' || estado != 'C') {
+        var rp_of_op_cab = new RP_OF_OP_CAB();
+        var rp_of_op_func = new RP_OF_OP_FUNC();
+        rp_of_op_cab = result[0][0];
+        rp_of_op_func = result[0][2];
+        //estado rp_of_cab
+        var rp_of_cab = new RP_OF_CAB();
+        rp_of_cab = result[0][1];
+        rp_of_cab.id_UTZ_MODIF = user;
+        rp_of_cab.nome_UTZ_MODIF = nome;
+        rp_of_cab.data_HORA_MODIF = date;
+        rp_of_cab.estado = estado;
+        if (estado == "M") rp_of_cab.versao_MODIF = (this.versao_modif + 1);
 
-      //tempo de Pausa
-      this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {
-        var count = Object.keys(result1).length;
-        var time_pausa = "0:0:0";
-        var time_pausa_prep = "0:0:0";
-        var time_pausa_of = "0:0:0";
-        var timedif3 = 0;
-        var timedif4 = 0;
-        var timedif5 = 0;
-        var soma_pausa = 0;
+        //tempo de Pausa
+        this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {
+          var count = Object.keys(result1).length;
+          var time_pausa = "0:0:0";
+          var time_pausa_prep = "0:0:0";
+          var time_pausa_of = "0:0:0";
+          var timedif3 = 0;
+          var timedif4 = 0;
+          var timedif5 = 0;
+          var soma_pausa = 0;
 
-        if (count > 0) {
-          for (var x in result1) {
-            if (result1[x].momento_PARAGEM == "E") {
+          if (count > 0) {
+            for (var x in result1) {
+              if (result1[x].momento_PARAGEM == "E") {
+                var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
+                var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
+                var timedif = this.timediff(hora1.getTime(), hora2.getTime())
+                var splitted_pausa = timedif.split(":", 3);
+                total_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              }
+              if (result1[x].momento_PARAGEM == "P") {
+                var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
+                var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
+                var timedif1 = this.timediff(hora1.getTime(), hora2.getTime())
+                var splitted_pausa = timedif1.split(":", 3);
+                total_pausa_prep += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              }
+
               var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
               var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-              var timedif = this.timediff(hora1.getTime(), hora2.getTime())
-              var splitted_pausa = timedif.split(":", 3);
-              total_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              var timep = this.timediff(hora1.getTime(), hora2.getTime())
+
+              var splitted_pausa = timep.split(":", 3);
+              soma_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
             }
-            if (result1[x].momento_PARAGEM == "P") {
-              var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
-              var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-              var timedif1 = this.timediff(hora1.getTime(), hora2.getTime())
+
+            time_pausa_of = this.gettime(soma_pausa);
+            time_pausa_prep = this.gettime(total_pausa_prep);
+            time_pausa = this.gettime(total_pausa);
+
+            var splitted_pausa = time_pausa_of.split(":", 3);
+            timedif4 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+          }
+          var hora1 = new Date(result[0][2].data_INI_M2 + " " + result[0][2].hora_INI_M2);
+          var hora2 = new Date(date);
+
+          if (estado == "M") hora2 = new Date(result[0][2].data_FIM_M2 + " " + result[0][2].hora_FIM_M2);
+          //tempo da total of
+          var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
+
+          if (estado == "M" && this.data_fim_preparacao != null && this.data_ini_preparacao != null && id_op_cab2 == id_op_cab) {
+            var splitted_pausa = time_pausa_prep.split(":", 3);
+            timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+            //estado rp_of_prep_lin
+            var rp_of_prep_lin = new RP_OF_PREP_LIN();
+            this.RPOFPREPLINService.getbyid2(id_op_cab).subscribe(resu => {
+
+              var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
+              var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
+              var timedif1 = this.timediff(date1.getTime(), date2.getTime());
               var splitted_pausa = timedif1.split(":", 3);
-              total_pausa_prep += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-            }
+              timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
 
-            var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
-            var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-            var timep = this.timediff(hora1.getTime(), hora2.getTime())
+              var time_prep = timedif3 - timedif5;
 
-            var splitted_pausa = timep.split(":", 3);
-            soma_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              var tempo_prep = this.gettime(time_prep);
+
+              rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
+
+              if (!comp) {
+                this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
+                  this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                    utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
+                });
+              }
+            }, error => console.log(error));
+          } else {
+            this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+              utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
           }
 
-          time_pausa_of = this.gettime(soma_pausa);
-          time_pausa_prep = this.gettime(total_pausa_prep);
-          time_pausa = this.gettime(total_pausa);
 
-          var splitted_pausa = time_pausa_of.split(":", 3);
-          timedif4 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-        }
-        var hora1 = new Date(result[0][2].data_INI_M2 + " " + result[0][2].hora_INI_M2);
-        var hora2 = new Date(date);
+        }, error => console.log(error));
 
-        if (estado == "M") hora2 = new Date(result[0][2].data_FIM_M2 + " " + result[0][2].hora_FIM_M2);
-        //tempo da total of
-        var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
-
-        if (estado == "M" && this.data_fim_preparacao != null && this.data_ini_preparacao != null && id_op_cab2 == id_op_cab) {
-          var splitted_pausa = time_pausa_prep.split(":", 3);
-          timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-
-          //estado rp_of_prep_lin
-          var rp_of_prep_lin = new RP_OF_PREP_LIN();
-          this.RPOFPREPLINService.getbyid2(id_op_cab).subscribe(resu => {
-
-            var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
-            var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
-            var timedif1 = this.timediff(date1.getTime(), date2.getTime());
-            var splitted_pausa = timedif1.split(":", 3);
-            timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-
-            var time_prep = timedif3 - timedif5;
-
-            var tempo_prep = this.gettime(time_prep);
-
-            rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
-
-            if (!comp) {
-              this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
-                this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-                  utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
-              });
-            }
-          }, error => console.log(error));
-        } else {
-          this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-            utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
-        }
-
-
-      }, error => console.log(error));
+      } else {
+        this.display_alerta = true;
+      }
     }, error => console.log(error));
   }
 

@@ -1499,6 +1499,8 @@ export class RegistoQuantidades2Component implements OnInit {
           //this.displaypopupnovosdefeitos = true;
           this.showMessage1();
 
+        } else {
+          this.showMessage1();
         }
       },
       error => {
