@@ -46,9 +46,14 @@
 
             <div class="clearfix">
             </div>
-            <div class="col-md-6 col-sm-6 col-lg-6 phone loginadicional" style="padding: 0px; text-align: -webkit-center; margin-left: 63px;">
-                <input style="margin: 0;width: 261px;" readonly type="password" name="name" id="telNumber" #box class="form-control tel" value="{{ operation }}"
-                    maxlength="4" />
+            <div class="col-md-6 col-sm-6 col-lg-6 phone loginadicional" style="padding: 0px; text-align: -webkit-center; margin-left: 85px;">
+                <input style="margin: 0;width: 261px;" readonly type="password" name="name" id="telNumber" #box class="form-control tel"
+                    value="{{ operation }}" maxlength="4" />
+                <div *ngIf="loading" class="load-bar">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
             </div>
         </div>
     </div>

@@ -56,7 +56,7 @@
 
             <div class="clearfix">
             </div>
-            <input readonly type="password" name="name" id="telNumber" #box class="form-control tel " style=" font-size: 27pt; padding: 0;"
+            <input readonly type="password" name="name" id="telNumbe" #box class="form-control tel " style=" font-size: 27pt; padding: 0;"
                 value="{{ operation }}" maxlength="4" />
             <div *ngIf="loading" class="load-bar">
                 <div class="bar"></div>
@@ -105,10 +105,10 @@
     </div>
 </p-dialog>
 
-<!-- Preparação em curso -->
+<!-- Preparação em curso 
 
 <p-dialog [(visible)]="displayprep" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
-    [dismissableMask]="true" [draggable]="false">
+    [dismissableMask]="true" [draggable]="false" >
     <div style="text-align:center;">
         <h1>Que operação pretende fazer?</h1>
     </div>
@@ -118,6 +118,47 @@
                 style="float: none; width: auto;"></button>
             <button type="button" pButton (click)="pausa()" label="FAZER PAUSA NA PREPARAÇÃO" style="float: none; width: auto;"></button>
             <button type="button" pButton (click)="concluir()" label="CONCLUIR TRABALHO" style="float: none; width: auto;"></button>
+        </div>
+    </p-footer>
+</p-dialog>-->
+<p-dialog [(visible)]="displayprep" [showHeader]="false" modal="modal" min-width="600" [responsive]="true"
+    [dismissableMask]="true" [dismissableMask]="true" [draggable]="false" class="mensagemdialog">
+    <div style="text-align:center;">
+        <h2>Que operação pretende fazer?</h2>
+    </div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center; max-height: 83vh; overflow: auto;">
+            <div class="col-md-12" style="padding: 0;">
+                <div class="col-md-12 col-lg-6">
+                    <button [disabled]="operadorPrincipal" type="button" pButton (click)="finalizarprep()" label=" "
+                        style="float: none; width: 100%; height: auto;">
+                        <i class="fa fa-play"></i><br> FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO</button>
+                </div>
+                <div class="col-md-12 col-lg-6">
+                    <button type="button" pButton (click)="pausa()" label=" " style="float: none; width: 100%; height: auto;">
+                        <i class="fa fa-pause"></i><br>FAZER PAUSA NA PREPARAÇÃO</button>
+                </div>
+            </div>
+            <div class="col-md-12" style="padding: 0;">
+                <div *ngIf="!operadorPrincipal" class="col-md-12 col-lg-6">
+                    <button type="button" [hidden]="operadorPrincipal" pButton (click)="concluir(true)" label=" " style="float: none; width: 100%; height: auto;">
+                        <i class="fa fa-check-circle-o"></i><br>CONCLUIR TRABALHO</button>
+                </div>
+                <div *ngIf="operadorPrincipal" class="col-md-12 col-lg-6">
+                    <button type="button" [hidden]="!operadorPrincipal" pButton (click)="concluir(false)" label=" "
+                        style="float: none; width: 100%; height: auto;">
+                        <i class="fa fa-check-circle-o"></i><br>SAIR DO TRABALHO</button>
+                </div>
+                <div class="col-md-12 col-lg-6">
+                    <button type="button" [disabled]="operadorPrincipal || maquina" pButton (click)="adicionarOperario()"
+                        label=" " style="float: none; width: 100%; height: auto;">
+                        <i class="fa fa-user-plus"></i><br>ADICIONAR OPERADOR</button>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button type="button" pButton (click)="displayprep = false" class="ui-button-danger" label="FECHAR"
+                    style="float: none; width: 100%;"></button>
+            </div>
         </div>
     </p-footer>
 </p-dialog>
@@ -196,8 +237,73 @@
             </div>
             <div class="col-md-12 col-sm-12 col-lg-12 phone loginadicional" style="padding: 0px; text-align: -webkit-center; margin-left: 48px;">
                 <input [ngClass]="{'ippassworderrada': passworderrada}" style="margin: 0;width: 100%;" readonly type="password"
-                    name="name" id="telNumber2" #box class="form-control tel" value="{{ operation2 }}" maxlength="4" />
+                    name="name" id="telNumbe2" #box class="form-control tel" value="{{ operation2 }}" maxlength="4" />
             </div>
         </div>
     </div>
 </p-dialog>
+
+
+<!--popup adicionar operador -->
+<p-dialog header="UTILIZADOR EM USO" [(visible)]="displayDialogutz" class="novoop" modal="modal" width="700"
+    [responsive]="true" [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-12 col-md-offset-12" style="float: left;">
+        <div class="ui-grid-row">
+            <div class="form-group">
+                O Utilizador {{utilizador_insere}} já se encontra a executar esta OF!
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<!--popup adicionar operador em uso-->
+<p-dialog header="UTILIZADOR EM USO" [(visible)]="displayDialogutz_em_uso" class="novoop" modal="modal" width="700"
+    [responsive]="true" [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-12 col-md-offset-12" style="float: left;">
+        <div class="ui-grid-row">
+            <div class="form-group">
+                O Utilizador {{utilizador_insere}} já se encontra a executar outra OF, é necessário concluir a OF em
+                Execução!
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<!--popup adicionar operador -->
+<p-dialog header="ADICIONAR OPERADOR" [(visible)]="displayDialog" class="novoop" modal="modal" [responsive]="true"
+    [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-12 col-md-offset-12" style="float: left;">
+        <div class="ui-grid-row">
+            <div class="form-group">
+                <!-- <label class="control-label ">PIN DO UTILIZADOR</label>
+        <input class="form-control" type="number" />-->
+                <app-pagelogin2></app-pagelogin2>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+
+<!--popup verificação-->
+<p-dialog header="Verificação" [(visible)]="display_alerta" class="novoop" modal="modal" width="700" [responsive]="true"
+    [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-12 col-md-offset-12" style="float: left;">
+        <div class="ui-grid-row">
+            <div class="form-group" style="text-align: center;">
+                <span [innerHTML]="texto_alerta" style="font-size: 17px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button style="float: none;" type="button" pButton (click)="display_alerta = false" label="OK"></button>
+            <button style="float: none; padding: 0;" type="button" class="ui-button-success ui-button-raised" pButton
+                (click)="continuar_concluir()" label="CONTINUAR"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+
+<p-confirmDialog width="500" header="Confirmação" class="mensagemdialog"></p-confirmDialog>

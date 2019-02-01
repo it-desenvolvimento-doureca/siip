@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { OperacaoEmCursoComponent } from "app/modelos/operacao-em-curso/operacao-em-curso.component";
 import { RPCONFUTZPERFService } from "app/modelos/services/rp-conf-utz-perf.service";
 import { LoginComponent } from '../login/login.component';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-pagelogin',
+  selector: 'app-pagelogin2',
   templateUrl: './pagelogin.component.html',
   styleUrls: ['./pagelogin.component.css']
 })
-export class PageloginComponent implements OnInit {
+export class Pagelogin2Component implements OnInit {
   confirmationService: any;
   displayDialog: boolean;
 
@@ -19,9 +18,7 @@ export class PageloginComponent implements OnInit {
   name = "";
   display: boolean = false;
   loading: boolean;
-
-
-  constructor(private service: RPCONFUTZPERFService, private emitter: OperacaoEmCursoComponent, private route: ActivatedRoute,
+  constructor(private service: RPCONFUTZPERFService, private emitter: LoginComponent, private route: ActivatedRoute,
     private router: Router) {
 
   }
@@ -93,9 +90,12 @@ export class PageloginComponent implements OnInit {
 
   //adiciona  operador
   redirect() {
+
     this.emitter.save(this.operation, this.name);
+
     this.reset();
   }
+
 
   ngOnInit() {
   }

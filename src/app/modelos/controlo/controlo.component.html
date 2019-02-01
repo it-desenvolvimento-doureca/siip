@@ -125,7 +125,7 @@
       <ng-template pTemplate="body" let-col let-row="rowData ">
         <div class="divtable2" style="padding: 0px; min-height: 24px;">
           <tr *ngFor="let col2 of row[col.field]">
-            <td class="{{col2.cor}}">{{col2.tempo}}</td>
+            <td class="{{col2.cor}}">{{col2.tempo}}&nbsp;</td>
           </tr>
         </div>
       </ng-template>
@@ -329,11 +329,17 @@
         </div>
         <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
           <div class="form-group">
+            <label class="control-label requiredField" style="width: 100%; ">Etiqueta</label>
+            <input tabindex="17" class="form-control" [(ngModel)]="pesquisa.etiqueta" [ngModelOptions]="{standalone: true}" type="text" />
+          </div>
+        </div>
+        <div class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
+          <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Referência</label>
             <input tabindex="17" class="form-control" [(ngModel)]="pesquisa.ref" [ngModelOptions]="{standalone: true}" type="text" />
           </div>
         </div>
-        <div class="col-md-9 col-md-offset-9 nopadding" style="float:left;">
+        <div class="col-md-6 col-md-offset-6 nopadding" style="float:left;">
           <div class="form-group">
             <label class="control-label requiredField" style="width: 100%; ">Designação da Referência</label>
             <input tabindex="18" class="form-control" [(ngModel)]="pesquisa.design_ref" [ngModelOptions]="{standalone: true}" type="text"

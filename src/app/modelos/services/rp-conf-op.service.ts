@@ -15,23 +15,23 @@ export class RPCONFOPService {
 
   create(data: RP_CONF_OP) {
     return this.http
-      .post(webUrl.host+'/rest/siip/createRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/createRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
   getAll(): Observable<RP_CONF_OP[]> {
-    const url = webUrl.host+'/rest/siip/getRP_CONF_OP';
+    const url = webUrl.host + '/rest/siip/getRP_CONF_OP';
     return this.http
       .get(url)
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
 
-    delete(id) {
+  delete(id) {
     return this.http
-      .delete(webUrl.host+'/rest/siip/deleteRP_CONF_OP/' + id + '')
+      .delete(webUrl.host + '/rest/siip/deleteRP_CONF_OP/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -39,16 +39,16 @@ export class RPCONFOPService {
 
   update(data: RP_CONF_OP) {
     return this.http
-      .put(webUrl.host+'/rest/siip/updateRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host + '/rest/siip/updateRP_CONF_OP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
   }
 
-    getAllbyid(id): Observable<RP_CONF_OP[]> {
-    const url = webUrl.host+'/rest/siip/getRP_CONF_OPbyid/'+id+'';
+  getAllbyid(id): Observable<RP_CONF_OP[]> {
+    const url = webUrl.host + '/rest/siip/getRP_CONF_OPbyid';
     return this.http
-      .get(url)
+      .put(url, id.toString(), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }

@@ -6,8 +6,8 @@
         <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
         <div class="input-group">
           <div class="icon-addon " style="width: 100%;">
-            <input type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}" [(ngModel)]="num_of"
-              #of (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
+            <input [disabled]="campoofdisabled" type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}"
+              [(ngModel)]="num_of" #of (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
           </div>
           <span class="input-group-btn">
             <button [disabled]="spinner" (click)="pesquisaof()" class="btn {{bt_class}}" type="button" style="line-height: 0;">
@@ -25,14 +25,18 @@
 
       <div class="form-group">
         <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-        <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)"
-          [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
+        <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op
+          (onChange)="carregamaquinas(op.value)" [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
         <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px; float: right; width: 51px;"
           (click)="togglestates()">
           <i class="icon-plus"></i>
         </button>
       </div>
-
+      <div class="form-group" *ngIf="op_PREVISTA == '2'">
+        <label class="control-label " for="subject">Secção</label>
+        <p-dropdown #valor [options]="seccoes" [(ngModel)]="seccao" [ngModelOptions]="{standalone: true}" (onChange)="carregamaquiOP_NAO_PREVISTA(valor.value)"
+          [style]="{'width':'100%'}"></p-dropdown>
+      </div>
       <div class="form-group">
         <label class="control-label " for="subject">Máquina</label>
         <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
@@ -50,9 +54,9 @@
   <div class="col-md-7 col-md-offset-7" style="float:left;">
 
 
-    <p-dataTable [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single" (onRowSelect)="onRowSelect($event)"
-      class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)" dataKey="codigo" scrollable="true" scrollHeight="600px"
-      [rows]="10">
+    <p-dataTable [loading]="loadingTable" [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single"
+      (onRowSelect)="onRowSelect($event)" class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)"
+      dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
       <p-header>REFERÊNCIA(S)</p-header>
       <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}">
         <ng-template let-col let-x="rowData" pTemplate="body">
@@ -64,21 +68,24 @@
     </p-dataTable>
   </div>
   <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
-    <button class="bt-cancelar ui-button-danger" pButton type="button" routerLink="/home" label="CANCELAR/SAIR" style="float:none;min-width: 17%;"></button>
-    <button class=" bt-cancelar ui-button-success" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO" style="float:none;min-width: 17%; margin-left: 20px;"></button>
+    <button class="bt-cancelar ui-button-danger ui-button-raised" pButton type="button" routerLink="/home" label="CANCELAR/SAIR"
+      style="float:none;min-width: 17%;"></button>
+    <button class=" bt-cancelar ui-button-success ui-button-raised" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO"
+      style="float:none;min-width: 17%; margin-left: 20px;"></button>
     <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"
       style="float:none;"></button>
   </div>
 
   <!-- Lista de operções não previstas -->
   <div id="adicionaop">
-    <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow: scroll;" (clickOutside)="ontogglestates()">
+    <div class="list-group adicionaop" [@movementtrigger]="state" style="display:none; overflow: scroll;"
+      (clickOutside)="ontogglestates()">
       <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
         <i class="fa fa-search" style="margin:4px 4px 0 0; float: left; font-size: 33px;"></i>
         <input #gb type="text" pInputText size="50" placeholder="Pesquisar" class="form-control" style="width: 90%;">
       </div>
-      <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb" #dt dataKey="OPECOD"
-        scrollable="true" scrollHeight="73vh" [responsive]="true" [rows]="10">
+      <p-dataTable [value]="novaopera" selectionMode="single" (onRowSelect)="onRowSelect3($event)" [globalFilter]="gb"
+        #dt dataKey="OPECOD" scrollable="true" scrollHeight="73vh" [responsive]="true" [rows]="10">
         <p-header>Operações</p-header>
         <p-column field="OPECOD" header="Código" [sortable]="true"></p-column>
         <p-column field="OPEDES" header="Designação"></p-column>
@@ -132,14 +139,14 @@
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
       <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
-      <button type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
+      <button class="ui-button-danger" type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
 
 <!--POPUP- Caso o operador queira inciar o trabalho para uma of e operação em execução-->
-<p-dialog [(visible)]="display_op_em_curso" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-  [draggable]="false">
+<p-dialog [(visible)]="display_op_em_curso" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       <b> OPERAÇÃO EM CURSO </b>
@@ -156,8 +163,8 @@
 </p-dialog>
 
 <!--POPUP- Caso a OF escolhida está Fechada ou Suspensa” -->
-<p-dialog [(visible)]="display_of_estado" modal="modal" width="600" [responsive]="true" [dismissableMask]="true" [dismissableMask]="true"
-  [draggable]="false">
+<p-dialog [(visible)]="display_of_estado" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
+  [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       A OF escolhida {{estado_of}}

@@ -40,6 +40,7 @@ import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
 import { RPOFOPETIQUETAService } from 'app/modelos/services/rp-of-op-etiqueta.service';
 import { RegistoQuantidades2Component } from './modelos/registo-quantidades2/registo-quantidades2.component';
 import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
+import { Pagelogin2Component } from './modelos/pagelogin/pagelogin2.component';
 
 const routes: Routes = [
   {
@@ -109,6 +110,7 @@ const routes: Routes = [
     LoginComponent,
     ControloComponent,
     PageloginComponent,
+    Pagelogin2Component,
     RegistoQuantidades2Component
   ],
   imports: [

@@ -20,4 +20,5 @@ export class RP_OF_OP_ETIQUETA {
     quant_DEF_M2: number;
     versao_MODIF: number;
     novo: boolean;
+    ofdatfr: Date;
 }

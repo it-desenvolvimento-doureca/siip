@@ -3193,7 +3193,7 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
 }
 
 .pgrowlmsg .ui-growl {
-    z-index: 1048 !important;
+    z-index: 1148 !important;
 }
 
 .mensagemdialog>div {
@@ -3206,4 +3206,234 @@ body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-odd {
 
 .loginadicional22 .num {
     color: black !important;
+}
+
+body .ui-selectbutton .ui-button {
+    background-color: #dadada;
+    border: 1px solid #dadada;
+    color: #333333;
+    -moz-transition: background-color 0.2s, box-shadow 0.2s;
+    -o-transition: background-color 0.2s, box-shadow 0.2s;
+    -webkit-transition: background-color 0.2s, box-shadow 0.2s;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+body .ui-selectbutton .ui-button .ui-button-icon-left {
+    color: #666666;
+}
+
+body .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover {
+    background-color: #c8c8c8;
+    border-color: #c8c8c8;
+    color: #333333;
+}
+
+body .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover .ui-button-icon-left {
+    color: #212121;
+}
+
+body .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active).ui-state-focus {
+    background-color: #c8c8c8;
+    border-color: #c8c8c8;
+    color: #333333;
+    outline: 0 none;
+}
+
+body .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active).ui-state-focus .ui-button-icon-left {
+    color: #212121;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active {
+    background-color: #007ad9;
+    border-color: #007ad9;
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active .ui-button-icon-left {
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active:not(.ui-state-disabled):hover {
+    background-color: #116fbf;
+    border-color: #116fbf;
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active:not(.ui-state-disabled):hover .ui-button-icon-left {
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active.ui-state-focus {
+    background-color: #005b9f;
+    border-color: #005b9f;
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button.ui-state-active.ui-state-focus .ui-button-icon-left {
+    color: #ffffff;
+}
+
+body .ui-selectbutton .ui-button:first-child {
+    -moz-border-radius-topleft: 3px;
+    -webkit-border-top-left-radius: 3px;
+    border-top-left-radius: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+body .ui-selectbutton .ui-button:last-child {
+    -moz-border-radius-topright: 3px;
+    -webkit-border-top-right-radius: 3px;
+    border-top-right-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+@media (max-width: 640px) {
+    body .ui-buttonset .ui-button {
+        margin-bottom: 1px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+    }
+}
+
+body .ui-splitbutton.ui-buttonset .ui-button {
+    border: 1px solid transparent;
+}
+
+body .ui-splitbutton.ui-buttonset .ui-menu {
+    min-width: 100%;
+}
+
+body .ui-splitbutton.ui-buttonset .ui-splitbutton-menubutton .ui-button-icon-left:before {
+    content: "";
+}
+
+body .ui-button.ui-state-default.ui-button-secondary, body .ui-buttonset.ui-button-secondary>.ui-button.ui-state-default {
+    color: #333333;
+    background-color: #f4f4f4;
+    border: 1px solid #f4f4f4;
+}
+
+body .ui-button.ui-state-default.ui-button-secondary:enabled:hover, body .ui-buttonset.ui-button-secondary>.ui-button.ui-state-default:enabled:hover {
+    background-color: #c8c8c8;
+    color: #333333;
+    border-color: #c8c8c8;
+}
+
+body .ui-button.ui-state-default.ui-button-secondary:enabled:focus, body .ui-buttonset.ui-button-secondary>.ui-button.ui-state-default:enabled:focus {
+    -webkit-box-shadow: 0 0 0 0.2em #8dcdff;
+    -moz-box-shadow: 0 0 0 0.2em #8dcdff;
+    box-shadow: 0 0 0 0.2em #8dcdff;
+}
+
+body .ui-button.ui-state-default.ui-button-secondary:enabled:active, body .ui-buttonset.ui-button-secondary>.ui-button.ui-state-default:enabled:active {
+    background-color: #a0a0a0;
+    color: #333333;
+    border-color: #a0a0a0;
+}
+
+body .ui-button.ui-state-default.ui-button-info, body .ui-buttonset.ui-button-info>.ui-button.ui-state-default {
+    color: #ffffff;
+    background-color: #007ad9;
+    border: 1px solid #007ad9;
+}
+
+body .ui-button.ui-state-default.ui-button-info:enabled:hover, body .ui-buttonset.ui-button-info>.ui-button.ui-state-default:enabled:hover {
+    background-color: #116fbf;
+    color: #ffffff;
+    border-color: #116fbf;
+}
+
+body .ui-button.ui-state-default.ui-button-info:enabled:focus, body .ui-buttonset.ui-button-info>.ui-button.ui-state-default:enabled:focus {
+    -webkit-box-shadow: 0 0 0 0.2em #8dcdff;
+    -moz-box-shadow: 0 0 0 0.2em #8dcdff;
+    box-shadow: 0 0 0 0.2em #8dcdff;
+}
+
+body .ui-button.ui-state-default.ui-button-info:enabled:active, body .ui-buttonset.ui-button-info>.ui-button.ui-state-default:enabled:active {
+    background-color: #005b9f;
+    color: #ffffff;
+    border-color: #005b9f;
+}
+
+body .ui-button.ui-state-default.ui-button-success, body .ui-buttonset.ui-button-success>.ui-button.ui-state-default {
+    color: #ffffff;
+    background-color: #34A835;
+    border: 1px solid #34A835;
+}
+
+body .ui-button.ui-state-default.ui-button-success:enabled:hover, body .ui-buttonset.ui-button-success>.ui-button.ui-state-default:enabled:hover {
+    background-color: #107D11;
+    color: #ffffff;
+    border-color: #107D11;
+}
+
+body .ui-button.ui-state-default.ui-button-success:enabled:focus, body .ui-buttonset.ui-button-success>.ui-button.ui-state-default:enabled:focus {
+    -webkit-box-shadow: 0 0 0 0.2em #aae5aa;
+    -moz-box-shadow: 0 0 0 0.2em #aae5aa;
+    box-shadow: 0 0 0 0.2em #aae5aa;
+}
+
+body .ui-button.ui-state-default.ui-button-success:enabled:active, body .ui-buttonset.ui-button-success>.ui-button.ui-state-default:enabled:active {
+    background-color: #0C6B0D;
+    color: #ffffff;
+    border-color: #0C6B0D;
+}
+
+body .ui-button.ui-state-default.ui-button-warning, body .ui-buttonset.ui-button-warning>.ui-button.ui-state-default {
+    color: #333333;
+    background-color: #ffba01;
+    border: 1px solid #ffba01;
+}
+
+body .ui-button.ui-state-default.ui-button-warning:enabled:hover, body .ui-buttonset.ui-button-warning>.ui-button.ui-state-default:enabled:hover {
+    background-color: #ED990B;
+    color: #333333;
+    border-color: #ED990B;
+}
+
+body .ui-button.ui-state-default.ui-button-warning:enabled:focus, body .ui-buttonset.ui-button-warning>.ui-button.ui-state-default:enabled:focus {
+    -webkit-box-shadow: 0 0 0 0.2em #ffeab4;
+    -moz-box-shadow: 0 0 0 0.2em #ffeab4;
+    box-shadow: 0 0 0 0.2em #ffeab4;
+}
+
+body .ui-button.ui-state-default.ui-button-warning:enabled:active, body .ui-buttonset.ui-button-warning>.ui-button.ui-state-default:enabled:active {
+    background-color: #D38B10;
+    color: #333333;
+    border-color: #D38B10;
+}
+
+body .ui-button.ui-state-default.ui-button-danger, body .ui-buttonset.ui-button-danger>.ui-button.ui-state-default {
+    color: #ffffff;
+    background-color: #e91224;
+    border: 1px solid #e91224;
+}
+
+body .ui-button.ui-state-default.ui-button-danger:enabled:hover, body .ui-buttonset.ui-button-danger>.ui-button.ui-state-default:enabled:hover {
+    background-color: #c01120;
+    color: #ffffff;
+    border-color: #c01120;
+}
+
+body .ui-button.ui-state-default.ui-button-danger:enabled:focus, body .ui-buttonset.ui-button-danger>.ui-button.ui-state-default:enabled:focus {
+    -webkit-box-shadow: 0 0 0 0.2em #f9b4ba;
+    -moz-box-shadow: 0 0 0 0.2em #f9b4ba;
+    box-shadow: 0 0 0 0.2em #f9b4ba;
+}
+
+body .ui-button.ui-state-default.ui-button-danger:enabled:active, body .ui-buttonset.ui-button-danger>.ui-button.ui-state-default:enabled:active {
+    background-color: #a90000;
+    color: #ffffff;
+    border-color: #a90000;
+}
+
+body .ui-button.ui-button-raised {
+    -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
 }

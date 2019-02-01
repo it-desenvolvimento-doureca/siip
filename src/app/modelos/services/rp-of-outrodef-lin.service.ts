@@ -45,6 +45,15 @@ export class RPOFOUTRODEFLINService {
   }
 
 
+  getbyidetiqueta(id, etiqueta): Observable<RP_OF_OUTRODEF_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getbyidRP_OF_OUTRODEF_LINFetiqueta/' + id + '/' + etiqueta;
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+
   update(data: RP_OF_OUTRODEF_LIN) {
     return this.http
       .put(webUrl.host + '/rest/siip/updateRP_OF_OUTRODEF_LIN', JSON.stringify(data), { headers: this.headers })

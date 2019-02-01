@@ -19,14 +19,19 @@ import { GER_EVENTO } from 'app/modelos/entidades/GER_EVENTO';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RP_OF_PARA_LIN } from '../entidades/RP_OF_PARA_LIN';
 import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic/src/platform_providers';
+import { RPCONFFAMILIACOMPService } from '../services/rp-conf-familia-comp.service';
+import { RP_OF_OP_LIN } from '../entidades/RP_OF_OP_LIN';
+import { RP_OF_OUTRODEF_LIN } from '../entidades/RP_OF_OUTRODEF_LIN';
 
 @Component({
   selector: 'app-operacao-em-curso',
+  host: { '(window:keydown)': 'hotkeys($event)' },
   templateUrl: './operacao-em-curso.component.html',
   styleUrls: ['./operacao-em-curso.component.css']
 })
 export class OperacaoEmCursoComponent implements OnInit {
   maq_numcod: any;
+  displaypreparacao;
   permissao_ficheiroteste: any;
   pausas_array = [];
   displaypausas: boolean = false;
@@ -99,8 +104,14 @@ export class OperacaoEmCursoComponent implements OnInit {
   verpausas: boolean = true;
   display_alerta: boolean;
   temp_confirma = true;
+  id_OP_CAB: any;
+  data_ini_preparacao_lider: Date;
+  data_fim_preparacao_lider: Date;
+  loadingTable: boolean;
+  sec_des: any;
+  sec_num: any;
 
-  constructor(private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
+  constructor(private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
@@ -159,7 +170,10 @@ export class OperacaoEmCursoComponent implements OnInit {
               if (response[x][1].id_UTZ_CRIA != this.user) this.disabledAdici = true;
               comp = false
               localStorage.setItem('id_op_cab', JSON.stringify(response[x][2].id_OP_CAB));
-              this.of_num = response[x][1].of_NUM.trim()
+              this.of_num = response[x][1].of_NUM.trim();
+              this.sec_des = response[x][1].sec_DES;
+              this.sec_num = response[x][1].sec_NUM
+
 
               if (response[x][1].op_NUM != null) {
                 this.op_num = response[x][1].op_NUM.trim() + "/" + response[x][1].op_COD_ORIGEM + "/ " + response[x][1].op_DES.trim();
@@ -174,14 +188,20 @@ export class OperacaoEmCursoComponent implements OnInit {
               if (response[x][0].data_FIM_M2 != null) this.datafim_utz_lider = new Date(response[x][0].data_FIM_M2 + ' ' + response[x][0].hora_FIM_M2);
               if (response[x][0].data_INI_M2 != null) this.dataini_utz_lider = new Date(response[x][0].data_INI_M2 + ' ' + response[x][0].hora_INI_M2);
 
+              this.data_ini_preparacao_lider = (response[x][3] != null) ? new Date(this.formatDate(response[x][3]) + ' ' + response[x][4]) : null;
+
+              this.data_fim_preparacao_lider = (response[x][5] != null) ? new Date(this.formatDate(response[x][5]) + ' ' + response[x][6]) : null;
+
+
+
               this.data_ini = response[x][0].data_INI_M2;
               this.hora_ini = response[x][0].hora_INI_M2;
               this.hora_fim = response[x][0].hora_FIM_M2;
               this.data_fim = response[x][0].data_FIM_M2;
 
-              this.data_ini_preparacao = response[x][3];
+              this.data_ini_preparacao = (response[x][3] != null) ? this.formatDate(response[x][3]) : "";
               this.hora_ini_preparacao = response[x][4];
-              this.data_fim_preparacao = response[x][5];
+              this.data_fim_preparacao = (response[x][5] != null) ? this.formatDate(response[x][5]) : "";
               this.hora_fim_preparacao = response[x][6];
               if (response[x][3] == null && response[x][4] == null) {
                 this.preparacaonovo = true;
@@ -203,7 +223,14 @@ export class OperacaoEmCursoComponent implements OnInit {
               if (response[x][0].data_FIM != null) {
                 this.concluido = true;
               }
-              if (this.utilizadores.length > 0) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+              if (this.utilizadores.length > 0) {
+                this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+                this.id_OP_CAB = this.utz_lider.id_OP_CAB;
+              } else {
+                this.utz_lider = [];
+                this.utz_lider.id_OP_CAB = response[x][2].id_OP_CAB;
+                this.utz_lider.id = response[x][0].id_UTZ_CRIA;
+              }
             } else {
               this.id_op_cab_lista.push({ id: response[x][2].id_OP_CAB, comp: true });
             }
@@ -243,13 +270,17 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
   preenchecombouUtz(id) {
-    this.RPOPFUNCService.getallUsersbyid_of_cab(id).subscribe(
+    this.RPOPFUNCService.getallUsersTEMPPREP(id).subscribe(
       response => {
         this.count = Object.keys(response).length;
         for (var x in response) {
           this.utilizadores.push({
-            label: response[x].id_UTZ_CRIA + " - " + response[x].nome_UTZ_CRIA,
-            value: { id_OP_FUNC: response[x].id_OP_FUNC, id_OP_CAB: response[x].id_OP_CAB, id: response[x].id_UTZ_CRIA, data_FIM: response[x].data_FIM_M2, hora_FIM: response[x].hora_FIM_M2, data_INI: response[x].data_INI_M2, hora_INI: response[x].hora_INI_M2, estado: response[x].estado }
+            label: response[x][0].id_UTZ_CRIA + " - " + response[x][0].nome_UTZ_CRIA,
+            value: {
+              id_OP_FUNC: response[x][0].id_OP_FUNC, id_OP_CAB: response[x][0].id_OP_CAB, id: response[x][0].id_UTZ_CRIA,
+              data_FIM: response[x][0].data_FIM_M2, hora_FIM: response[x][0].hora_FIM_M2, data_INI: response[x][0].data_INI_M2, hora_INI: response[x][0].hora_INI_M2, estado: response[x][0].estado
+              , HORA_INI_PREP: response[x][1], DATA_INI_PREP: response[x][2], DATA_FIM_PREP: response[x][3], HORA_FIM_PREP: response[x][4]
+            }
           });
 
         }
@@ -514,34 +545,42 @@ export class OperacaoEmCursoComponent implements OnInit {
           //tempo da total of
           var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
 
-          if (estado == "M" && this.data_fim_preparacao != null && this.data_ini_preparacao != null && id_op_cab2 == id_op_cab) {
+          if (estado == "M" && this.data_fim_preparacao != null && this.data_ini_preparacao != null /*&& id_op_cab2 == id_op_cab*/) {
+
             var splitted_pausa = time_pausa_prep.split(":", 3);
             timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
 
             //estado rp_of_prep_lin
             var rp_of_prep_lin = new RP_OF_PREP_LIN();
             this.RPOFPREPLINService.getbyid2(id_op_cab).subscribe(resu => {
+              var countxresu = Object.keys(resu).length;
 
-              var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
-              var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
-              var timedif1 = this.timediff(date1.getTime(), date2.getTime());
-              var splitted_pausa = timedif1.split(":", 3);
-              timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              if (countxresu > 0) {
+                var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
+                var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
+                var timedif1 = this.timediff(date1.getTime(), date2.getTime());
+                var splitted_pausa = timedif1.split(":", 3);
+                timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
 
-              var time_prep = timedif3 - timedif5;
+                var time_prep = timedif3 - timedif5;
 
-              var tempo_prep = this.gettime(time_prep);
+                var tempo_prep = this.gettime(time_prep);
 
-              rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
+                rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
 
-              if (!comp) {
-                this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
-                  this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-                    utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
-                });
+                if (!comp) {
+                  this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
+                    this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                      utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
+                  });
+                }
+              } else {
+                this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                  utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
               }
             }, error => console.log(error));
           } else {
+
             this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
               utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
           }
@@ -782,13 +821,13 @@ export class OperacaoEmCursoComponent implements OnInit {
     });
   }
 
-  ficheiroteste(estado, ficheiros = false, dialog = false) {
+  ficheiroteste(estado, ficheiros = false, dialog = false, original = false) {
 
     if (dialog) {
       this.displaygerarficheiros = true;
     } else {
       if (this.displaygerarficheiros) { this.progressBarDialog = true; }
-      this.ofService.criaficheiro(this.id_of_cab, estado, ficheiros).subscribe(resu => {
+      this.ofService.criaficheiro(this.id_of_cab, estado, ficheiros, original).subscribe(resu => {
 
         if (this.displaygerarficheiros) {
           this.progressBarDialog = false;
@@ -797,7 +836,7 @@ export class OperacaoEmCursoComponent implements OnInit {
         if (ficheiros) {
           var a = document.createElement('a');
           a.href = URL.createObjectURL(resu);
-          a.download = "ficherios_interface.zip";
+          a.download = "ficheiros_interface.zip";
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -933,6 +972,14 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.hora_fim = event.value.hora_FIM;
     this.data_fim = event.value.data_FIM;
     this.estado_val = event.value.estado;
+
+    this.id_OP_CAB = event.value.id_OP_CAB;
+    this.data_ini_preparacao = (event.value.DATA_INI_PREP != null) ? this.formatDate(event.value.DATA_INI_PREP) : "";
+    this.hora_ini_preparacao = event.value.HORA_INI_PREP;
+    this.data_fim_preparacao = (event.value.DATA_FIM_PREP) ? this.formatDate(event.value.DATA_FIM_PREP) : "";
+    this.hora_fim_preparacao = event.value.HORA_FIM_PREP;
+
+
   }
 
 
@@ -951,6 +998,18 @@ export class OperacaoEmCursoComponent implements OnInit {
         break;
       case "hora_fim":
         utz.hora_FIM = this.hora_fim;
+        break;
+      case "data_ini_preparacao":
+        utz.DATA_INI_PREP = this.data_ini_preparacao;
+        break;
+      case "hora_ini_preparacao":
+        utz.HORA_INI_PREP = this.hora_ini_preparacao;
+        break;
+      case "data_fim_preparacao":
+        utz.DATA_FIM_PREP = this.data_fim_preparacao;
+        break;
+      case "hora_fim_preparacao":
+        utz.HORA_FIM_PREP = this.hora_fim_preparacao;
         break;
     }
   }
@@ -996,8 +1055,12 @@ export class OperacaoEmCursoComponent implements OnInit {
       if (this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id)) {
         var utz = this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id).value;
         var utznome = this.utilizadores.find(item => item.value.id == this.pausas_array_editar_temp[y].id).label;
+
+        var datpreini = (utz.DATA_INI_PREP == null || utz.DATA_INI_PREP == "") ? null : new Date(utz.DATA_INI_PREP).toDateString();
+        var datprefim = (utz.DATA_FIM_PREP == null || utz.DATA_FIM_PREP == "") ? null : new Date(utz.DATA_FIM_PREP).toDateString();
+
         if (!this.validapausas(this.pausas_array_editar_temp[y].value, utz.data_INI, utz.hora_INI, utz.data_FIM, utz.hora_FIM,
-          this.data_ini_preparacao, this.hora_ini_preparacao, this.data_fim_preparacao, this.hora_fim_preparacao, utznome)) {
+          datpreini, utz.HORA_INI_PREP, datprefim, utz.HORA_FIM_PREP, utznome)) {
           continuar = false;
           break;
         }
@@ -1042,40 +1105,51 @@ export class OperacaoEmCursoComponent implements OnInit {
       if (this.utilizadores[x].value.data_INI != null && this.utilizadores[x].value.data_INI != '') data_inicio = new Date(this.utilizadores[x].value.data_INI + ' ' + this.utilizadores[x].value.hora_INI);
       if (this.utilizadores[x].value.data_FIM != null && this.utilizadores[x].value.data_FIM != '') data_fim = new Date(this.utilizadores[x].value.data_FIM + ' ' + this.utilizadores[x].value.hora_FIM);
 
-      if (this.data_ini_preparacao != null && this.data_ini_preparacao != '') data_prepinicio = new Date(this.data_ini_preparacao + ' ' + this.hora_ini_preparacao);
-      if (this.data_fim_preparacao != null && this.data_fim_preparacao != '') data_prepfim = new Date(this.data_fim_preparacao + ' ' + this.hora_fim_preparacao);
+      if (this.utilizadores[x].value.DATA_INI_PREP != null && this.utilizadores[x].value.DATA_INI_PREP != '') data_prepinicio = new Date(this.formatDate(this.utilizadores[x].value.DATA_INI_PREP) + ' ' + this.utilizadores[x].value.HORA_INI_PREP);
+      if (this.utilizadores[x].value.DATA_FIM_PREP != null && this.utilizadores[x].value.DATA_FIM_PREP != '') data_prepfim = new Date(this.formatDate(this.utilizadores[x].value.DATA_FIM_PREP) + ' ' + this.utilizadores[x].value.HORA_FIM_PREP);
+
 
       if (this.utilizadores[x].value.id == this.id_utz_lider) {
+        this.data_fim_preparacao_lider = data_prepfim;
+      }
 
-        if (data_prepinicio != null && data_prepfim != null) {
-          if (data_inicio.getTime() != data_prepinicio.getTime()) {
-            this.msgs2.push({
-              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho e Data/Hora Início Preparação são diferentes! Utilizador: ' + this.utilizadores[x].label + ''
-            });
-            continuar = false;
-            break;
-          } else if (data_fim.getTime() < data_prepfim.getTime()) {
-            this.msgs2.push({
-              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação superior à Data/Hora Fim Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
-            });
-            continuar = false;
-            break;
-          } else if (data_inicio.getTime() > data_prepfim.getTime()) {
-            this.msgs2.push({
-              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
-            });
-            continuar = false;
-            break;
-          } else if (data_prepfim.getTime() < data_prepinicio.getTime()) {
-            this.msgs2.push({
-              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Preparação! Utilizador: ' + this.utilizadores[x].label + ''
-            });
-            continuar = false;
-            break;
-          }
+      if (data_prepinicio != null && data_prepfim != null) {
+        if (data_inicio.getTime() != data_prepinicio.getTime() /*&& this.utilizadores[x].value.id == this.id_utz_lider*/) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho e Data/Hora Início Preparação são diferentes! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_fim.getTime() < data_prepfim.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação superior à Data/Hora Fim Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_inicio.getTime() > data_prepfim.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_prepfim.getTime() < data_prepinicio.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Preparação! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_inicio.getTime() > data_prepfim.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
         }
+      }
 
-      } else {
+      //} else {
+
+      if (this.utilizadores[x].value.id != this.id_utz_lider) {
         if (data_inicio.getTime() < this.dataini_utz_lider.getTime()) {
           this.msgs2.push({
             severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho inferior à  Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
@@ -1096,15 +1170,24 @@ export class OperacaoEmCursoComponent implements OnInit {
           });
           continuar = false;
           break;
-        } else if (data_prepinicio != null && data_prepfim != null) {
-          if (data_inicio.getTime() < data_prepfim.getTime()) {
-            this.msgs2.push({
-              severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Trabalho tem que ser superior à Data/Hora Fim Preparação! Utilizador: ' + this.utilizadores[x].label + ''
-            });
-            continuar = false;
-            break;
-
-          }
+        } else if (data_prepfim != null && data_inicio.getTime() > data_prepfim.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (data_prepinicio != null && data_inicio.getTime() > data_prepinicio.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Preparação inferior à Data/Hora Início Trabalho! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
+        } else if (this.data_fim_preparacao_lider != null && data_prepfim != null && this.data_fim_preparacao_lider.getTime() < data_prepfim.getTime()) {
+          this.msgs2.push({
+            severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Preparação Superior à Data/Hora Fim Preparação (Líder)! Utilizador: ' + this.utilizadores[x].label + ''
+          });
+          continuar = false;
+          break;
         }
       }
     }
@@ -1122,6 +1205,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
       if (dataini.getTime() > datafim.getTime()) {
         this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data/Hora Fim Pausa! ' + utznome });
+        continuar = false;
         break;
       }
       var datainip = new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime();
@@ -1152,24 +1236,31 @@ export class OperacaoEmCursoComponent implements OnInit {
         }
 
       } else if (pausas_array_editar[x].momento == "P") {
-        if (dataini.getTime() > new Date(data_fim + ' ' + hora_fim).getTime()) {
-          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data Fim do Trabalho! ' + utznome });
-          continuar = false;
-          break;
-        } else if (dataini.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
-          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
-          continuar = false;
-          break;
-        } else if (datafim.getTime() > new Date(data_fim_preparacao + ' ' + hora_fim_preparacao).getTime()) {
-          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Superior à Data/Hora Fim da Preparação! ' + utznome });
-          continuar = false;
-          break;
-        } else if (datafim.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
-          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
-          continuar = false;
-          break;
-        }
 
+        if (data_ini_preparacao == "" || data_ini_preparacao == null || data_fim_preparacao == "" || data_fim_preparacao == null) {
+          this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Verifique as Datas da Preparação! ' + utznome });
+          continuar = false;
+          break;
+        } else {
+          if (dataini.getTime() > new Date(data_fim + ' ' + hora_fim).getTime()) {
+            this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Superior à Data Fim do Trabalho! ' + utznome });
+            continuar = false;
+            break;
+          } else if (dataini.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
+            this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Início Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
+            continuar = false;
+            break;
+          } else if (datafim.getTime() > new Date(data_fim_preparacao + ' ' + hora_fim_preparacao).getTime()) {
+            this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Superior à Data/Hora Fim da Preparação! ' + utznome });
+            continuar = false;
+            break;
+          } else if (datafim.getTime() < new Date(data_ini_preparacao + ' ' + hora_ini_preparacao).getTime()) {
+            this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Data/Hora Fim Pausa Inferior à Data/Hora Início da Preparação! ' + utznome });
+            continuar = false;
+            break;
+          }
+
+        }
       }
       if (!this.validPeriod(dataini, datafim, pausas_array_editar, pausas_array_editar[x].pos)) {
         this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Valide o período das Datas! ' + utznome });
@@ -1218,7 +1309,7 @@ export class OperacaoEmCursoComponent implements OnInit {
       var rp_of_prep_lin = new RP_OF_PREP_LIN();
 
       if (!this.preparacaonovo) {
-        this.RPOFPREPLINService.getbyid2(this.utz_lider.id_OP_CAB).subscribe(result3 => {
+        this.RPOFPREPLINService.getbyid2(this.id_OP_CAB).subscribe(result3 => {
           var countx = Object.keys(result3).length;
 
           if (countx > 0) {
@@ -1276,6 +1367,7 @@ export class OperacaoEmCursoComponent implements OnInit {
       res => {
         this.msgs = [];
         this.msgs.push({ severity: 'success', summary: 'Atualização', detail: 'Atualizado com Sucesso' });
+        this.preparacaonovo = false;
       },
       error => console.log(error));
   }
@@ -1392,11 +1484,11 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.RPOFPARALINService.getbyallUSER(this.utz_lider.id_OP_CAB, this.utz_lider.id).subscribe(
       response => {
         for (var x in response) {
-          var estado = this.estados_array.find(item => item.value == response[x].momento_PARAGEM).label;
+          var estado = this.estados_array.find(item => item.value == response[x].momento_PARAGEM_M2).label;
           this.pausas_array.push({
             datahora_ini: response[x].data_INI_M2 + ' ' + response[x].hora_INI_M2,
             datahora_fim: response[x].data_FIM_M2 + ' ' + response[x].hora_FIM_M2,
-            paragem: response[x].des_PARAGEM,
+            paragem: response[x].des_PARAGEM_M2,
             momento: estado,
             id: response[x].id_PARA_LIN
           });
@@ -1421,9 +1513,9 @@ export class OperacaoEmCursoComponent implements OnInit {
 
         this.estados_pausa = [{ label: "Execução", value: "E" }];
 
-        if (this.data_ini_preparacao != null && this.data_ini_preparacao != '' && this.utz_lider.id == this.id_utz_lider) {
-          this.estados_pausa.push({ label: "Preparação", value: "P" });
-        }
+        //if (this.data_ini_preparacao != null && this.data_ini_preparacao != '' && this.utz_lider.id == this.id_utz_lider) {
+        this.estados_pausa.push({ label: "Preparação", value: "P" });
+        // }
 
         this.pausas_array_editar = [];
         this.displayeditarpausas = true;
@@ -1528,10 +1620,10 @@ export class OperacaoEmCursoComponent implements OnInit {
     var id_op_cab = id_OP_CAB;
     var rp_of_para_lin = new RP_OF_PARA_LIN();
 
-    rp_of_para_lin.data_INI = date_ini;
+    /*rp_of_para_lin.data_INI = date_ini;
     rp_of_para_lin.hora_INI = (time_ini + ":00").substr(0, 8);
     rp_of_para_lin.data_FIM = date_fim;
-    rp_of_para_lin.hora_FIM = (time_fim + ":00").substr(0, 8);
+    rp_of_para_lin.hora_FIM = (time_fim + ":00").substr(0, 8);*/
 
     rp_of_para_lin.data_INI_M1 = null;
     rp_of_para_lin.hora_INI_M1 = null;
@@ -1546,11 +1638,11 @@ export class OperacaoEmCursoComponent implements OnInit {
     rp_of_para_lin.id_UTZ_CRIA = this.utz_lider.id;
     rp_of_para_lin.id_OP_CAB = id_op_cab;
     rp_of_para_lin.tipo_PARAGEM_M2 = item;
-    rp_of_para_lin.tipo_PARAGEM = item;
+    //rp_of_para_lin.tipo_PARAGEM = item;
     rp_of_para_lin.des_PARAGEM_M2 = design;
-    rp_of_para_lin.des_PARAGEM = design;
+    //rp_of_para_lin.des_PARAGEM = design;
     rp_of_para_lin.momento_PARAGEM_M2 = momento;
-    rp_of_para_lin.momento_PARAGEM = momento;
+    //rp_of_para_lin.momento_PARAGEM = momento;
     rp_of_para_lin.estado = "C";
 
     rp_of_para_lin.id_UTZ_MODIF = user;
@@ -1575,6 +1667,246 @@ export class OperacaoEmCursoComponent implements OnInit {
       this.pausas_array_editar.splice(index, 1);
       this.pausas_array_editar = this.pausas_array_editar.slice();
     }
+  }
+
+  //formatar a data para yyyy-mm-dd
+  formatDate(date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+
+  //ao clicar nas teclas 
+  hotkeys(event) {
+    var access = JSON.parse(localStorage.getItem('access'));
+    if (event.keyCode == 73 && event.ctrlKey && event.altKey) {
+      alert('ID_OF_CAB: ' + this.id_of_cab)
+    }
+  }
+
+  atualizarreferencias() {
+    this.confirmationService.confirm({
+      message: 'Pretende atualizar referências?',
+      accept: () => {
+        this.atualizarreferencias2();
+      }, reject: () => {
+      }
+    });
+  }
+
+  //atualoizareferencias
+  atualizarreferencias2() {
+    this.loadingTable = true;
+    this.service.getOF(this.of_num).subscribe(
+      response => {
+        var count = Object.keys(response).length;
+        //se existir uma of vai preencher combobox operações e tabela referencias
+        if (count > 0) {
+          // if (response[0].OFETAT != 3 && response[0].OFETAT != 4) {
+
+          //preenche tabela referencias
+          this.service.getRef(response[0].ofanumenr).subscribe(
+            response2 => {
+              var referencias = [];
+              for (var x in response2) {
+                var perc = 0;
+                if (response2[x].ZPAVAL != null) {
+                  perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
+                }
+                referencias.push({ GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
+                //verifica familia
+                this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias, response[0].ofanumenr);
+              }
+              if (this.defeitos.find(item => item.ref_num == response2[x].PROREF)) {
+                //se existir não faz anda
+              } else {
+                //se não existir insere
+              }
+            },
+            error => {
+              console.log(error);
+              this.loadingTable = false;
+            });
+        }
+        //}
+      },
+      error => { console.log(error); this.loadingTable = false; });
+  }
+
+
+  //verifica FAM
+  veirificafam(codfam, ref, response = null, referencias, OFANUMENR = null) {
+    if (codfam != "" && codfam != null) {
+      this.RPCONFFAMILIACOMPService.getcodfam(codfam).subscribe(
+        response1 => {
+          var count1 = Object.keys(response1).length;
+          if (count1 > 0) {
+            if (response != null) {
+              var perc = null;
+              if (response.ZPAVAL != null) {
+                perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
+              }
+              referencias.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
+              if (this.defeitos.find(item => item.ref_num == response.PROREF)) {
+                //se existir não faz anda
+
+              } else {
+                //se não existir insere
+                this.defeitos.push({
+                  tipo: "C", ref_num: response.PROREF, cor: "rgba(255, 255, 0, 0.78)", ref_des: response.PRODES1 + " " + response.PRODES2
+                  , quant_of: parseInt(this.defeitos[0].quant_of), quant_boas: 0, quant_def_total: 0, quant_control: 0, comp: true
+                });
+                this.defeitos = this.defeitos.slice();
+
+                var refcomp = [];
+                refcomp.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
+                this.criatabelacomp(this.id_of_cab, this.estado_val, refcomp);
+              }
+            }
+            if (OFANUMENR != null) {
+              this.get_filhosprimeiro(OFANUMENR, referencias);
+            } else {
+              this.get_filhos(ref, referencias);
+            }
+          } else {
+            this.loadingTable = false;
+          }
+        },
+        error => { console.log(error); this.loadingTable = false; });
+    } else {
+      this.loadingTable = false;
+    }
+
+  }
+
+
+  //pesquisar componentes
+  get_filhosprimeiro(OFANUMENR, referencias) {
+    this.service.getfilhosprimeiro(OFANUMENR).subscribe(
+      response1 => {
+        var count1 = Object.keys(response1).length;
+        if (count1 > 0) {
+          for (var x in response1) {
+            this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREF, response1[x], referencias);
+          }
+        } else {
+          this.loadingTable = false;
+        }
+      },
+      error => { console.log(error); this.loadingTable = false; });
+  }
+
+  //pesquisar componentes
+  get_filhos(ref, referencias) {
+    this.service.getfilhos(ref).subscribe(
+      response1 => {
+        var count1 = Object.keys(response1).length;
+        if (count1 > 0) {
+          for (var x in response1) {
+            this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x], referencias);
+          }
+        } else {
+          this.loadingTable = false;
+        }
+      },
+      error => { console.log(error); this.loadingTable = false; });
+  }
+
+
+  criatabelacomp(id, estado, proref) {
+    var opnum = 1010;
+
+    var rpof = new RP_OF_CAB;
+    rpof.data_HORA_CRIA = new Date();
+    rpof.estado = estado;
+    rpof.id_OF_CAB_ORIGEM = id;
+    rpof.of_NUM = null;
+    rpof.op_COD = '60';
+    rpof.op_NUM = '';// + opnum;
+    rpof.op_DES = null;
+    rpof.maq_NUM = '000';
+    rpof.maq_NUM_ORIG = '000';
+    rpof.maq_DES = 'MÃO DE OBRA';
+    rpof.id_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["username"];
+    rpof.nome_UTZ_CRIA = JSON.parse(localStorage.getItem('user'))["name"]
+    rpof.of_OBS = null;
+    rpof.versao_MODIF = 0;
+    rpof.sec_DES = this.sec_des;
+    rpof.sec_NUM = this.sec_num;
+    rpof.op_PREVISTA = "2";
+    rpof.op_COD_ORIGEM = '60';
+
+    this.createRPOFCABComp(rpof, estado, proref)
+
+    //opnum = opnum + 10;
+  }
+
+  createRPOFCABComp(rpof, estado, ref) {
+
+    this.RPOFCABService.create(rpof).subscribe(
+      res => {
+        this.criatabelaRPOFOPCAB(res.id_OF_CAB, estado, true, ref);
+      },
+      error => console.log(error));
+  }
+
+
+  //criar cabeçalho Operação OF
+  criatabelaRPOFOPCAB(id_OF_CAB, estado, comp, ref = null) {
+
+    var rpofopcab = new RP_OF_OP_CAB;
+    rpofopcab.id_OF_CAB = id_OF_CAB;
+    this.RPOFOPCABService.create(rpofopcab).subscribe(
+      res => {
+
+        if (comp) {
+          this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);
+        } else {
+          /* this.criartabelaRPOPFUNC(res.id_OP_CAB, estado, comp);
+           this.criatabelaRPOFOPLIN(res.id_OP_CAB, comp, ref);*/
+        }
+      },
+      error => console.log(error));
+
+
+  }
+
+  criatabelaRPOFOPLIN(id_OP_CAB, comp, refcomp) {
+    var ref = refcomp[0];
+    var rpofoplin = new RP_OF_OP_LIN;
+    rpofoplin.id_OP_CAB = id_OP_CAB;
+    rpofoplin.ref_NUM = ref.codigo;
+    rpofoplin.ref_DES = ref.design;
+    rpofoplin.ref_IND = ref.INDREF;
+    rpofoplin.ref_VAR1 = ref.var1;
+    rpofoplin.ref_VAR2 = ref.var2;
+    rpofoplin.quant_BOAS_TOTAL = 0;
+    rpofoplin.quant_DEF_TOTAL = 0;
+    rpofoplin.quant_BOAS_TOTAL_M1 = 0;
+    rpofoplin.quant_DEF_TOTAL_M1 = 0;
+    rpofoplin.quant_BOAS_TOTAL_M2 = 0;
+    rpofoplin.quant_DEF_TOTAL_M2 = 0;
+    rpofoplin.quant_OF = parseInt(this.defeitos[0].quant_of);
+    rpofoplin.perc_OBJETIV = ref.perc_obj;
+    rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
+    rpofoplin.gescod = ref.GESCOD;
+    this.insereref(rpofoplin, true);
+  }
+
+  insereref(rpofoplin, comp) {
+    this.RPOFOPLINService.create(rpofoplin).subscribe(
+      res => {
+      },
+      error => console.log(error));
   }
 
 

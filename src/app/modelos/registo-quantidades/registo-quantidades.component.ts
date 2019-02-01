@@ -298,7 +298,7 @@ export class RegistoQuantidadesComponent implements OnInit {
         rp_of_op_etiqueta.quant_BOAS = 0;
         rp_of_op_etiqueta.quant_DEF = 0;
         //create
-        this.RPOFOPETIQUETAService.create(rp_of_op_etiqueta).then(
+        this.RPOFOPETIQUETAService.create(rp_of_op_etiqueta).subscribe(
           res => {
 
           },

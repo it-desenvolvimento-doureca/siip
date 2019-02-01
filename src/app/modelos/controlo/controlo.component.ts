@@ -68,6 +68,40 @@ export class ControloComponent implements OnInit {
   constructor(private ofservice: ofService, private AppGlobals: AppGlobals, private service: utilizadorService, private GEREVENTOService: GEREVENTOService, private router: Router, private RPOFOPLINService: RPOFOPLINService, private RPOFCABService: RPOFCABService) { }
 
   ngOnInit() {
+    var campos = [{ nome: "Data Início", value: "c.DATA_INI_M2" },
+    { nome: "Data Início Desc", value: "c.DATA_INI_M2 desc" },
+    { nome: "Hora Início", value: "c.HORA_INI_M2" },
+    { nome: "Hora Início Desc", value: "c.HORA_INI_M2 desc" },
+    { nome: "Data Fim", value: "c.DATA_FIM_M2" },
+    { nome: "Data Fim Desc", value: "c.DATA_FIM_M2 desc" },
+    { nome: "Hora Fim", value: "c.HORA_FIM_M2 desc" },
+    { nome: "Hora Fim Desc", value: "c.HORA_FIM_M2 desc" },
+    { nome: "Estado", value: "c.ESTADO" },
+    { nome: "Estado Desc", value: "c.ESTADO desc" },
+    { nome: "OF", value: "a.OF_NUM" },
+    { nome: "OF Desc", value: "a.OF_NUM desc" },
+    { nome: "Número Operação", value: "a.OP_COD_ORIGEM" },
+    { nome: "Número Operação Desc", value: "a.OP_COD_ORIGEM desc" },
+    { nome: "Operação", value: "a.OP_DES" },
+    { nome: "Operação Desc", value: "a.OP_DES desc" },
+    { nome: "Máquina", value: "a.MAQ_DES" },
+    { nome: "Máquina Desc", value: "a.MAQ_DES desc" },
+    { nome: "Número Máquina", value: "a.MAQ_NUM" },
+    { nome: "Número Máquina Desc", value: "a.MAQ_NUM desc" },
+    { nome: "Funcionário", value: "c.NOME_UTZ_CRIA" },
+    { nome: "Funcionário Desc", value: "c.NOME_UTZ_CRIA desc" },
+    { nome: "Número Funcionário", value: "c.ID_UTZ_CRIA" },
+    { nome: "Número Funcionário Desc", value: "c.ID_UTZ_CRIA desc" },
+    { nome: "Tempo Produção", value: "b.TEMPO_EXEC_TOTAL_M2" },
+    { nome: "Tempo Produção Desc", value: "b.TEMPO_EXEC_TOTAL_M2 desc" },
+    //{ nome: "Referência", value: "c.REF_NUM" },
+    //{ nome: "Referência Desc", value: "c.REF_NUM desc" },
+    //{ nome: "Nome Referência", value: "c.REF_DES" },
+    //{ nome: "Nome Referência Desc", value: "c.REF_DES desc" },
+    { nome: "Estado", value: "c.ESTADO" },
+    { nome: "Estado Desc", value: "c.ESTADO desc" }];
+    this.campos = campos;
+
     this.count2 = 0;
     this.pesquisa = [];
     this.num_rows = this.items;
@@ -88,7 +122,14 @@ export class ControloComponent implements OnInit {
         if (this.AppGlobals.getfiltros("seccao")) { this.seccao = this.AppGlobals.getfiltros("seccao"); }
         if (this.AppGlobals.getfiltros("estado")) { this.estado = this.AppGlobals.getfiltros("estado"); }
         if (this.AppGlobals.getfiltros("pesquisa")) { this.pesquisa = this.AppGlobals.getfiltros("pesquisa"); }
-
+        if (this.seccao.length > 0) {
+          var secc_n = [];
+          for (var x in this.seccao) {
+            secc_n.push("'" + this.seccao[x] + "'")
+          }
+          this.sec_num_user = secc_n.toString();
+          this.AppGlobals.setfiltros("seccao", this.seccao);
+        }
         var count = 0;
         for (var n in this.pesquisa) {
           if (this.pesquisa[n] != "" && this.pesquisa[n] != null) {
@@ -160,21 +201,22 @@ export class ControloComponent implements OnInit {
       this.dados_old = this.dados;
       //this.dados = [];
       //this.items = 10;
-      this.RPOFCABService.getAll(this.sec_num_user).subscribe(
+      this.count3 = 0;
+      this.RPOFCABService.getAll2(this.sec_num_user, this.start_row).subscribe(
         res => {
-          this.count = 0;
+          //this.count = 0;
           var total = Object.keys(res).length;
           if (total > 0) {
-            if (this.start_row >= total) this.start_row = total;
+            //if (this.start_row >= total) this.start_row = total;
             if (this.num_rows >= total) { this.num_rows = total; this.hiddenvermais = true; }
-
-            for (var y = this.start_row; y < this.num_rows; y++) {
-              if (res[y][0].id_OF_CAB_ORIGEM == null) {
-                this.preenchetabela(this.count2, this.num_rows, res, y, this.count)
-                this.count++;
-                this.count2++;
-              }
-            }
+            this.preenchetabela(res)
+            /*for (var y = 0; y < this.num_rows; y++) {
+              //if (res[y][0].id_OF_CAB_ORIGEM == null) {
+              this.preenchetabela(res)
+              // this.count++;
+              // this.count2++;
+              //}
+            }*/
           } else {
             this.tabela = [];
             this.hiddenvermais = true;
@@ -191,69 +233,107 @@ export class ControloComponent implements OnInit {
   }
 
 
-  preenchetabela(count2, total, res, y, count) {
+  preenchetabela(res) {
 
-    this.RPOFOPLINService.getAllbyid(res[y][1].id_OP_CAB).subscribe(
-      response => {
-        var artigos = [];
-        var refs = [];
-        var qtd_of = [];
-        var qtd_boas = [];
-        var total_def = [];
-        var perc_def = [];
-        var perc_obj = [];
-        var perc_def_val = 0;
-        var perc_obj_val = 0;
-        var inser = false;
-        //var estado = "";
 
-        var cor_of = "green";
+    var artigos = [];
+    var refs = [];
+    var qtd_of = [];
+    var qtd_boas = [];
+    var total_def = [];
+    var perc_def = [];
+    var perc_obj = [];
+    var perc_def_val = 0;
+    var perc_obj_val = 0;
+    var inser = false;
+    var dtfim = [];
+    var hfim = [];
+    var dt_inicio = [];
+    var hora_inicio = [];
+    var func = [];
+    var qtd_func = 0;
+    var tempo_prod = [];
+    var estado = [];
+    var cor_tempo_prod1 = "green";
+    var dtfim2 = null;
+    var hfim2 = null;
 
-        for (var x in response) {
-          // var cor_of = "green";
-          var cor_tempo_prod = "green";
-          var cor_estado = "green";
-          var cor_qtd_of = "";
-          var cor_total_def = "";
-          var cor_perc_def = "";
-          var val_perc_def = 0;
+    var cor_tempo_prod = "green";
+    var cor_estado = "green";
+    //var estado = "";
 
-          //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
-          if ((response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2) > response[x][0].quant_OF) {
-            cor_qtd_of = "yellow";
-            cor_estado = "yellow";
-            if (cor_of != "red") cor_of = "yellow";
-          }
+    var cor_of = "green";
+    var idof = null;
+    for (var x in res) {
+      idof = res[x][0];
+      cor_tempo_prod = "green";
+      cor_tempo_prod1 = "green";
 
-          //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
-          val_perc_def = (response[x][0].quant_DEF_TOTAL_M2 / (response[x][0].quant_BOAS_TOTAL_M2 + response[x][0].quant_DEF_TOTAL_M2)) * 100;
-          //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
-          if (isNaN(val_perc_def)) val_perc_def = 0;
+      //referencias
+      if (res[x][2] != null) {
+        // var cor_of = "green";
 
-          var val = response[x][0].perc_OBJETIV;
-          if (val == null) val = 0;
+        var cor_qtd_of = "";
+        var cor_total_def = "";
+        var cor_perc_def = "";
+        var val_perc_def = 0;
 
-          if (val_perc_def == val) {
-           // cor_total_def = "yellow";
-           // cor_perc_def = "yellow";
-           // if (cor_of != "red") cor_of = "yellow";
+        //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
+        if ((res[x][19] + res[x][20]/* def*/) > res[x][18]) {
+          cor_qtd_of = "yellow";
+          cor_estado = "yellow";
+          if (cor_of != "red") cor_of = "yellow";
+        }
 
-          }
+        //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
+        val_perc_def = (res[x][20] / (res[x][19] + res[x][20])) * 100;
+        //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
+        if (isNaN(val_perc_def)) val_perc_def = 0;
 
-          if (val_perc_def > val) {
-            cor_total_def = "red";
-            cor_perc_def = "red";
-            cor_of = "red";
+        var val = res[x][22];
+        if (val == null) val = 0;
 
-          }
+        if (val_perc_def == val) {
+          // cor_total_def = "yellow";
+          // cor_perc_def = "yellow";
+          // if (cor_of != "red") cor_of = "yellow";
 
-          var hora1 = new Date(res[y][2].data_INI_M2 + "," + res[y][2].hora_INI_M2.slice(0, 5))
+        }
+
+        if (val_perc_def > val) {
+          cor_total_def = "red";
+          cor_perc_def = "red";
+          cor_of = "red";
+
+        }
+
+
+
+        artigos.push(res[x][17].substring(0, 32));
+        refs.push(res[x][16]);
+        qtd_of.push({ value: res[x][18], cor: cor_qtd_of });
+        qtd_boas.push(res[x][19]);
+        total_def.push({ value: res[x][20], cor: cor_total_def });
+        perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString() + "%", cor: cor_perc_def });
+        var perc = 0;
+        if (res[x][22] != null) {
+          perc = res[x][22];
+        }
+        perc_obj.push(perc.toFixed(2).toLocaleString() + "%");
+      }
+
+
+      //utilizadores
+      if (res[x][3] != null) {
+
+        if (res[x][24] == res[x][9]) {
+          var hora1 = new Date(res[x][11] + "," + res[x][12].slice(0, 8))
           var hora2 = new Date();
 
           var timedif1 = hora2.getTime() - hora1.getTime();
           //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
           //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
-          if (timedif1 > 57600000 && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
+          if (timedif1 > 57600000 && res[x][15] == null) {
             cor_tempo_prod = "red";
             cor_estado = "red";
             cor_of = "red";
@@ -265,171 +345,171 @@ export class ControloComponent implements OnInit {
           */
 
           //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
-          if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
+          if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[x][15] == null) {
             cor_tempo_prod = "yellow";
             cor_estado = "yellow";
             if (cor_of != "red") cor_of = "yellow";
           }
-
-          artigos.push(response[x][0].ref_DES.substring(0, 32));
-          refs.push(response[x][0].ref_NUM);
-          qtd_of.push({ value: response[x][0].quant_OF, cor: cor_qtd_of });
-          qtd_boas.push(response[x][0].quant_BOAS_TOTAL_M2);
-          total_def.push({ value: response[x][0].quant_DEF_TOTAL_M2, cor: cor_total_def });
-          perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString() + "%", cor: cor_perc_def });
-          var perc = 0;
-          if (response[x][0].perc_OBJETIV != null) {
-            perc = response[x][0].perc_OBJETIV;
-          }
-          perc_obj.push(perc.toFixed(2).toLocaleString() + "%");
         }
 
-        this.RPOFCABService.getRP_OF_CABbyid(res[y][0].id_OF_CAB).subscribe(
-          res5 => {
 
-            this.inserelinhas(count2, total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado);
+        if (res[x][13] != null) dtfim2 = this.formatDate(res[x][13]);
+        if (res[x][14] != null) hfim2 = res[x][14].slice(0, 8);
 
-          },
-          error => console.log(error));
-
-
-      },
-      error => console.log(error));
-  }
-
-  inserelinhas(count2, total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado) {
-    var estado = [];
-
-    var dtfim = [];
-    var hfim = [];
-    var dt_inicio = [];
-    var hora_inicio = [];
-    var func = [];
-    var qtd_func = 0;
-    var tempo_prod = [];
-
-
-    for (var n in res5) {
-      var cor_tempo_prod1 = "green";
-      if (res5[n][1].data_FIM_M2 != null) var dtfim2 = this.formatDate(res5[n][1].data_FIM_M2);
-      if (res5[n][1].hora_FIM_M2 != null) var hfim2 = res5[n][1].hora_FIM_M2.slice(0, 5);
-
-      dtfim.push(dtfim2);
-      hfim.push(hfim2);
-      dt_inicio.push(this.formatDate(res5[n][1].data_INI_M2));
-      hora_inicio.push(res5[n][1].hora_INI_M2.slice(0, 5));
+        dtfim.push(dtfim2);
+        hfim.push(hfim2);
+        dt_inicio.push(this.formatDate(res[x][11]));
+        hora_inicio.push(res[x][12].slice(0, 8));
 
 
 
-      var hora1 = new Date(res5[n][1].data_INI_M2 + "," + res5[n][1].hora_INI_M2.slice(0, 5));
-      var hora2 = null;
-      if (res5[n][1].data_FIM_M2 == null) {
-        hora2 = new Date();
-      } else {
-        hora2 = new Date(dtfim2 + "," + hfim2);
-      }
-
-      var timedif1 = hora2.getTime() - hora1.getTime();
-      //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
-      //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
-      if (timedif1 > 57600000 && res5[n][0].tempo_EXEC_TOTAL_M2 == null) {
-        cor_tempo_prod1 = "red";
-        cor_estado = "red";
-        cor_of = "red";
-      }
-      //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
-      if ((timedif1 < 900000 || timedif1 > 28800000) && res5[n][0].tempo_EXEC_TOTAL_M2 != null) {
-        cor_tempo_prod1 = "yellow";
-        cor_estado = "yellow";
-        if (cor_of != "red") cor_of = "yellow";
-      }
-      func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 14));
-
-      if (res5[n][1].data_FIM_M2 == null) qtd_func++;
-      tempo_prod.push({ tempo: res5[n][0].tempo_EXEC_TOTAL_M2, cor: cor_tempo_prod1 });
-
-      if (res5[n][1].estado == 'C') estado.push("Concluido");
-      if (res5[n][1].estado == 'I') estado.push("Iniciado");
-      if (res5[n][1].estado == 'M') estado.push("Modificado");
-      if (res5[n][1].estado == 'S') estado.push("Pausa");
-      if (res5[n][1].estado == 'E') estado.push("Execução");
-      if (res5[n][1].estado == 'P') estado.push("Preparação");
-      if (res5[n][1].estado == 'R') estado.push("Em Edição");
-
-      if (res5[n][1].estado == 'A') {
-        estado.push("Anulado");
-        cor_estado = "red";
-        cor_of = "red";
-      }
-
-    }
-
-
-
-
-    var total_lidas = false;
-    if (res[y][3] == res[y][4]) total_lidas = true;
-
-    this.dados.push({
-      pos: count2,
-      id_of_cab: res[y][0].id_OF_CAB,
-      of: res[y][0].of_NUM,
-      operacao: res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim(),
-      maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
-      func: func,
-      id_func: res[y][2].id_UTZ_CRIA,
-      qtd_func: qtd_func,
-      ref: refs,
-      artigo: artigos,
-      dt_inicio: dt_inicio,
-      hora_inicio: hora_inicio,
-      dt_fim: dtfim,
-      hora_fim: hfim,
-      tempo_prod: tempo_prod,
-      qtd_of: qtd_of,
-      qtd_boas: qtd_boas,
-      total_def: total_def,
-      perc_def: perc_def,
-      perc_obj: perc_obj,
-      estado: estado,
-      cor_of: cor_of,
-      //cor_tempo_prod: cor_tempo_prod1,
-      cor_estado: cor_estado,
-      total_lidas: total_lidas,
-      mensagens: res[y][3]
-    });
-    this.count3++;
-    if (this.count3 == this.num_rows) {
-      this.atualizacao = true;
-      if (this.dados.find(item => item.pos == count)) {
-        this.dados.find(item => item.pos == count).cor_estado = cor_estado;
-        this.dados.find(item => item.pos == count).cor_of = cor_of;
-      }
-
-      this.tabela = this.dados;
-      this.tabela = this.tabela.slice();
-
-
-      this.ordernar();
-
-      var sorttab = this.AppGlobals.getfiltros("sorttabela");
-
-      this.multiSortMeta = null;
-      if (sorttab && sorttab.length > 0) {
-        this.multiSortMeta = [];
-        for (var v in sorttab) {
-          //this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
-          this.dataTableComponent.sortField = sorttab[v].field;
-          this.dataTableComponent.sortOrder = sorttab[v].order;
+        var hora1 = new Date(res[x][11] + "," + res[x][12].slice(0, 8));
+        var hora22 = null;
+        if (res[x][13] == null) {
+          hora22 = new Date();
+        } else {
+          hora22 = new Date(dtfim2 + "," + hfim2);
         }
 
+        var timedif1 = hora22.getTime() - hora1.getTime();
+        //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
+        //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
+        if (timedif1 > 57600000 && res[x][15] == null) {
+          cor_tempo_prod1 = "red";
+          cor_estado = "red";
+          cor_of = "red";
+        }
+        //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
+        if ((timedif1 < 900000 || timedif1 > 28800000) && res[x][15] != null) {
+          cor_tempo_prod1 = "yellow";
+          cor_estado = "yellow";
+          if (cor_of != "red") cor_of = "yellow";
+        }
+        func.push(res[x][9] + ' - ' + (res[x][10]).substring(0, 14));
+
+        if (res[x][13] == null) qtd_func++;
+        tempo_prod.push({ tempo: res[x][15], cor: cor_tempo_prod1 });
+
+        if (res[x][23] == 'C') estado.push("Concluido");
+        if (res[x][23] == 'I') estado.push("Iniciado");
+        if (res[x][23] == 'M') estado.push("Modificado");
+        if (res[x][23] == 'S') estado.push("Pausa");
+        if (res[x][23] == 'E') estado.push("Execução");
+        if (res[x][23] == 'P') estado.push("Preparação");
+        if (res[x][23] == 'R') estado.push("Em Edição");
+
+        if (res[x][23] == 'A') {
+          estado.push("Anulado");
+          cor_estado = "red";
+          cor_of = "red";
+        }
+
+        var operacao = res[x][5] + " - " + res[x][6].trim();
+        var maquina = res[x][7] + ' - ' + res[x][8];
+        var num_of = res[x][4];
+        var messlidas = res[x][25];
+
+        var total_lidas = false;
+        if (res[x][25] == res[x][26]) total_lidas = true;
+        var id_func = res[x][24];
       }
+
+
+
+      if (!res[parseInt(x) + 1] || res[parseInt(x) + 1][0] != idof) {
+        this.dados.push({
+          pos: this.count,
+          id_of_cab: res[x][0],
+          of: num_of,
+          operacao: operacao,
+          maquina: maquina,
+          func: func,
+          id_func: id_func,
+          qtd_func: qtd_func,
+          ref: refs,
+          artigo: artigos,
+          dt_inicio: dt_inicio,
+          hora_inicio: hora_inicio,
+          dt_fim: dtfim,
+          hora_fim: hfim,
+          tempo_prod: tempo_prod,
+          qtd_of: qtd_of,
+          qtd_boas: qtd_boas,
+          total_def: total_def,
+          perc_def: perc_def,
+          perc_obj: perc_obj,
+          estado: estado,
+          cor_of: cor_of,
+          //cor_tempo_prod: cor_tempo_prod1,
+          cor_estado: cor_estado,
+          total_lidas: total_lidas,
+          mensagens: messlidas
+        });
+
+
+        artigos = [];
+        refs = [];
+        qtd_of = [];
+        qtd_boas = [];
+        total_def = [];
+        perc_def = [];
+        perc_obj = [];
+        perc_def_val = 0;
+        perc_obj_val = 0;
+        dtfim = [];
+        hfim = [];
+        dt_inicio = [];
+        hora_inicio = [];
+        func = [];
+        qtd_func = 0;
+        tempo_prod = [];
+        estado = [];
+        cor_tempo_prod1 = "green";
+        dtfim2 = null;
+        hfim2 = null;
+        cor_of = "green";
+        cor_tempo_prod = "green";
+        cor_estado = "green";
+        cor_tempo_prod1 = "green";
+        this.count++;
+      }
+
 
 
     }
 
+    //if (this.count3 == this.num_rows) {
+    this.atualizacao = true;
+    /*if (this.dados.find(item => item.pos == count)) {
+      this.dados.find(item => item.pos == count).cor_estado = cor_estado;
+      this.dados.find(item => item.pos == count).cor_of = cor_of;
+    }*/
+
+    this.tabela = this.dados;
+    this.tabela = this.tabela.slice();
+
+
+    this.ordernar();
+
+    var sorttab = this.AppGlobals.getfiltros("sorttabela");
+
+    this.multiSortMeta = null;
+    if (sorttab && sorttab.length > 0) {
+      this.multiSortMeta = [];
+      for (var v in sorttab) {
+        //this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
+        this.dataTableComponent.sortField = sorttab[v].field;
+        this.dataTableComponent.sortOrder = sorttab[v].order;
+      }
+
+      //}
+
+
+    }
 
   }
+
+
 
   apaga() {
     this.dataTableComponent.reset();
@@ -536,6 +616,7 @@ export class ControloComponent implements OnInit {
           innerObj[n] = new Date(this.pesquisa[n]).toLocaleDateString();
         } else if (n == "ordenacao") {
           var ord = []
+
           for (var v in this.pesquisa[n]) {
             ord.push(this.campos.find(item => item.nome == this.pesquisa[n][v].nome).value)
           }
@@ -567,17 +648,18 @@ export class ControloComponent implements OnInit {
       this.dados_old = this.dados;
       //this.dados = [];
       //this.items = 10;
-
-      this.RPOFCABService.pesquisa_avancada(data).subscribe(
+      this.count3 = 0;
+      this.RPOFCABService.pesquisa_avancada(data, this.start_row).subscribe(
         res => {
           this.count = 0;
           var total = Object.keys(res).length;
           if (total > 0) {
-            if (this.start_row >= total) this.start_row = total;
+            //if (this.start_row >= total) this.start_row = total;
             if (this.num_rows >= total) { this.num_rows = total; this.hiddenvermais = true; }
-            for (var y = this.start_row; y < this.num_rows; y++) {
+
+            for (var y = 0; y < this.num_rows; y++) {
               if (res[y][0].id_OF_CAB_ORIGEM == null) {
-                this.preenchetabela(this.count2, this.num_rows, res, y, this.count)
+                this.preenchetabela2(this.count2, this.num_rows, res, y, this.count)
                 this.count++;
                 this.count2++;
               }
@@ -620,7 +702,7 @@ export class ControloComponent implements OnInit {
        this.tabela = this.dados_old.slice(0, this.items);
      }
      this.ordernar();*/
-    this.num_rows += this.items;
+    //this.num_rows += this.items;
     this.start_row += this.items;
 
     var count = 0;
@@ -710,40 +792,8 @@ export class ControloComponent implements OnInit {
 
   search(event) {
     let query = event.query;
-    var campos = [{ nome: "Data Início", value: "c.DATA_INI_M2" },
-    { nome: "Data Início Desc", value: "c.DATA_INI_M2 desc" },
-    { nome: "Hora Início", value: "c.HORA_INI_M2" },
-    { nome: "Hora Início Desc", value: "c.HORA_INI_M2 desc" },
-    { nome: "Data Fim", value: "c.DATA_FIM_M2" },
-    { nome: "Data Fim Desc", value: "c.DATA_FIM_M2 desc" },
-    { nome: "Hora Fim", value: "c.HORA_FIM_M2 desc" },
-    { nome: "Hora Fim Desc", value: "c.HORA_FIM_M2 desc" },
-    { nome: "Estado", value: "c.ESTADO" },
-    { nome: "Estado Desc", value: "c.ESTADO desc" },
-    { nome: "OF", value: "a.OF_NUM" },
-    { nome: "OF Desc", value: "a.OF_NUM desc" },
-    { nome: "Número Operação", value: "a.OP_COD_ORIGEM" },
-    { nome: "Número Operação Desc", value: "a.OP_COD_ORIGEM desc" },
-    { nome: "Operação", value: "a.OP_DES" },
-    { nome: "Operação Desc", value: "a.OP_DES desc" },
-    { nome: "Máquina", value: "a.MAQ_DES" },
-    { nome: "Máquina Desc", value: "a.MAQ_DES desc" },
-    { nome: "Número Máquina", value: "a.MAQ_NUM" },
-    { nome: "Número Máquina Desc", value: "a.MAQ_NUM desc" },
-    { nome: "Funcionário", value: "c.NOME_UTZ_CRIA" },
-    { nome: "Funcionário Desc", value: "c.NOME_UTZ_CRIA desc" },
-    { nome: "Número Funcionário", value: "c.ID_UTZ_CRIA" },
-    { nome: "Número Funcionário Desc", value: "c.ID_UTZ_CRIA desc" },
-    { nome: "Tempo Produção", value: "h.TEMPO_EXEC_TOTAL_M2" },
-    { nome: "Tempo Produção Desc", value: "h.TEMPO_EXEC_TOTAL_M2 desc" },
-    { nome: "Referência", value: "a.REF_NUM" },
-    { nome: "Referência Desc", value: "a.REF_NUM desc" },
-    { nome: "Nome Referência", value: "a.REF_DES" },
-    { nome: "Nome Referência Desc", value: "a.REF_DES desc" },
-    { nome: "Estado", value: "c.ESTADO" },
-    { nome: "Estado Desc", value: "c.ESTADO desc" }];
-    this.campos = campos;
-    this.results = this.filterCountry(query, campos);
+
+    this.results = this.filterCountry(query, this.campos);
   }
 
   filterCountry(query, campos: any[]): any[] {
@@ -764,6 +814,248 @@ export class ControloComponent implements OnInit {
     if (this.pesquisa.ordenacao.find(item => item.nome.replace("Desc", "").trim().toLowerCase() == event.nome.replace("Desc", "").trim().toLowerCase() && item.nome != event.nome)) {
       this.pesquisa.ordenacao.splice(this.pesquisa.ordenacao.length - 1, 1)
     }
+
+  }
+
+  preenchetabela2(count2, total, res, y, count) {
+
+    this.RPOFOPLINService.getAllbyidcontrolo(res[y][1].id_OP_CAB).subscribe(
+      response => {
+        var artigos = [];
+        var refs = [];
+        var qtd_of = [];
+        var qtd_boas = [];
+        var total_def = [];
+        var perc_def = [];
+        var perc_obj = [];
+        var perc_def_val = 0;
+        var perc_obj_val = 0;
+        var inser = false;
+        //var estado = "";
+
+        var cor_of = "green";
+
+        for (var x in response) {
+          // var cor_of = "green";
+          var cor_tempo_prod = "green";
+          var cor_estado = "green";
+          var cor_qtd_of = "";
+          var cor_total_def = "";
+          var cor_perc_def = "";
+          var val_perc_def = 0;
+
+          //Amarelo se Quantidade Boas + Total de defeitos > Quantidade OF;
+          if ((response[x].quant_BOAS_TOTAL_M2 + response[x].quant_DEF_TOTAL_M2) > response[x].quant_OF) {
+            cor_qtd_of = "yellow";
+            cor_estado = "yellow";
+            if (cor_of != "red") cor_of = "yellow";
+          }
+
+          //Total Defeitos e % Defeitos: Amarelo se % Defeitos >= % Objetivos;
+          val_perc_def = (response[x].quant_DEF_TOTAL_M2 / (response[x].quant_BOAS_TOTAL_M2 + response[x].quant_DEF_TOTAL_M2)) * 100;
+          //val_perc_def = ((response[x][0].quant_DEF_TOTAL_M2 * 100) / response[x][0].quant_OF_M2) || 0;
+          if (isNaN(val_perc_def)) val_perc_def = 0;
+
+          var val = response[x].perc_OBJETIV;
+          if (val == null) val = 0;
+
+          if (val_perc_def == val) {
+            // cor_total_def = "yellow";
+            // cor_perc_def = "yellow";
+            // if (cor_of != "red") cor_of = "yellow";
+
+          }
+
+          if (val_perc_def > val) {
+            cor_total_def = "red";
+            cor_perc_def = "red";
+            cor_of = "red";
+
+          }
+
+          var hora1 = new Date(res[y][2].data_INI_M2 + "," + res[y][2].hora_INI_M2.slice(0, 8))
+          var hora2 = new Date();
+
+          var timedif1 = hora2.getTime() - hora1.getTime();
+          //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
+          //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
+          if (timedif1 > 57600000 && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
+            cor_tempo_prod = "red";
+            cor_estado = "red";
+            cor_of = "red";
+          }
+          /*
+            var tempo = res[y][1].tempo_EXEC_TOTAL;
+            var splitted_pausa = tempo.split(":", 3);
+            var total_tempo = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+          */
+
+          //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
+          if ((timedif1 < 900000 || timedif1 > 28800000 && timedif1 < 57600000) && res[y][1].tempo_EXEC_TOTAL_M2 == null) {
+            cor_tempo_prod = "yellow";
+            cor_estado = "yellow";
+            if (cor_of != "red") cor_of = "yellow";
+          }
+
+          artigos.push(response[x].ref_DES.substring(0, 32));
+          refs.push(response[x].ref_NUM);
+          qtd_of.push({ value: response[x].quant_OF, cor: cor_qtd_of });
+          qtd_boas.push(response[x].quant_BOAS_TOTAL_M2);
+          total_def.push({ value: response[x].quant_DEF_TOTAL_M2, cor: cor_total_def });
+          perc_def.push({ value: (val_perc_def.toFixed(2)).toLocaleString() + "%", cor: cor_perc_def });
+          var perc = 0;
+          if (response[x].perc_OBJETIV != null) {
+            perc = response[x].perc_OBJETIV;
+          }
+          perc_obj.push(perc.toFixed(2).toLocaleString() + "%");
+        }
+
+        this.RPOFCABService.getRP_OF_CABbyid(res[y][0].id_OF_CAB).subscribe(
+          res5 => {
+
+            this.inserelinhas(count2, total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado);
+
+          },
+          error => console.log(error));
+
+
+      },
+      error => console.log(error));
+  }
+
+  inserelinhas(count2, total, count, res5, res, y, response, x, refs, artigos, qtd_of, qtd_boas, total_def, perc_def, perc_obj, cor_of, cor_tempo_prod, cor_estado) {
+    var estado = [];
+
+    var dtfim = [];
+    var hfim = [];
+    var dt_inicio = [];
+    var hora_inicio = [];
+    var func = [];
+    var qtd_func = 0;
+    var tempo_prod = [];
+
+
+    for (var n in res5) {
+      var cor_tempo_prod1 = "green";
+      var dtfim2 = null;
+      var hfim2 = null;
+      if (res5[n][1].data_FIM_M2 != null) dtfim2 = this.formatDate(res5[n][1].data_FIM_M2);
+      if (res5[n][1].hora_FIM_M2 != null) hfim2 = res5[n][1].hora_FIM_M2.slice(0, 8);
+
+      dtfim.push(dtfim2);
+      hfim.push(hfim2);
+      dt_inicio.push(this.formatDate(res5[n][1].data_INI_M2));
+      hora_inicio.push(res5[n][1].hora_INI_M2.slice(0, 8));
+
+
+
+      var hora1 = new Date(res5[n][1].data_INI_M2 + "," + res5[n][1].hora_INI_M2.slice(0, 8));
+      var hora2 = null;
+      if (res5[n][1].data_FIM_M2 == null) {
+        hora2 = new Date();
+      } else {
+        hora2 = new Date(dtfim2 + "," + hfim2);
+      }
+
+      var timedif1 = hora2.getTime() - hora1.getTime();
+      //Estado: Amarelo se pelo menos 1 dos campos anteriores estiver a amarelo; Vermelho se tempo de produção tiver a vermelho ou estado = Eliminado;
+      //Vermelho se data/hora início a mais de 16h e ainda não foi registada a data/hora de fim;
+      if (timedif1 > 57600000 && res5[n][0].tempo_EXEC_TOTAL_M2 == null) {
+        cor_tempo_prod1 = "red";
+        cor_estado = "red";
+        cor_of = "red";
+      }
+      //Amarelo se tempo menor de 15 minutos ou maior que 8 horas;
+      if ((timedif1 < 900000 || timedif1 > 28800000) && res5[n][0].tempo_EXEC_TOTAL_M2 != null) {
+        cor_tempo_prod1 = "yellow";
+        cor_estado = "yellow";
+        if (cor_of != "red") cor_of = "yellow";
+      }
+      func.push(res5[n][1].id_UTZ_CRIA + ' - ' + (res5[n][1].nome_UTZ_CRIA).substring(0, 14));
+
+      if (res5[n][1].data_FIM_M2 == null) qtd_func++;
+      tempo_prod.push({ tempo: res5[n][0].tempo_EXEC_TOTAL_M2, cor: cor_tempo_prod1 });
+
+      if (res5[n][1].estado == 'C') estado.push("Concluido");
+      if (res5[n][1].estado == 'I') estado.push("Iniciado");
+      if (res5[n][1].estado == 'M') estado.push("Modificado");
+      if (res5[n][1].estado == 'S') estado.push("Pausa");
+      if (res5[n][1].estado == 'E') estado.push("Execução");
+      if (res5[n][1].estado == 'P') estado.push("Preparação");
+      if (res5[n][1].estado == 'R') estado.push("Em Edição");
+
+      if (res5[n][1].estado == 'A') {
+        estado.push("Anulado");
+        cor_estado = "red";
+        cor_of = "red";
+      }
+
+    }
+
+
+
+
+    var total_lidas = false;
+    if (res[y][3] == res[y][4]) total_lidas = true;
+
+    this.dados.push({
+      pos: count2,
+      id_of_cab: res[y][0].id_OF_CAB,
+      of: res[y][0].of_NUM,
+      operacao: res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim(),
+      maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
+      func: func,
+      id_func: res[y][2].id_UTZ_CRIA,
+      qtd_func: qtd_func,
+      ref: refs,
+      artigo: artigos,
+      dt_inicio: dt_inicio,
+      hora_inicio: hora_inicio,
+      dt_fim: dtfim,
+      hora_fim: hfim,
+      tempo_prod: tempo_prod,
+      qtd_of: qtd_of,
+      qtd_boas: qtd_boas,
+      total_def: total_def,
+      perc_def: perc_def,
+      perc_obj: perc_obj,
+      estado: estado,
+      cor_of: cor_of,
+      //cor_tempo_prod: cor_tempo_prod1,
+      cor_estado: cor_estado,
+      total_lidas: total_lidas,
+      mensagens: res[y][3]
+    });
+    this.count3++;
+    if (this.count3 == this.num_rows) {
+      this.atualizacao = true;
+      if (this.dados.find(item => item.pos == count)) {
+        this.dados.find(item => item.pos == count).cor_estado = cor_estado;
+        this.dados.find(item => item.pos == count).cor_of = cor_of;
+      }
+
+      this.tabela = this.dados;
+      this.tabela = this.tabela.slice();
+
+
+      this.ordernar();
+
+      var sorttab = this.AppGlobals.getfiltros("sorttabela");
+
+      this.multiSortMeta = null;
+      if (sorttab && sorttab.length > 0) {
+        this.multiSortMeta = [];
+        for (var v in sorttab) {
+          //this.multiSortMeta.push({ field: sorttab[v].field, order: sorttab[v].order });
+          this.dataTableComponent.sortField = sorttab[v].field;
+          this.dataTableComponent.sortOrder = sorttab[v].order;
+        }
+
+      }
+
+
+    }
+
 
   }
 

@@ -112,12 +112,17 @@
               </div>
             </div>
           </form>
+          <button type="button" class="ui-button-warning" [hidden]="modoedicao " pButton (click)="displaypreparacao = true"
+            label="Ver Preparação" style="height: 39px; display: -webkit-inline-box; top: 8px; margin-bottom: 9px; float: left; margin-right: 8px;"></button>
+          <button type="button" class="ui-button-success" [hidden]="modoedicao || !verpausas" pButton (click)="pausas()"
+            label="Ver Pausas" style="float: left; height: 39px; display: -webkit-box; top: 8px;"></button>
           <div [hidden]="!modoedicao && verpausas" class="col-md-12 col-md-offset-12 nopadding" style="padding-top: 10px; display: -webkit-box;">
             <!--<label class="control-label ">Estado</label>-->
             <p-dropdown [options]="estados_array" [style]="{'width':'200px'}" [(ngModel)]="estado_val" [ngModelOptions]="{standalone: true}"
               [hidden]="!modoedicao && verpausas" [disabled]="true"></p-dropdown>
-            <button type="button" class="ui-button-success" [hidden]="modoedicao && !disableEditar && verpausas"
-              pButton (click)="pausas()" label="Ver Pausas" style="float: right; height: 39px;     margin-left: 15px;"></button>
+            <button type="button" class="ui-button-success ui-button-raise" [hidden]="modoedicao && !disableEditar && verpausas"
+              pButton (click)="pausas()" label="Ver Pausas" style="float: right; height: 39px; display: -webkit-box; left: 11px;"></button>
+
             <button type="button" class="ui-button-success" [hidden]="!modoedicao || disableEditar" pButton (click)="pausas_editar()"
               label="Editar Pausas" style="float: right; height: 39px;     margin-left: 15px;"></button>
           </div>
@@ -146,7 +151,8 @@
         label="REGISTO DE QUANTIDADES E DEFEITOS" style=" float:left; width: 100%; height: 70px;"></button>
     </div>
     <div class="col-md-12 col-md-offset-12 nopadding" style="float:left;">
-      <p-dataTable [rowStyleClass]="lookupRowStyleClass" [value]="defeitos" class="tabelaref_of" dataKey="ref_num">
+      <p-dataTable [loading]="loadingTable" [rowStyleClass]="lookupRowStyleClass" [value]="defeitos" class="tabelaref_of"
+        dataKey="ref_num">
         <!--<p-header></p-header>-->
         <p-column [style]="{'width':'16%'}" field="ref_num" header="Código" [sortable]="true">
           <ng-template let-col let-x="rowData" pTemplate="body">
@@ -166,6 +172,8 @@
           </ng-template>
         </p-column>
       </p-dataTable>
+      <button [hidden]="!permissao_ficheiroteste" type="button" icon="fa-refresh" class="ui-button-info" pButton
+        (click)="atualizarreferencias()" label="Atualizar Referências" style="height: 41px; float: right; vertical-align: -webkit-baseline-middle;"></button>
     </div>
   </div>
   <div [hidden]="modoedicao" class="col-md-12 col-md-offset-12 nopadding" style="float:left; margin-top: 20px; text-align: center;">
@@ -176,8 +184,8 @@
       style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
     <button [disabled]="concluido || disabledAdici || maq_numcod == '000'" type="button" class="ui-button-secondary"
       pButton (click)="adicionaop()" label="ADICIONAR OPERADOR" style="float: none;  width: 17%; vertical-align: -webkit-baseline-middle;"></button>
-    <button [disabled]="concluido || terminadisabled" type="button" class="ui-button-success" pButton (click)="validaconclusao('C','O')"
-      label="TERMINAR TRABALHO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
+    <button [disabled]="concluido || terminadisabled" type="button" class="ui-button-success ui-button-raise" pButton
+      (click)="validaconclusao('C','O')" label="TERMINAR TRABALHO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>
 
     <!-- <button [disabled]="!concluido" type="button" class="ui-button-warning" pButton (click)="ficheiroteste()" label="TESTAR FICHEIRO" style="float: none; width: 17%; vertical-align: -webkit-baseline-middle;"></button>-->
   </div>
@@ -412,15 +420,67 @@
   </div>
 </p-dialog>
 
+<p-dialog header="Preparação" [(visible)]="displaypreparacao" class="novoop" modal="modal" width="800" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12 " style="padding-right: 0;">
+    <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
+      <div class="form-group">
+        <label class="control-label ">Data Início Preparação</label>
+        <input style="display: -webkit-box; height: 44.4px; background: #e8e6e6; width: 90%;" class="form-control"
+          [(ngModel)]="data_ini_preparacao" type="date" [ngModelOptions]="{standalone: true}" [disabled]="true"
+          [ngClass]="{'cor_trasparent': (data_ini_preparacao == '' || data_ini_preparacao == null ) && disableEditar}"
+          required />
+      </div>
+    </div>
+    <div class="col-md-6 col-md-offset-6 col-sm-12  nopadding" style="float:left;padding: 0;">
+      <div class="form-group">
+        <label class="control-label ">Hora Início Preparação</label>
+        <input class="form-control" [(ngModel)]="hora_ini_preparacao" type="time" [ngModelOptions]="{standalone: true}"
+          [disabled]="true" style="display: -webkit-box; height: 44.4px; background: #e8e6e6; width: 90%;" step='1' min="00:00:00"
+          [ngClass]="{'cor_trasparent': (hora_ini_preparacao == '' || hora_ini_preparacao == null ) && disableEditar}"
+          required />
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 col-md-offset-12 " style="padding-right: 0;">
+    <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding: 0;">
+      <div class="form-group">
+        <label class="control-label ">Data Fim Preparação</label>
+        <input [ngClass]="{'cor_trasparent': (data_fim_preparacao== '' || data_fim_preparacao == null) && disableEditar }"
+          class="form-control" style="display: -webkit-box; height: 44.4px; background: #e8e6e6; width: 90%;"
+          [(ngModel)]="data_fim_preparacao" min="{{data_ini_preparacao}}" type="date" [ngModelOptions]="{standalone: true}"
+          [disabled]="true" required />
+      </div>
+    </div>
+    <div class="col-md-6 col-md-offset-6 col-sm-12 nopadding" style="float:left; padding-right: 0px;">
+      <div class="form-group">
+        <label class="control-label ">Hora Fim Preparação</label>
+        <input [ngClass]="{'cor_trasparent': (hora_fim_preparacao == '' || hora_fim_preparacao == null ) && disableEditar}"
+          class="form-control" [(ngModel)]="hora_fim_preparacao" style="display: -webkit-box; height: 44.4px; background: #e8e6e6; width: 90%;"
+          type="time" step='1' min="00:00:00" [ngModelOptions]="{standalone: true}" [disabled]="true" required />
+      </div>
+      <button [hidden]="!modoedicao || disableEditar" style="position: absolute; right: -29px; height: 44px; top: 24px; width: 42px;"
+        pButton type="submit" icon="fa-save" iconPos="left"></button>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="displaypreparacao = false" label="Fechar"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
 <p-dialog header="Gerar Ficheiro" [(visible)]="displaygerarficheiros" class="novoop" modal="modal" [responsive]="true"
   [dismissableMask]="true" [dismissableMask]="true" [draggable]="false" (onShow)="onShow()" (onHide)="onHide()">
   <div class="col-md-12 col-md-offset-12" style="float: left;">
     <div class="ui-grid-row">
       <div class="form-group" style="padding: 22px 0 22px 0;">
-        <button class="ui-button-success" (click)="ficheiroteste('C',true)" style="height: 44px;" pButton type="button"
-          icon="fa-save" iconPos="left" label="DESCARREGAR FICHEIROS"></button>
-        <button class="ui-button-warning" (click)="ficheiroteste('C',false)" label="GUARDAR PASTA DESTINO" style="height: 44px;"
-          pButton type="button" icon="fa-folder" iconPos="left"></button>
+        <button [disabled]="progressBarDialog" class="ui-button-success" (click)="ficheiroteste('C',true,false,true)"
+          style="height: 44px;" pButton type="button" icon="fa-save" iconPos="left" label="DESCARREGAR FICHEIROS"></button>
+        <button [disabled]="progressBarDialog" class="ui-button-warning" (click)="ficheiroteste('C',false,false,true)"
+          label="GUARDAR PASTA DESTINO" style="height: 44px;" pButton type="button" icon="fa-folder" iconPos="left"></button>
       </div>
       <div *ngIf="progressBarDialog" class="load-wrapp">
         <div class="load-3">

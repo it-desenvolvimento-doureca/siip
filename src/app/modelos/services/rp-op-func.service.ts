@@ -90,4 +90,12 @@ export class RPOPFUNCService {
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
+
+  getallUsersTEMPPREP(id) {
+    const url = webUrl.host + '/rest/siip/getallUsersTEMPPREP/' + id
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
 }

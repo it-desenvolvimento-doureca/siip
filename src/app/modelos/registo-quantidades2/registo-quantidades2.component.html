@@ -282,8 +282,8 @@
           <h5> Verificações Adicionais </h5>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[1]"
-                [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
+                [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -292,8 +292,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[2]"
-                [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
+                [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -302,8 +302,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[3]"
-                [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
+                [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -312,8 +312,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left; ">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao" type="checkbox" value="" (change)="gravar()" [(ngModel)]="verif_adic[4]"
-                [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
+                [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>

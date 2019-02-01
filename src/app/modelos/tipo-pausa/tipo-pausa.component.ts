@@ -23,14 +23,39 @@ export class TipoPausaComponent implements OnInit {
   pausas: any[];
   display_alerta: boolean;
   mensagem_alerta: string;
+  pausasANTIGAS: any[];
   constructor(private AppGlobals: AppGlobals, private RPOPFUNCService: RPOPFUNCService, private router: Router, private RPOFCABService: RPOFCABService, private confirmationService: ConfirmationService, private RPOFPARALINService: RPOFPARALINService, private RPOFOPCABService: RPOFOPCABService, private _location: Location, private service: ofService) { }
 
   ngOnInit() {
     this.pausas = [];
+    this.pausasANTIGAS = [];
+
+    var user = JSON.parse(localStorage.getItem('user'))["username"];
+    var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
+    this.RPOFPARALINService.getbyallUSERIDOFCAB(id_of, user).subscribe(result => {
+
+      var total = Object.keys(result).length;
+      if (total > 0) {
+        for (var x in result) {
+          this.pausasANTIGAS.push(result[x]);
+        }
+        this.carregaPAUSAS()
+      } else {
+        this.carregaPAUSAS()
+      }
+    },
+      error => { console.log(error); this.carregaPAUSAS() });
+  }
+
+
+  carregaPAUSAS() {
     this.service.getTipoFalta().subscribe(
       response => {
         for (var x in response) {
-          this.pausas.push({ design: response[x].arrlib, id: response[x].ARRCOD });
+          var disabled_pausa = false;
+          if (this.pausasANTIGAS.find(item => item == response[x].ARRCOD)) { disabled_pausa = true; }
+          
+          this.pausas.push({ design: response[x].arrlib, id: response[x].ARRCOD, disabled_pausa: disabled_pausa });
         }
         this.pausas = this.pausas.slice();
       },
@@ -89,7 +114,7 @@ export class TipoPausaComponent implements OnInit {
 
               },
               error => console.log(error));
-          } else if (result[0][0].estado != "C") {
+          } else if (result[0][0].estado == "C") {
             this.mensagem_alerta = "Não é possível entrar em pausa, o utilizador atual já concluiu o Trabalho!";
             this.display_alerta = true;
           } else {

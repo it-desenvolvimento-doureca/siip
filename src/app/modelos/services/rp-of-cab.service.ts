@@ -28,9 +28,16 @@ export class RPOFCABService {
       .catch(this.handleError);
   }
 
-  pesquisa_avancada(data) {
+  pesquisa_avancada(data, start) {
     return this.http
-      .post(webUrl.host + '/rest/siip/pesquisa_avancada', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/pesquisa_avancada/' + start, JSON.stringify(data), { headers: this.headers })
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  pesquisa_avancada2(data, start) {
+    return this.http
+      .post(webUrl.host + '/rest/siip/pesquisa_avancada2/' + start, JSON.stringify(data), { headers: this.headers })
       .map(this.extractData)
       .catch((error: any) => Observable.throw('Server error'));
   }
@@ -43,8 +50,16 @@ export class RPOFCABService {
   }
 
 
-  getAll(data): Observable<RP_OF_CAB[]> {
-    const url = webUrl.host + '/rest/siip/getRP_OF_CAB';
+  getAll(data, start): Observable<RP_OF_CAB[]> {
+    const url = webUrl.host + '/rest/siip/getRP_OF_CAB/' + start;
+    return this.http
+      .post(url, data, { headers: this.headers })
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  getAll2(data, start): Observable<RP_OF_CAB[]> {
+    const url = webUrl.host + '/rest/siip/getRP_OF_CAB2/' + start;
     return this.http
       .post(url, data, { headers: this.headers })
       .map(this.extractData)
@@ -84,8 +99,8 @@ export class RPOFCABService {
 
   }
 
-  verifica(of_num, op_cod, op_num) {
-    const url = webUrl.host + '/rest/siip/verifica/' + of_num + '/' + op_cod + '/' + op_num + '';
+  verifica(of_num, op_cod, op_num, user) {
+    const url = webUrl.host + '/rest/siip/verifica/' + of_num + '/' + op_cod + '/' + op_num + '/' + user;
     return this.http
       .get(url)
       .map(this.extractData)

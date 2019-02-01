@@ -40,6 +40,7 @@ import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    temp_ope_num;
     [x: string]: any;
     sec_des: any;
     perfil_utz: any;
@@ -76,7 +77,7 @@ export class NovaOperacaoComponent implements OnInit {
     readonly_maq: boolean = true;
     num_of = "";
     bt_class = "btn-primary";
-    selected = "";
+    selected = null;
     spinner = false;
     refresh = true;
     observacoes = "";
@@ -93,6 +94,11 @@ export class NovaOperacaoComponent implements OnInit {
     MAQ_NUM_ORIG;
     display_campos_obrigatorios = false;
     campo = "";
+    seccoes;
+    seccao;
+    loadingTable: boolean = false;
+    campoofdisabled = false;
+
     @ViewChild('inputFocous') inputFocous: any;
 
     constructor(private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
@@ -118,6 +124,18 @@ export class NovaOperacaoComponent implements OnInit {
             },
             error => console.log(error));
 
+        this.seccoes = [];
+        this.service.getSeccao().subscribe(
+            response => {
+                this.seccoes.push({ label: "Seleccionar Secção", value: null });
+                for (var x in response) {
+
+                    this.seccoes.push({ label: response[x].SECCOD + " - " + response[x].SECLIB + " - " + response[x].SECNUMINT, value: { SECLIB: response[x].SECLIB, SECCOD: response[x].SECCOD } });
+                }
+                this.seccoes = this.seccoes.slice();
+            },
+            error => console.log(error));
+
     }
 
     //verificar se existe a OF
@@ -132,6 +150,7 @@ export class NovaOperacaoComponent implements OnInit {
         this.selected = "";
         this.selectedmaq = "";
         this.observacoes = "";
+        this.campoofdisabled = true;
         if (this.num_of != "") {
             this.service.getOF(this.num_of).subscribe(
                 response => {
@@ -147,6 +166,7 @@ export class NovaOperacaoComponent implements OnInit {
                             //preenche tabela referencias
                             this.service.getRef(response[0].ofanumenr).subscribe(
                                 response2 => {
+                                    this.loadingTable = true;
                                     this.referencias = [];
                                     var referencias = [];
                                     for (var x in response2) {
@@ -154,13 +174,16 @@ export class NovaOperacaoComponent implements OnInit {
                                         if (response2[x].ZPAVAL != null) {
                                             perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
                                         }
-                                        referencias.push({ perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
+                                        referencias.push({ GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
                                         //verifica familia
-                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias);
+                                        this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias, response[0].ofanumenr);
                                     }
                                     this.referencias = referencias.slice();
                                 },
-                                error => console.log(error));
+                                error => {
+                                    console.log(error);
+                                    this.loadingTable = false;
+                                });
 
                             //preenche comobobox operações
                             this.service.getOP(response[0].ofanumenr).subscribe(
@@ -180,7 +203,8 @@ export class NovaOperacaoComponent implements OnInit {
                                     if (error.status == 0) {
                                         alert("Conexão com o Servidor Perdida!");
                                     }
-                                });;
+                                    this.campoofdisabled = false;
+                                });
                         } else {
                             this.display_of_estado = true;
                             this.estado_of = "";
@@ -189,11 +213,13 @@ export class NovaOperacaoComponent implements OnInit {
                             } else {
                                 this.estado_of = "está Fechada!";
                             }
+                            this.campoofdisabled = false;
                         }
                     } else {
                         this.bt_class = "btn-danger";
                         this.estado_of = "não existe!";
                         this.display_of_estado = true;
+                        this.campoofdisabled = false;
                     }
                     this.refresh = true;
                     this.spinner = false;
@@ -205,6 +231,7 @@ export class NovaOperacaoComponent implements OnInit {
             this.bt_class = "btn-danger";
             this.refresh = true;
             this.spinner = false;
+            this.campoofdisabled = false;
         }
 
     }
@@ -225,7 +252,7 @@ export class NovaOperacaoComponent implements OnInit {
         this.selected = "";
         this.selectedmaq = "";
         this.observacoes = "";
-
+        this.campoofdisabled = false;
         this.inputFocous.nativeElement.focus();
     }
     //fechar popup estado of
@@ -234,8 +261,8 @@ export class NovaOperacaoComponent implements OnInit {
     }
 
     //verifica FAM
-    veirificafam(codfam, ref, response = null, referencias) {
-        if (codfam != "") {
+    veirificafam(codfam, ref, response = null, referencias, OFANUMENR = null) {
+        if (codfam != "" && codfam != null) {
             this.RPCONFFAMILIACOMPService.getcodfam(codfam).subscribe(
                 response1 => {
                     var count1 = Object.keys(response1).length;
@@ -245,16 +272,40 @@ export class NovaOperacaoComponent implements OnInit {
                             if (response.ZPAVAL != null) {
                                 perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
                             }
-                            referencias.push({ perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+                            referencias.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
 
                             this.referencias = referencias.slice();
                         }
-                        this.get_filhos(ref, referencias);
+                        if (OFANUMENR != null) {
+                            this.get_filhosprimeiro(OFANUMENR, referencias);
+                        } else {
+                            this.get_filhos(ref, referencias);
+                        }
+                    } else {
+                        this.loadingTable = false;
                     }
                 },
-                error => console.log(error));
+                error => { console.log(error); this.loadingTable = false; });
+        } else {
+            this.loadingTable = false;
         }
 
+    }
+
+    //pesquisar componentes
+    get_filhosprimeiro(OFANUMENR, referencias) {
+        this.service.getfilhosprimeiro(OFANUMENR).subscribe(
+            response1 => {
+                var count1 = Object.keys(response1).length;
+                if (count1 > 0) {
+                    for (var x in response1) {
+                        this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREF, response1[x], referencias);
+                    }
+                } else {
+                    this.loadingTable = false;
+                }
+            },
+            error => { console.log(error); this.loadingTable = false; });
     }
 
     //pesquisar componentes
@@ -266,9 +317,11 @@ export class NovaOperacaoComponent implements OnInit {
                     for (var x in response1) {
                         this.veirificafam(response1[x].PRDFAMCOD, response1[x].PROREFCST, response1[x], referencias);
                     }
+                } else {
+                    this.loadingTable = false;
                 }
             },
-            error => console.log(error));
+            error => { console.log(error); this.loadingTable = false; });
     }
 
     //Seleccionar uma referência da Tabela Referência
@@ -299,17 +352,100 @@ export class NovaOperacaoComponent implements OnInit {
 
     //ao alterar a operação preenche SelectItem das maquinas
     carregamaquinas(event, openum = null, op_prev = null) {
+        this.op_PREVISTA = event.op_PREVISTA;
+        this.selectedmaq = null;
+        this.seccao = null;
+        if (this.op_PREVISTA != '2') {
+            this.op_cod = [];
+            if (event != 0) {
+                var ope_num;
+                if (openum != null) {
+                    ope_num = openum;
+                    this.op_PREVISTA = op_prev;
+                } else {
+                    ope_num = event.OPENUM;
+                    this.op_PREVISTA = event.op_PREVISTA;
+                }
+                for (var x in this.operacao) {
+                    if (this.operacao[x].value.OPENUM <= ope_num && this.operacao[x].value.OPECOD != "") {
+                        if (this.op_cod.indexOf(this.operacao[x].value.OPECOD) == -1) {
+                            this.op_cod.push(this.operacao[x].value.OPECOD);
+                        }
+                    }
+                }
+                this.op_desc = event.OPEDES;
+                this.op_NUM = ope_num;
+                this.service.getMaq(event.SECNUMENR1).subscribe(
+                    response => {
+                        this.maquina = [];
+                        this.readonly_maq = true;
+                        var find = false;
+                        for (var x in response) {
+                            if (response[x].SECTYP == "2") {
+                                this.maquina.push({ label: response[x].ssecod + "/" + response[x].SSEDES, value: { code: response[x].ssecod, desc: response[x].SSEDES } });
+                                find = true;
+                                this.maq_DES = response[x].SSEDES;
+                                this.maq_NUM = response[x].ssecod;
+                                this.MAQ_NUM_ORIG = response[x].ssecod;
+                                this.selectedmaq = response[x].ssecod;
+                                this.sec_des = response[x].SECLIB;
+                                this.sec_num = response[x].SECCOD;
+                            } else if (response[x].SECTYP == "1") {
+                                this.selectedmaq = response[x].ssecod;
+                                this.maq_DES = response[x].SSEDES;
+                                this.maq_NUM = response[x].ssecod;
+                                this.MAQ_NUM_ORIG = response[x].ssecod;
+                                this.sec_des = response[x].SECLIB;
+                                this.sec_num = response[x].SECCOD;
 
-        this.op_cod = [];
-        if (event != 0) {
-            var ope_num;
-            if (openum != null) {
-                ope_num = openum;
-                this.op_PREVISTA = op_prev;
+                            } else {
+                                find = true;
+                            }
+                        }
+                        //lista todas as maquinas se op. não utilizar mão de obra
+                        if (!find) {
+                            this.service.getAllMaq(response[0].SECCOD).subscribe(
+                                response3 => {
+                                    this.readonly_maq = true;
+
+                                    for (var x in response3) {
+                                        if (response3[x].ssecod != "000")
+                                            this.maquina.push({ label: response3[x].ssecod + "/" + response3[x].SSEDES, value: { code: response3[x].ssecod, desc: response3[x].SSEDES } });
+                                    }
+                                    this.maquina = this.maquina.slice();
+                                    this.selectedmaq = this.maquina.find(item => item.value.code === this.selectedmaq).value;
+                                    if (this.maquina.length > 0) {
+                                        this.readonly_maq = false;
+                                    }
+                                },
+                                error => console.log(error));
+                        }
+                        if (this.maquina.length > 0) {
+                            this.readonly_maq = false;
+                        }
+                    },
+                    error => console.log(error));
             } else {
-                ope_num = event.OPENUM;
-                this.op_PREVISTA = event.op_PREVISTA;
+                this.maquina = [];
+                this.readonly_maq = true;
             }
+        } else {
+            this.temp_ope_num = event.OPENUM;
+            this.op_NUM = event.OPENUM;
+            this.op_desc = event.OPEDES;
+
+            this.op_cod = [];
+            this.maquina = [];
+            this.readonly_maq = true;
+        }
+    }
+
+    //ao escolher uma secção
+    carregamaquiOP_NAO_PREVISTA(event) {
+        this.maquina = [];
+        var ope_num = this.temp_ope_num;
+        this.selectedmaq = null;
+        if (event != null) {
             for (var x in this.operacao) {
                 if (this.operacao[x].value.OPENUM <= ope_num && this.operacao[x].value.OPECOD != "") {
                     if (this.op_cod.indexOf(this.operacao[x].value.OPECOD) == -1) {
@@ -317,44 +453,38 @@ export class NovaOperacaoComponent implements OnInit {
                     }
                 }
             }
-            this.op_desc = event.OPEDES;
-            this.op_NUM = ope_num;
-            this.service.getMaq(event.SECNUMENR1).subscribe(
-                response => {
-                    this.maquina = [];
-                    this.readonly_maq = true;
-                    var find = false;
-                    for (var x in response) {
-                        if (response[x].ssecod == "000") {
-                            this.maquina.push({ label: response[x].ssecod + "/" + response[x].SSEDES, value: { code: response[x].ssecod, desc: response[x].SSEDES } });
-                            find = true;
-                            this.maq_DES = response[x].SSEDES;
-                            this.maq_NUM = response[x].ssecod;
-                            this.MAQ_NUM_ORIG = response[x].ssecod;
-                            this.selectedmaq = response[x].ssecod;
-                            this.sec_des = response[x].SECLIB;
-                            this.sec_num = response[x].SECCOD;
-                        } else {
-                            this.selectedmaq = response[x].ssecod;
-                            this.maq_DES = response[x].SSEDES;
-                            this.maq_NUM = response[x].ssecod;
-                            this.MAQ_NUM_ORIG = response[x].ssecod;
-                            this.sec_des = response[x].SECLIB;
-                            this.sec_num = response[x].SECCOD;
 
+            this.service.getOPTIPO(this.selected.OPECOD).subscribe(
+                resp => {
+                    this.sec_des = event.SECLIB;
+                    this.sec_num = event.SECCOD;
+                    var find = true;
+                    this.maquina = [];
+                    for (var x in resp) {
+                        if (resp[x].SECTYP == "2") {
+                            this.maquina.push({ label: resp[x].SSECOD + "/" + resp[x].SSEDES, value: { code: resp[x].SSECOD, desc: resp[x].SSEDES } });
+                            find = true;
+                            this.maq_DES = resp[x].SSEDES;
+                            this.maq_NUM = resp[x].SSECOD;
+                            this.MAQ_NUM_ORIG = resp[x].SSECOD;
+                            this.selectedmaq = resp[x].SSECOD;
+
+                        } else if (resp[x].SECTYP == "1") {
+                            find = false;
                         }
                     }
                     //lista todas as maquinas se op. não utilizar mão de obra
                     if (!find) {
-                        this.service.getAllMaq(response[0].SECCOD).subscribe(
+                        this.service.getAllMaq(event.SECCOD).subscribe(
                             response3 => {
                                 this.readonly_maq = true;
-
+                                this.maquina.push({ label: "Seleccionar Máquina", value: null });
                                 for (var x in response3) {
-                                    this.maquina.push({ label: response3[x].ssecod + "/" + response3[x].SSEDES, value: { code: response3[x].ssecod, desc: response3[x].SSEDES } });
+                                    if (response3[x].ssecod != "000")
+                                        this.maquina.push({ label: response3[x].ssecod + "/" + response3[x].SSEDES, value: { code: response3[x].ssecod, desc: response3[x].SSEDES } });
                                 }
                                 this.maquina = this.maquina.slice();
-                                this.selectedmaq = this.maquina.find(item => item.value.code === this.selectedmaq).value;
+                                this.selectedmaq = null;
                                 if (this.maquina.length > 0) {
                                     this.readonly_maq = false;
                                 }
@@ -366,9 +496,6 @@ export class NovaOperacaoComponent implements OnInit {
                     }
                 },
                 error => console.log(error));
-        } else {
-            this.maquina = [];
-            this.readonly_maq = true;
         }
     }
 
@@ -398,8 +525,16 @@ export class NovaOperacaoComponent implements OnInit {
         } else {
             this.selected = this.operacao.find(item => item.value.OPECOD === event.data.OPECOD && item.value.OPENUM === OPENUM).value;
         }
+        this.op_NUM = this.selected.OPENUM;
+        this.op_desc = this.selected.OPEDES;
 
-        this.carregamaquinas(event.data, OPENUM, '2');
+        this.temp_ope_num = OPENUM;
+        this.op_cod = [];
+        this.maquina = [];
+        this.readonly_maq = true;
+        this.op_PREVISTA = '2';
+        this.seccao = null;
+        //this.carregamaquinas(event.data, OPENUM, '2');
     }
 
     //Quando o botão "Seleccionar só 1 referencia" pode seleccionar uma ref da tabela
@@ -411,31 +546,46 @@ export class NovaOperacaoComponent implements OnInit {
     //Quando clica no botão inciar trabalho
 
     iniciartrab() {
-        if (this.num_of != "" && this.selected != "" && this.selectedmaq != "") {
+        if (this.num_of != "" && this.selected != "" && this.selectedmaq != "" && this.selectedmaq != null && (this.op_PREVISTA == '1'
+            || (this.seccao != null && this.op_PREVISTA == '2')) && !this.loadingTable) {
             if (this.referencias.length == 0) {
                 this.display_sem_referencias = true;
             } else {
                 //verifica se existe alguma of com a mesma operação em execução 
-                this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM).subscribe(
+                this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM, this.username).subscribe(
                     response => {
                         var c = Object.keys(response).length;
                         //se existir e não for mão de obra
-                        if (c > 0 && this.MAQ_NUM_ORIG != "000") {
-                            if (response[0].estado == "P") {
-                                this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque o utilizador " + response[0].nome_UTZ_CRIA + " está em Preparação desse trabalho.";
-                            } else if (response[0].estado == "E") {
-                                this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque já se encontra em Execução! Solicite a " + response[0].nome_UTZ_CRIA + " que o(a) adicione à operação.";
-                            }
-
+                        if (c > 0 && response[0][1] > 0) {
+                            this.pessoa_op_em_curso = "Não é possível iniciar trabalho, utilizador tem um trabalho a decorrer!";
                             this.display_op_em_curso = true;
                         } else {
-                            this.display3 = true;
+                            if (c > 0 && this.MAQ_NUM_ORIG != "000") {
+                                if (response[0][0].estado == "P") {
+                                    this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque o utilizador " + response[0][0].id_UTZ_CRIA + " - " + response[0][0].nome_UTZ_CRIA + " está em Preparação desse trabalho.";
+                                } else if (response[0][0].estado == "E") {
+                                    this.pessoa_op_em_curso = "Não é possível iniciar trabalho porque já se encontra em Execução! Solicite a " + response[0][0].id_UTZ_CRIA + " - " + response[0][0].nome_UTZ_CRIA + " que o(a) adicione à operação.";
+                                }
+
+                                this.display_op_em_curso = true;
+                            } else {
+                                this.display3 = true;
+                            }
                         }
                     },
                     error => console.log(error));
             }
         } else {
-            this.campo = "Operação";
+            if (this.selected == null || this.selected == 0) {
+                this.campo = "Operação";
+            } else if (this.seccao == null && this.op_PREVISTA == '2') {
+                this.campo = "Secção";
+            } else if (this.selectedmaq == null || this.selectedmaq == "") {
+                this.campo = "Máquina";
+            } else if (this.loadingTable) {
+                this.campo = "Referências (aguarde que sejam todas carregadas)";
+            }
+
             this.display_campos_obrigatorios = true;
         }
     }
@@ -462,6 +612,7 @@ export class NovaOperacaoComponent implements OnInit {
     maquinadados(event) {
         this.maq_DES = event.value.desc;
         this.maq_NUM = event.value.code;
+        if (this.op_PREVISTA == '2') { this.MAQ_NUM_ORIG = event.value.code; }
     }
 
     //criar cabeçalho OF
@@ -607,6 +758,7 @@ export class NovaOperacaoComponent implements OnInit {
             rpofoplin.quant_OF = parseInt(this.referencias[0].OFBQTEINI);
             rpofoplin.perc_OBJETIV = ref.perc_obj;
             rpofoplin.ref_INDNUMENR = ref.INDNUMENR;
+            rpofoplin.gescod = ref.GESCOD;
             this.insereref(rpofoplin, true);
         } else {
             for (var x in this.referencias) {
@@ -628,6 +780,8 @@ export class NovaOperacaoComponent implements OnInit {
                     rpofoplin.perc_OBJETIV = this.referencias[x].perc_obj;
                     rpofoplin.ref_INDNUMENR = this.referencias[x].INDNUMENR;
                     rpofoplin.quant_OF = parseInt(this.referencias[x].OFBQTEINI);
+
+                    rpofoplin.gescod = this.referencias[x].GESCOD;
                     this.insereref(rpofoplin, false);
                 }
             }
@@ -638,11 +792,13 @@ export class NovaOperacaoComponent implements OnInit {
     insereref(rpofoplin, comp) {
         this.RPOFOPLINService.create(rpofoplin).subscribe(
             res => {
-                if (!comp) this.deftoref(res.id_OP_LIN);
-                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
-                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
-                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
-                this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
+                if (!comp) {
+                    this.deftoref(res.id_OP_LIN);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 1);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 2);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 3);
+                    this.cria_RP_OF_OUTRODEF_LIN(res.id_OP_LIN, 4);
+                }
             },
             error => console.log(error));
     }
@@ -683,9 +839,13 @@ export class NovaOperacaoComponent implements OnInit {
     //adicionar lista de defeitos às referencias
     //id= id operação 
     deftoref(id_OP_LIN) {
+        var op_cod = [];
         for (var x in this.op_cod) {
-            this.famassociadas(id_OP_LIN, this.op_cod[x]);
+            // this.famassociadas(id_OP_LIN, this.op_cod[x]);
+            op_cod.push(this.op_cod[x]);
         }
+        this.famassociadas(id_OP_LIN, op_cod);
+
     }
 
     //pesquisa as familias ligadas à operação

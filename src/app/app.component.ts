@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { ofService } from './ofService';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,8 @@ export class AppComponent {
   versao = "versão 1.0.1";
   modulo = "Gestão de Registos de Produção";
   semInternet: boolean;
+  mostraerro: any = false;
+  textoERRO: string;
 
   @HostListener('document:click', ['$event'])
   clickout(event) {
@@ -24,20 +27,49 @@ export class AppComponent {
     }
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private service: ofService) {
     this.semInternet = false;
+    this.onlineCheck();
 
     setInterval(() => {
-      if (navigator.onLine) {
-        this.semInternet = false;
-      } else {
-        this.semInternet = true;
-      }
+      this.onlineCheck();
     }, 2000);
 
     setInterval(() => {
       this.time();
     }, 14400000);
+  }
+
+  onlineCheck() {
+    this.textoERRO = "";
+    this.service.testeligacao().subscribe(
+      response => {
+
+        if (navigator.onLine) {
+          this.semInternet = false;
+        } else {
+          this.semInternet = true;
+        }
+
+      },
+      error => {
+        if (!this.mostraerro) { console.log(error); this.mostraerro = true }
+        this.semInternet = true;
+
+        if (error.status == 0) {
+          this.semInternet = true;
+        } else {
+
+          if (navigator.onLine) {
+            this.textoERRO = "Servidor não Responde. Aguarde, por favor...";
+            // this.semInternet = false;
+          } else {
+            this.semInternet = true;
+          }
+        }
+
+      });
+
   }
 
   time() {

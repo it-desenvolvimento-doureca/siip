@@ -12,6 +12,14 @@ export class ofService {
 
     constructor(private http: Http) { }
 
+    getSeccao() {
+        const url = webUrl.host + '/rest/demo/getSeccao/';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
 
     getOF(ofnum) {
         const url = webUrl.host + '/rest/demo/silver/' + ofnum + '';
@@ -93,6 +101,14 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    getfilhosprimeiro(OFANUMENR) {
+        const url = webUrl.host + '/rest/demo/getfilhosprimeiro/' + OFANUMENR;
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     defeitos(fam) {
         const url = webUrl.host + '/rest/demo/defeitos/' + fam + '';
         return this.http
@@ -100,6 +116,15 @@ export class ofService {
             .map((res: Response) => res.json())
             .catch(this.handleError2);
     }
+
+    defeitos2(fam) {
+        const url = webUrl.host + '/rest/demo/defeitos2';
+        return this.http
+            .post(url, fam.toString(), { headers: this.headers })
+            .map((res: Response) => res.json())
+            .catch(this.handleError2);
+    }
+
     private handleError2(error: any): Promise<any> {
         return Promise.reject(error.message || error);
     }
@@ -111,6 +136,15 @@ export class ofService {
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
+
+    getOPTIPO(OPECOD) {
+        const url = webUrl.host + '/rest/demo/getOPTIPO/' + OPECOD + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
 
     getTipoFalta() {
         const url = webUrl.host + '/rest/demo/tipofaltas';
@@ -136,8 +170,8 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    criaficheiro(id, estado, ficheiros = false) {
-        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado + '/' + ficheiros;
+    criaficheiro(id, estado, ficheiros = false, manual) {
+        const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado + '/' + ficheiros + '/' + manual;
         return this.http.get(url, { responseType: ResponseContentType.Blob }).map(
             (res) => {
                 if (ficheiros) {
@@ -146,8 +180,34 @@ export class ofService {
             });
     }
 
+    criaficheiroManual(data) {
+        const url = webUrl.host + '/rest/siip/ficheiroManual';
+        return this.http.post(url, JSON.stringify(data), { responseType: ResponseContentType.Blob, headers: this.headers }).map(
+            (res) => {
+
+                return new Blob([res.blob()], { type: 'application/zip' });
+
+            });
+    }
+
+    getList(data) {
+        const url = webUrl.host + '/rest/siip/getOFS';
+        return this.http
+            .post(url, JSON.stringify(data), { headers: this.headers })
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     atualizarcampos(id) {
         const url = webUrl.host + '/rest/siip/atualizarcampos/' + id;
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    testeligacao() {
+        const url = webUrl.host + '/rest/siip/testeligacao';
         return this.http
             .get(url)
             .map((res: Response) => res.json())

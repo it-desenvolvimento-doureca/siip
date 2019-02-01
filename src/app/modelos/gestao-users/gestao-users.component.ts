@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SelectItem } from "primeng/primeng";
+import { SelectItem, Message } from "primeng/primeng";
 import { utilizadorService } from "app/utilizadorService";
 import { ConfirmDialogModule, ConfirmationService } from 'primeng/primeng';
 import { RP_CONF_UTZ_PERF } from "app/modelos/entidades/RP_CONF_UTZ_PERF";
@@ -67,6 +67,16 @@ export class GestaoUsersComponent implements OnInit {
   selectedoppermitida: string = "";
   selefam = "";
   seleopp = "";
+  horainicio: string;
+  horafim: string;
+  datainicio: any;
+  datafim: any;
+  msgs2: Message[] = [];
+  loading: boolean;
+  listaofs: any = [];
+  selectedOFS: string[] = []
+  displayDialogmsg: boolean;
+  loadingTable: boolean = false;
 
   constructor(private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private op_service: RPCONFOPNPREVService, private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
@@ -623,7 +633,7 @@ export class GestaoUsersComponent implements OnInit {
   }
 
   atualizaPassword(tab) {
-    
+
     var conf_utiliz = new RP_CONF_UTZ_PERF;
     conf_utiliz.id_UTZ = tab.no;
     conf_utiliz.id_CONF_UTZ_PERF = tab.id;
@@ -634,5 +644,66 @@ export class GestaoUsersComponent implements OnInit {
 
     });
   }
+
+  getList() {
+    this.loadingTable = true;
+    var data = [{ datainicio: this.formatDate(this.datainicio) + " " + this.horainicio, datafim: this.formatDate(this.datafim) + " " + this.horafim }];
+    this.listaofs = [];
+    this.ofservice.getList(data).subscribe(resu => {
+
+      for (var x in resu) {
+        this.listaofs.push({
+          ID: resu[x].ID, OPERARIO: resu[x].RESCOD + " - " + resu[x].NOME,
+          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0,8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OPECOD
+        });
+      }
+      this.listaofs = this.listaofs.slice();
+      this.loadingTable = false;
+    }, error => {
+      console.log(error);
+      this.loadingTable = false;
+    });
+  }
+
+  getFile() {
+    
+    if (this.selectedOFS.length > 0) {
+      this.loading = true;
+      var data = this.selectedOFS;
+      this.ofservice.criaficheiroManual(data).subscribe(resu => {
+        this.loading = false;
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(resu);
+        a.download = "ficheiros_interface.zip";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+      }, error => {
+        this.loading = false;
+        this.msgs2.push({
+          severity: 'error', summary: 'Alerta', detail: 'Erro! Download Ficheiros Falhou!'
+        });
+        console.log(error)
+      });
+    } else {
+      this.displayDialogmsg = true;
+    }
+  }
+
+
+  //formatar a data para yyyy-mm-dd
+  formatDate(date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
 
 }

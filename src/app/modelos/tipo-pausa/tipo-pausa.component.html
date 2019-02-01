@@ -11,7 +11,8 @@
   </div>
 
   <div *ngFor="let item of pausas let i = index" [attr.data-index]="i" class="col-md-3 col-md-offset-3 nopadding" style="float:left;">
-    <button pButton type="button" label="{{ item.design }}" (click)="pausa(item.id,item.design)" class="btstyle ui-button-secondary"></button>
+    <button pButton type="button" [disabled]="item.disabled_pausa" label="{{ item.design }}" (click)="pausa(item.id,item.design)"
+      class="btstyle ui-button-secondary"></button>
   </div>
 </div>
 

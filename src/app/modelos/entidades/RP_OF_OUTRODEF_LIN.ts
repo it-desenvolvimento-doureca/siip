@@ -8,4 +8,5 @@ export class RP_OF_OUTRODEF_LIN {
     res_OUTRODEF: string;
     obs_OUTRODEF: string;
     quant_OUTRODEF_M1: number;
+    id_REF_ETIQUETA: number;
 }
