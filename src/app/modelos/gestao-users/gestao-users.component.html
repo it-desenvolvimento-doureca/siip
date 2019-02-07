@@ -88,7 +88,7 @@
               <p-column field="field" header="Perfil Administrador" [sortable]="true"></p-column>
               <p-column field="password" header="Password Administrador" [sortable]="true" [style]="{'width':'42%'}">
                 <ng-template let-op="rowData" pTemplate="body">
-                  <input type="password" autocomplete="new-password" id="passut" name="passut" (change)="atualizaPassword(op)" pInputText size="100" placeholder="Password"
+                  <input type="password" autocomplete="new-password" id="passut{{op['no']}}" name="passut" (change)="atualizaPassword(op)" pInputText size="100" placeholder="Password"
                     class="form-control" [(ngModel)]="op['password']" [ngModelOptions]="{standalone: true}">
                 </ng-template>
               </p-column>
@@ -207,7 +207,7 @@
             <hr style="margin: 0px 0 7px 0;" />
             <div class="col-md-12">
               <div style="padding: 1px 5px 1px 10px;" class="form-group col-md-12 col-lg-12">
-                <label style="display: -webkit-box;">Data Incício entre</label>
+                <label style="display: -webkit-box;">Data Incío entre</label>
                 <p-calendar dateFormat="yy-mm-dd" placeholder="yyyy-mm-dd" [monthNavigator]="true" [yearNavigator]="true"
                   yearRange="2000:2050" [(ngModel)]="datainicio" [ngModelOptions]="{standalone: true}" [showIcon]="true"
                   [required]="true"></p-calendar>
@@ -239,8 +239,10 @@
               <p-column field="OFNUM" header="OF" [filter]="true" [sortable]="true" [style]="{'width':'14%'}"></p-column>
               <p-column field="OPERARIO" header="OPERÁRIO" [sortable]="true" [filter]="true"> </p-column>
               <p-column field="OPECOD" header="OPECOD" [sortable]="true" [filter]="true" [style]="{'width':'130px'}"></p-column>
-              <p-column field="DATDEB" header="DATA" [filter]="true" [sortable]="true"></p-column>
-              <p-column field="HEUDEB" header="HORA" [filter]="true" [sortable]="true"></p-column>
+              <p-column field="DATDEB" header="DATA INÍCIO" [filter]="true" [sortable]="true"></p-column>
+              <p-column field="HEUDEB" header="HORA INÍCIO" [filter]="true" [sortable]="true"></p-column>
+              <p-column field="DATAFIM" header="DATA FIM" [filter]="true" [sortable]="true"></p-column>
+              <p-column field="HORAFIM" header="HORA FIM" [filter]="true" [sortable]="true"></p-column>
               <p-footer>
                 <div class="ui-helper-clearfix" style="width:100%"><button [disabled]="listaofs.length == 0 || loading"
                     type="button" pButton style="float:left" (click)="getFile()" label="Download Ficheiros"></button></div>

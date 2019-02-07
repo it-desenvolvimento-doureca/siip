@@ -896,7 +896,8 @@ export class LoginComponent implements OnInit {
       rp_of_cab.id_UTZ_MODIF = user;
       rp_of_cab.nome_UTZ_MODIF = nome;
       rp_of_cab.data_HORA_MODIF = date;
-      if (count2 == total && user_count == total_user) rp_of_cab.estado = "C"
+      //if (count2 == total && user_count == total_user) rp_of_cab.estado = "C"
+      if (lider) rp_of_cab.estado = "C"
 
       //tempo de Pausa
       this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {

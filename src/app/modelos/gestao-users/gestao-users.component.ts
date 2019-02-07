@@ -654,7 +654,8 @@ export class GestaoUsersComponent implements OnInit {
       for (var x in resu) {
         this.listaofs.push({
           ID: resu[x].ID, OPERARIO: resu[x].RESCOD + " - " + resu[x].NOME,
-          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0,8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OPECOD
+          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0,8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OPECOD,
+          DATAFIM: resu[x].DATAFIM, HORAFIM: resu[x].HORAFIM
         });
       }
       this.listaofs = this.listaofs.slice();
