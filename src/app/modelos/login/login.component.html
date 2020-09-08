@@ -56,8 +56,8 @@
 
             <div class="clearfix">
             </div>
-            <input readonly type="password" name="name" id="telNumbe" #box class="form-control tel " style=" font-size: 27pt; padding: 0;"
-                value="{{ operation }}" maxlength="4" />
+            <input readonly type="password" name="name" id="telNumbe" #box class="form-control tel "
+                style=" font-size: 27pt; padding: 0;" value="{{ operation }}" maxlength="4" />
             <div *ngIf="loading" class="load-bar">
                 <div class="bar"></div>
                 <div class="bar"></div>
@@ -67,12 +67,14 @@
     </div>
 </div>
 <div id="particles"></div>
-<div *ngIf="edited" class="alert alert-success box-msg" role="alert" style="text-align:center; position: relative; z-index:1;">
+<div *ngIf="edited" class="alert alert-success box-msg" role="alert"
+    style="text-align:center; position: relative; z-index:1;">
     <strong>É O(A) OPERADOR(A): {{ name }}?</strong>
     <br>
     <br>
     <button (click)="redirect()" class="btn btn-success btn-recreate btn-lg" type="button">SIM</button>
-    <button (click)="reset()" class="btn btn-danger btn-destroy btn-lg" type="button" style="margin-left: 30px;">NÃO</button>
+    <button (click)="reset()" class="btn btn-danger btn-destroy btn-lg" type="button"
+        style="margin-left: 30px;">NÃO</button>
 
 
 </div>
@@ -89,9 +91,12 @@
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-            <button type="button" [hidden]="isHidden1" pButton (click)="novaoperacao()" label="OPERADOR" style="float: none; width: auto;"></button>
-            <button type="button" [hidden]="isHidden2" pButton (click)="adminarea()" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
-            <button type="button" [hidden]="isHidden3" pButton (click)="controlo()" label="CONTROLO" style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden1" pButton (click)="novaoperacao()" label="OPERADOR"
+                style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden2" pButton (click)="adminarea()" label="ADMINISTRAÇÃO"
+                style="float: none; width: auto;"></button>
+            <button type="button" [hidden]="isHidden3" pButton (click)="controlo()" label="CONTROLO"
+                style="float: none; width: auto;"></button>
         </div>
     </p-footer>
 </p-dialog>
@@ -100,8 +105,10 @@
 <p-dialog [(visible)]="display2" modal="modal" min-width="600" [responsive]="true" [dismissableMask]="true"
     [dismissableMask]="true" [draggable]="false">
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center; border: none;">
-        <button type="button" pButton routerLink="/config" label="ADMINISTRAÇÃO" style="float: none; width: auto;"></button>
-        <button type="button" pButton routerLink="/controlo" label="CONTROLO" style="float: none; width: auto;"></button>
+        <button type="button" pButton routerLink="/config" label="ADMINISTRAÇÃO"
+            style="float: none; width: auto;"></button>
+        <button type="button" pButton routerLink="/controlo" label="CONTROLO"
+            style="float: none; width: auto;"></button>
     </div>
 </p-dialog>
 
@@ -127,7 +134,8 @@
         <h2>Que operação pretende fazer?</h2>
     </div>
     <p-footer>
-        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center; max-height: 83vh; overflow: auto;">
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix"
+            style="text-align: center; max-height: 83vh; overflow: auto;">
             <div class="col-md-12" style="padding: 0;">
                 <div class="col-md-12 col-lg-6">
                     <button [disabled]="operadorPrincipal" type="button" pButton (click)="finalizarprep()" label=" "
@@ -135,13 +143,15 @@
                         <i class="fa fa-play"></i><br> FINALIZAR PREPARAÇÃO E INICIAR EXECUÇÃO</button>
                 </div>
                 <div class="col-md-12 col-lg-6">
-                    <button type="button" pButton (click)="pausa()" label=" " style="float: none; width: 100%; height: auto;">
+                    <button type="button" pButton (click)="pausa()" label=" "
+                        style="float: none; width: 100%; height: auto;">
                         <i class="fa fa-pause"></i><br>FAZER PAUSA NA PREPARAÇÃO</button>
                 </div>
             </div>
             <div class="col-md-12" style="padding: 0;">
                 <div *ngIf="!operadorPrincipal" class="col-md-12 col-lg-6">
-                    <button type="button" [hidden]="operadorPrincipal" pButton (click)="concluir(true)" label=" " style="float: none; width: 100%; height: auto;">
+                    <button type="button" [hidden]="operadorPrincipal" pButton (click)="concluir(true)" label=" "
+                        style="float: none; width: 100%; height: auto;">
                         <i class="fa fa-check-circle-o"></i><br>CONCLUIR TRABALHO</button>
                 </div>
                 <div *ngIf="operadorPrincipal" class="col-md-12 col-lg-6">
@@ -150,8 +160,8 @@
                         <i class="fa fa-check-circle-o"></i><br>SAIR DO TRABALHO</button>
                 </div>
                 <div class="col-md-12 col-lg-6">
-                    <button type="button" [disabled]="operadorPrincipal || maquina" pButton (click)="adicionarOperario()"
-                        label=" " style="float: none; width: 100%; height: auto;">
+                    <button type="button" [disabled]="operadorPrincipal || maquina" pButton
+                        (click)="adicionarOperario()" label=" " style="float: none; width: 100%; height: auto;">
                         <i class="fa fa-user-plus"></i><br>ADICIONAR OPERADOR</button>
                 </div>
             </div>
@@ -172,7 +182,8 @@
     </div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-            <button type="button" pButton (click)="finalizarpausa()" label="SIM" style="float: none; width: auto;"></button>
+            <button type="button" pButton (click)="finalizarpausa()" label="SIM"
+                style="float: none; width: auto;"></button>
             <button type="button" pButton (click)="cancelar()" label="NÃO" style="float: none; width: auto;"></button>
         </div>
     </p-footer>
@@ -182,7 +193,8 @@
 <p-dialog header="Admin Login" [(visible)]="displayPasswordADMIN" modal="modal" min-width="600" [responsive]="true"
     [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
     <div style="display: inline-grid;">
-        <div class="col-md-9 col-sm-12 col-lg-6 phone loginadicional loginadicional22" style="padding: 0px; text-align: -webkit-center; display: table; margin: 0 auto;">
+        <div class="col-md-9 col-sm-12 col-lg-6 phone loginadicional loginadicional22"
+            style="padding: 0px; text-align: -webkit-center; display: table; margin: 0 auto;">
             <div class="row1">
                 <div class="col-md-9 col-sm-9 col-xs-9 col-lg-10">
                     <div class="num-pad">
@@ -220,11 +232,13 @@
                             <button type="button" class="num num1" (click)="undo2()" label="APAGAR" pButton></button>
                         </div>
                         <div class="span4" style="position: absolute; right: -51px; height: 100%;">
-                            <button type="button" class="num num1" style="height: 100%; width: 90px !important; background-color: #058605 !important;"
+                            <button type="button" class="num num1"
+                                style="height: 100%; width: 90px !important; background-color: #058605 !important;"
                                 (click)="continuar()" label="OK" pButton></button>
                         </div>
                         <div class="span4" style="position: absolute; right: -151px; height: 100%;">
-                            <button type="button" class="num num1" style="height: 100%; width: 110px !important; background-color: red !important;"
+                            <button type="button" class="num num1"
+                                style="height: 100%; width: 110px !important; background-color: red !important;"
                                 (click)="displayPasswordADMIN = false" label="FECHAR" pButton></button>
                         </div>
                     </div>
@@ -235,9 +249,11 @@
 
             <div class="clearfix">
             </div>
-            <div class="col-md-12 col-sm-12 col-lg-12 phone loginadicional" style="padding: 0px; text-align: -webkit-center; margin-left: 48px;">
-                <input [ngClass]="{'ippassworderrada': passworderrada}" style="margin: 0;width: 100%;" readonly type="password"
-                    name="name" id="telNumbe2" #box class="form-control tel" value="{{ operation2 }}" maxlength="4" />
+            <div class="col-md-12 col-sm-12 col-lg-12 phone loginadicional"
+                style="padding: 0px; text-align: -webkit-center; margin-left: 48px;">
+                <input [ngClass]="{'ippassworderrada': passworderrada}" style="margin: 0;width: 100%;" readonly
+                    type="password" name="name" id="telNumbe2" #box class="form-control tel" value="{{ operation2 }}"
+                    maxlength="4" />
             </div>
         </div>
     </div>
@@ -299,8 +315,27 @@
     <p-footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <button style="float: none;" type="button" pButton (click)="display_alerta = false" label="OK"></button>
-            <button style="float: none; padding: 0;" type="button" class="ui-button-success ui-button-raised" pButton
-                (click)="continuar_concluir()" label="CONTINUAR"></button>
+            <button style="float: none; padding: 0; width: 175px;" type="button"
+                class="ui-button-success ui-button-raised" pButton (click)="continuar_concluir()"
+                label="CONTINUAR"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<!--popup verificação-->
+<p-dialog header="Verificação" [(visible)]="display_alerta2" class="novoop" modal="modal" width="700"
+    [responsive]="true" [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+    <div class="col-md-12 col-md-offset-12" style="float: left;">
+        <div class="ui-grid-row">
+            <div class="form-group" style="text-align: center;">
+                <span [innerHTML]="texto_alerta2" style="font-size: 17px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button style="float: none;" type="button" pButton (click)="display_alerta2 = false" label="OK"></button>
         </div>
     </p-footer>
 </p-dialog>

@@ -74,6 +74,14 @@ export class RPOFCABService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  duplicarRegistos(id) {
+    const url = webUrl.host + '/rest/siip/duplicarRegistos/' + id;
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
   update(data: RP_OF_CAB) {
     return this.http
       .put(webUrl.host + '/rest/siip/updateRP_OF_CAB', JSON.stringify(data), { headers: this.headers })
@@ -107,6 +115,17 @@ export class RPOFCABService {
       .catch((error: any) => Observable.throw('Server error'));
 
   }
+
+
+  verificaetiquetas(of_num) {
+    const url = webUrl.host + '/rest/siip/verificaetiquetas/' + of_num;
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+
+  }
+
 
   private extractData(res: Response) {
     let body = res.json();

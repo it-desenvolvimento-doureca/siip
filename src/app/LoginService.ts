@@ -19,7 +19,16 @@ export class LoginService implements CanActivate {
         if (localStorage.getItem('time_siip')) {
             var data_storage = new Date(JSON.parse(localStorage.getItem('time_siip'))["data"]).getTime();
             if ((data_storage + 14400000) <= new Date().getTime()) {
-                localStorage.clear();
+                this.router.navigate(['./home']);
+                //localStorage.clear();
+                localStorage.removeItem('time_siip');
+                localStorage.removeItem('id_of_cab');
+                localStorage.removeItem('id_op_cab');
+                localStorage.removeItem('siip_edicao');
+                localStorage.removeItem('user');
+                localStorage.removeItem('access');
+                localStorage.removeItem('sec_num_user');
+                localStorage.removeItem('perfil');
             } else {
                 localStorage.setItem('time_siip', JSON.stringify({ data: new Date() }));
             }
@@ -28,7 +37,7 @@ export class LoginService implements CanActivate {
 
         var access = JSON.parse(localStorage.getItem('access'));
         if (!localStorage.getItem('user')) {
-            alert('Efetue o Login!');
+            //alert('Efetue o Login!');
             this.router.navigate(['./home']);
             return false;
         } else if (!localStorage.getItem('access')) {

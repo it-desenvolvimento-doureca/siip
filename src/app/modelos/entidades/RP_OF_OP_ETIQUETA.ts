@@ -21,4 +21,6 @@ export class RP_OF_OP_ETIQUETA {
     versao_MODIF: number;
     novo: boolean;
     ofdatfr: Date;
+    ativo: boolean;
+    apagado: boolean;
 }

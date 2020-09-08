@@ -54,7 +54,7 @@ export class TipoPausaComponent implements OnInit {
         for (var x in response) {
           var disabled_pausa = false;
           if (this.pausasANTIGAS.find(item => item == response[x].ARRCOD)) { disabled_pausa = true; }
-          
+
           this.pausas.push({ design: response[x].arrlib, id: response[x].ARRCOD, disabled_pausa: disabled_pausa });
         }
         this.pausas = this.pausas.slice();
@@ -74,19 +74,27 @@ export class TipoPausaComponent implements OnInit {
         var nome = JSON.parse(localStorage.getItem('user'))["name"];
         var id_of = JSON.parse(localStorage.getItem('id_of_cab'));
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        this.estado.push('T');
+        //this.estado.push('T');
+        this.estado.push('C', 'A', 'M');
         this.RPOFOPCABService.getdataof(id_of, user, this.estado).subscribe(result => {
-          if (result[0][0].estado != "S" && result[0][0].estado != "C" && result[0][0].estado != "A") {
 
-            var id_op_cab = result[0][2].id_OP_CAB;
+          var x = '0';
+          for (var y in result) {
+            if (result[y][2].id_OP_CAB == JSON.parse(localStorage.getItem('id_op_cab'))) {
+              x = y;
+            }
+          }
+          if (result[x][0].estado != "S" && result[x][0].estado != "C" && result[x][0].estado != "A") {
+
+            var id_op_cab = result[x][2].id_OP_CAB;
             var rp_of_para_lin = new RP_OF_PARA_LIN();
-            rp_of_para_lin.data_INI = date;
+            rp_of_para_lin.data_INI = new Date(this.formatDate(date));
             rp_of_para_lin.hora_INI = time;
 
-            rp_of_para_lin.data_INI_M1 = date;
+            rp_of_para_lin.data_INI_M1 = new Date(this.formatDate(date));
             rp_of_para_lin.hora_INI_M1 = time;
 
-            rp_of_para_lin.data_INI_M2 = date;
+            rp_of_para_lin.data_INI_M2 = new Date(this.formatDate(date));
             rp_of_para_lin.hora_INI_M2 = time;
 
             rp_of_para_lin.id_UTZ_CRIA = user;
@@ -97,10 +105,11 @@ export class TipoPausaComponent implements OnInit {
             rp_of_para_lin.des_PARAGEM = design;
             rp_of_para_lin.des_PARAGEM_M1 = design;
             rp_of_para_lin.des_PARAGEM_M2 = design;
-            rp_of_para_lin.momento_PARAGEM = result[0][0].estado;
-            rp_of_para_lin.momento_PARAGEM_M1 = result[0][0].estado;
-            rp_of_para_lin.momento_PARAGEM_M2 = result[0][0].estado;
+            rp_of_para_lin.momento_PARAGEM = result[x][0].estado;
+            rp_of_para_lin.momento_PARAGEM_M1 = result[x][0].estado;
+            rp_of_para_lin.momento_PARAGEM_M2 = result[x][0].estado;
             rp_of_para_lin.estado = "S";
+            
             this.RPOFPARALINService.create(rp_of_para_lin).subscribe(
               res => {
                 for (var x in result) {
@@ -114,7 +123,8 @@ export class TipoPausaComponent implements OnInit {
 
               },
               error => console.log(error));
-          } else if (result[0][0].estado == "C") {
+          } else if (result[x][0].estado == "C") {
+
             this.mensagem_alerta = "Não é possível entrar em pausa, o utilizador atual já concluiu o Trabalho!";
             this.display_alerta = true;
           } else {
@@ -129,6 +139,19 @@ export class TipoPausaComponent implements OnInit {
     });
   }
 
+
+  //formatar a data para yyyy-mm-dd
+  formatDate(date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
 
   backClicked() {
     this._location.back();

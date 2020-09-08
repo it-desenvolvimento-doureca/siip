@@ -1,14 +1,18 @@
 <div class="row wrapper fundo_style" [style.background]="cor_fundo">
   <div class="col-md-12 nopadding" style="display: initial; text-align: center;  padding-right:0;">
     <div class="col-md-2 col-md-offset-2 nopadding col-sm-3" style="display: initial;  float: left;">
-      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()"
-        [(disabled)]="disabledrefanterior" style="width: auto; height: 60px; float: left;" label="Referência Anterior"></button>
+      <form (keydown.enter)="$event.preventDefault()">
+        <button type="button" class="form-control btn btn-primary" icon="fa-chevron-left" pButton (click)="prevItem()"
+          [(disabled)]="disabledrefanterior" style="width: auto; height: 60px; float: left;"
+          label="Referência Anterior"></button>
+      </form>
     </div>
     <div class="col-md-8 nopadding col-sm-6" style="display: initial;  float: left;">
       <h6 style="font-size: 1.2vw;">
         REGISTO DE QUANTIDADES REFERÊNCIA
-        <span *ngIf="!comp">(PF)</span>
-        <span *ngIf="comp">(COMP)</span>:
+        <span *ngIf="!comp && tipo_PECA != 'COM'">(PF)</span>
+        <span *ngIf="comp && tipo_PECA != 'COM'">(COMP)</span>
+        <span *ngIf="tipo_PECA == 'COM'">(COMPRADA)</span>:
       </h6>
       <h5 style="font-size: 1.3vw;">
         <b>
@@ -17,22 +21,27 @@
       </h5>
     </div>
     <div class="col-md-2  nopadding col-sm-3" style="display: initial;  float: left;  padding-right:0;">
-      <button type="button" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton
-        (click)="nextItem()" [(disabled)]="disabledrefseguinte" style="width: auto; height: 60px; float: right; margin-right: 0"
-        label="Referência Seguinte"></button>
+      <form (keydown.enter)="$event.preventDefault()">
+        <button type="submit" class="form-control btn btn-primary" icon="fa-chevron-right" iconPos="right" pButton
+          (click)="nextItem()" [(disabled)]="disabledrefseguinte"
+          style="width: auto; height: 60px; float: right; margin-right: 0" label="Referência Seguinte"></button>
+      </form>
     </div>
   </div>
-  <div class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 10px 0 0 0; text-align: center; float: left; padding: 0;">
-    <div *ngIf="comp" class="col-md-12 col-md-offset-12 nopadding" style="padding: 0;  display: initial; margin: 0px 0 0 0; text-align: center; ">
-      <div [class.invisible]="!comp" class="col-md-12 col-md-offset-12 nopadding" style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
+  <div class="col-md-9 col-md-offset-9 nopadding"
+    style="display: initial; margin: 10px 0 0 0; text-align: center; float: left; padding: 0;">
+    <div *ngIf="comp" class="col-md-12 col-md-offset-12 nopadding"
+      style="padding: 0;  display: initial; margin: 0px 0 0 0; text-align: center; ">
+      <div [class.invisible]="!comp" class="col-md-12 col-md-offset-12 nopadding"
+        style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
         <label class="control-label " for="name">
           <h6>Nº Etiqueta:</h6>
         </label>
         <div class="icon-addon " style="width: 100%;">
-          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null || !modoedicao" [(ngModel)]="num_etiqueta"
-            [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()" class="form-control" type="number"
-            #num (ngModelChange)="num_etiqueta=num.value" style="text-align: center; width:19%; display: inline; margin-left: 10px;"
-            min="0" />
+          <input id="inputFocous2" [disabled]="num_lote!='' && num_lote != null || !modoedicao"
+            [(ngModel)]="num_etiqueta" [ngModelOptions]="{standalone: true}" (keyup.enter)="pesquisaetiqueta()"
+            class="form-control" type="number" #num (ngModelChange)="num_etiqueta=num.value"
+            style="text-align: center; width:19%; display: inline; margin-left: 10px;" min="0" />
         </div>
         <span class="input-group-btn" style="width: 10%; display: inline;">
           <button [disabled]="num_lote!='' && num_lote != null" (click)="pesquisaetiqueta()" class="btn {{bt_class}}"
@@ -41,27 +50,31 @@
             <i *ngIf="spinner" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
             <span class="sr-only">Loading...</span>
           </button>
-          <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default" type="button"
-            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button [disabled]="num_lote!='' && num_lote != null" (click)="limpardados()" class="btn btn-default"
+            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()" class="btn btn-primary"
-            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="novaetiqueta()"
+            class="btn btn-primary" type="button"
+            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-plus"></i>
           </button>
-          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="apagardados()" class="btn btn-danger"
-            type="button" style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
+          <button *ngIf="num_lote!='' && num_lote != null" [disabled]="!modoedicao" (click)="apagardados()"
+            class="btn btn-danger" type="button"
+            style="opacity: 1; line-height: 0; height: 36.8px; margin-top: -3px; margin-left: 10px;">
             <i class="fa fa-trash"></i>
           </button>
           <label *ngIf="num_lote!='' && num_lote != null" class="control-label " for="name">
             <h6 style="top: 5px; left: 6px; position: relative;">Total Etiq.:</h6>
           </label>
-          <div *ngIf="num_lote!='' && num_lote != null" class="icon-addon " style="width: 30%; margin-left: 4px; position: absolute;">
-            <input readonly [(ngModel)]="qtdetiquetas" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
-              style=" text-align: center; display: inline; margin-left: 4px; position: relative;" min="0" />
+          <div *ngIf="num_lote!='' && num_lote != null" class="icon-addon "
+            style="width: 30%; margin-left: 4px; position: absolute;">
+            <input readonly [(ngModel)]="qtdetiquetas" [ngModelOptions]="{standalone: true}" class="form-control"
+              type="text" style=" text-align: center; display: inline; margin-left: 4px; position: relative;" min="0" />
           </div>
           <h6 style="display: initial; position: absolute; margin-top: 7px; margin-left: 97px;">Nº OF Componente/Lote:
-            <span style="font-weight: 300">{{num_lote}}</span>
+            <span *ngIf="tipo_PECA != 'COM'" style="font-weight: 300">{{num_lote}}</span>
+            <span *ngIf="tipo_PECA == 'COM'" style="font-weight: 300">Peça Comprada</span>
           </h6>
           <!--<button *ngIf="num_lote!='' && num_lote != null" (click)="editaretiquetas()" class="btn btn-primary" type="button" style="padding: 4px; opacity: 1; line-height: 0; height: 58px; position: absolute; top: -18px; margin-left: 72px;">
             Editar Etiquetas Lidas
@@ -71,12 +84,13 @@
     </div>
 
     <!-- SE FOR COMPONENTE -->
-    <div *ngIf="comp" class="col-md-9 col-md-offset-9 nopadding" style="display: table-cell; margin: 0px 0 0 0; text-align: center;">
+    <div *ngIf="comp" class="col-md-9 col-md-offset-9 nopadding"
+      style="display: table-cell; margin: 0px 0 0 0; text-align: center;">
       <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
         <label class="control-label " for="name">Quant. Boas Ref.</label>
         <div class="input-group">
           <input [(ngModel)]="qttboas_ref" readonly class="form-control" type="number" #box style="text-align: center;"
-            min="0" style="text-align: center;" />
+          step="0.1" min="0" lang="en" value="0.0" style="text-align: center;" />
         </div>
       </div>
       <div class="col-md-1 col-md-offset-1 col-sm-1 nopadding" style="float: left; max-width: 5%;">
@@ -95,32 +109,40 @@
       </div>
       <div class="col-md-2 col-md-offset-2 col-sm-2  nopadding nopadding" style="float: left;">
         <label class="control-label " for="name">Total Cont. Ref.</label>
-        <input class="form-control {{corfundo_ref}}" type="text" readonly style="text-align: center;" value="{{totalcontrol_ref}}" />
+        <input class="form-control {{corfundo_ref}}" type="number" readonly style="text-align: center;"
+          value="{{totalcontrol_ref}}" />
       </div>
-      <div class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+      <div class="col-md-2 col-md-offset-2 col-sm-2 nopadding"
+        style="float: left; max-width: 13.666667%; margin-left: 10px;">
         <label class="control-label " for="name">Quant. OF</label>
         <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
       </div>
-      <div [hidden]="!(comp && qtdetiquetas == 0)" class="nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
-        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton style="height: 43px;"
-          label="Obs. Referência"></button>
+      <div [hidden]="!(comp && qtdetiquetas == 0)" class="nopadding"
+        style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
+        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton
+          style="height: 43px;" label="Obs. Referência"></button>
       </div>
     </div>
 
-    <div [hidden]="(comp && qtdetiquetas == 0)" class="col-md-9 col-md-offset-9 nopadding" style="display: initial; margin: 0px 0 0 0; text-align: center;">
+    <div [hidden]="(comp && qtdetiquetas == 0)" class="col-md-9 col-md-offset-9 nopadding"
+      style="display: initial; margin: 0px 0 0 0; text-align: center;">
       <div class="col-md-2 col-md-offset-2 col-sm-3  nopadding" style=" float: left; max-width:18.3%;">
         <label class="control-label " for="name">Quant. Boas</label>
         <div class="input-group">
           <span class="input-group-btn" style="height: 40px; top: 1px;">
-            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;"
-              (click)="menosqtdboas()" class="btn btn-default">-</button>
+            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button"
+              style="font-size:18pt; padding: 0px 13px 0px 13px; cursor:pointer;" (click)="menosqtdboas(PROQTEFMT)"
+              class="btn btn-default">-</button>
           </span>
-          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control" id="qtdboas"
-            type="number" #box (ngModelChange)="updatetotal(box.value,i,totaldefeitos,qttboas,versao_modif,totaldefeitos_ref,qttboas_ref)"
-            (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;" min="0" style="text-align: center;" />
+          <input [(ngModel)]="qttboas" [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" class="form-control"
+            id="qtdboas" type="number" #box
+            (ngModelChange)="updatetotal(box.value,i,totaldefeitos,qttboas,versao_modif,totaldefeitos_ref,qttboas_ref)"
+            (blur)="blurText($event)" (click)="selectText($event)" style="text-align: center;" step="0.1" min="0" lang="en" value="0.0"
+            style="text-align: center;" />
           <span class="input-group-btn" style="height: 40px; top: 1px;">
-            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button" style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;"
-              (click)="maisqtdboas()" class="btn btn-default">+</button>
+            <button [disabled]="(comp && qtdetiquetas == 0) || !modoedicao" type="button"
+              style="font-size:18pt; padding: 0px 10px 0px 10px; cursor:pointer;" (click)="maisqtdboas(PROQTEFMT)"
+              class="btn btn-default">+</button>
           </span>
         </div>
       </div>
@@ -140,25 +162,30 @@
       </div>
       <div class="col-md-2 col-md-offset-2 col-sm-2  nopadding nopadding" style="float: left;">
         <label class="control-label " for="name">Total Control</label>
-        <input class="form-control {{corfundo}}" type="text" readonly style="text-align: center;" value="{{totalcontrol}}" />
+        <input class="form-control {{corfundo}}" type="number" readonly style="text-align: center;"
+          value="{{totalcontrol}}" />
       </div>
-      <div *ngIf="!comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+      <div *ngIf="!comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding"
+        style="float: left; max-width: 13.666667%; margin-left: 10px;">
         <label class="control-label " for="name">Quant. OF</label>
         <input class="form-control" type="text" style="text-align: center;" value="{{qtdof}}" readonly />
       </div>
 
-      <div *ngIf="comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding" style="float: left; max-width: 13.666667%; margin-left: 10px;">
+      <div *ngIf="comp" class="col-md-2 col-md-offset-2 col-sm-2 nopadding"
+        style="float: left; max-width: 13.666667%; margin-left: 10px;">
         <label class="control-label " for="name">Quant. Etiq.</label>
         <input class="form-control" type="text" style="text-align: center;" value="{{qtd_etiqueta}}" readonly />
       </div>
 
-      <div class="btobserva nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
-        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton style="height: 43px;"
-          label="Obs. Referência"></button>
+      <div class="btobserva nopadding"
+        style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: -6%;">
+        <button type="button" class="form-control btn ui-button-success btobs" (click)="abrirobsref()" pButton
+          style="height: 43px;" label="Obs. Referência"></button>
       </div>
-      <div *ngIf="tabSets.length > 0" class="btobserva btobserva2 nopadding" style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: 95px;">
-        <button type="button" class="form-control btn  btobs" (click)="adicionarobs()" pButton style="height: 43px; background: dimgrey;"
-          label="Obs. do Defeito"></button>
+      <div *ngIf="tabSets.length > 0" class="btobserva btobserva2 nopadding"
+        style="float: left; bottom: 12px; position: absolute; display: inline-block; margin-left: 95px;">
+        <button type="button" class="form-control btn  btobs" (click)="adicionarobs()" pButton
+          style="height: 43px; background: dimgrey;" label="Obs. do Defeito"></button>
       </div>
       <!--
       <div *ngIf="comp" class="col-md-3 col-md-offset-2 col-sm-3 nopadding" style=" float: left; margin-left: 10px;  max-width: 17%;">
@@ -167,7 +194,8 @@
       </div>-->
     </div>
   </div>
-  <div *ngIf="etiquetas.length > 0" class="col-md-3 col-md-offset-3 col-sm-3  nopadding" style="float: left; margin-top: 8px;">
+  <div *ngIf="etiquetas.length > 0" class="col-md-3 col-md-offset-3 col-sm-3  nopadding"
+    style="float: left; margin-top: 8px;">
     <div class="container even_tab nopadding" style="text-align: center; max-width: 93%; float: right; ">
       <div class="row divider_row" style="padding: 0;">
         <div class="col-md-6 col-sm-6 col-xs-6">
@@ -188,7 +216,8 @@
       </div>
     </div>
   </div>
-  <div class="col-md-12 col-md-offset-12 nopadding" style=" float: left; background: rgba(169, 162, 162, 0.92); padding: 0;">
+  <div class="col-md-12 col-md-offset-12 nopadding"
+    style=" float: left; background: rgba(169, 162, 162, 0.92); padding: 0;">
     <form #valForm="ngForm">
       <!--<p-tabView *ngIf="tabSets" orientation="left" class="tabcss" (onChange)="handleChange($event)">
         <p-tabPanel *ngFor="let tab of tabSets" header="{{tab.label}}">
@@ -229,35 +258,45 @@
       </p-tabView>
       {{carregaraltura()}}-->
 
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bhoechie-tab-container" style="margin-bottom: 6px; margin-top: 0; margin-left: 0;">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bhoechie-tab-container"
+        style="margin-bottom: 6px; margin-top: 0; margin-left: 0;">
         <div *ngIf="tabSets.length > 0" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 bhoechie-tab-menu">
           <div class="list-group">
-            <a style="color:black; font-size: 0.9vw; cursor: pointer;" *ngFor="let tab of tabSets" (click)="setactive(tab)"
-              class="list-group-item {{tab.ative}}">
+            <a style="color:black; font-size: 0.9vw; cursor: pointer;" *ngFor="let tab of tabSets"
+              (click)="setactive(tab)" class="list-group-item {{tab.ative}}">
               {{tab.label}}
               <b> ({{getdef(tab.id)}})</b>
             </a>
           </div>
         </div>
-        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 bhoechie-tab" style="border-left: 1px solid #f3f3da; min-height: 100px;">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 bhoechie-tab"
+          style="border-left: 1px solid #f3f3da; min-height: 100px;">
           <div *ngFor="let tab2 of tabSets" class="bhoechie-tab-content {{tab2.ative}}">
 
-            <div *ngFor="let item of tab2.defeitos" class="col-md-4 col-sm-4 col-lg-3  col-md-offset-3 nopadding" style="float:left;">
-              <label class="control-label requiredField" style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 0.8vw; color: black;"
+            <div *ngFor="let item of tab2.defeitos" class="col-md-4 col-sm-4 col-lg-3  col-md-offset-3 nopadding"
+              style="float:left;">
+              <label class="control-label requiredField"
+                style="width: 100%; margin-bottom:0px; /*min-height:48px;*/font-size: 0.8vw; color: black;"
                 for="{{ item.cod }}">
                 <span [hidden]="item.obs == null || item.obs == ''">*</span>{{ item.cod }} - {{ item.des }}</label>
               <div class="input-group" style="width: 92%;">
                 <span class="input-group-btn">
-                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;"
-                    (click)="menos(item.cod,item)" class="btn btn-default">-</button>
+                  <button [disabled]="!modoedicao" type="button"
+                    style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="menos(item.cod,item)"
+                    class="btn btn-default">-</button>
                 </span>
-                <input tabindex="{{item.pos}}" (blur)="blurText($event)" (click)="selectText($event)" (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)"
-                  id="{{ item.cod }}" (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
-                  name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0" type="number"
-                  min="0" style="text-align: center;" [disabled]="!modoedicao">
+                <div style="width: 100%;display: -webkit-inline-box;"
+                  (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)">
+                  <input tabindex="{{item.pos}}" (blur)="blurText($event)" (click)="selectText($event)"
+                    (click)="selectinput(item.id_DEF_LIN,item.obs,item.cod+'-'+item.des)" id="{{ item.cod }}"
+                    (ngModelChange)="alteraValor(inputvalue.value,item.id_DEF_LIN,item.pos,item.cod,item.des)"
+                    name="{{ item.cod }}" #inputvalue [(ngModel)]="item.value" class="form-control" value="0"
+                    type="number" min="0" style="text-align: center;" [disabled]="!modoedicao">
+                </div>
                 <span class="input-group-btn">
-                  <button [disabled]="!modoedicao" type="button" style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;"
-                    (click)="mais(item.cod,item)" class="btn btn-default">+</button>
+                  <button [disabled]="!modoedicao" type="button"
+                    style="font-size:18pt; padding: 0px 25px 0px 25px; cursor:pointer;" (click)="mais(item.cod,item)"
+                    class="btn btn-default">+</button>
                 </span>
               </div>
             </div>
@@ -273,8 +312,9 @@
           </div>-->
         </div>
       </div>
-      <button type="input" #fileInput class="form-control btn ui-button-secondary" icon="fa-refresh" [disabled]="!valForm.form.valid"
-        pButton style="width: auto; height: 60px; float: right; margin-right: 40px; margin-top: 12px; margin-bottom: 20px; display:none;"
+      <button type="input" #fileInput class="form-control btn ui-button-secondary" icon="fa-refresh"
+        [disabled]="!valForm.form.valid" pButton
+        style="width: auto; height: 60px; float: right; margin-right: 40px; margin-top: 12px; margin-bottom: 20px; display:none;"
         label="Atualizar Valores"></button>
       <br>
       <div class="col-md-12 col-md-offset-12" style="float: right">
@@ -282,8 +322,8 @@
           <h5> Verificações Adicionais </h5>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
-                [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value=""
+                (change)="gravar(id_ref_etiq)" [(ngModel)]="verif_adic[1]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -292,8 +332,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
-                [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value=""
+                (change)="gravar(id_ref_etiq)" [(ngModel)]="verif_adic[2]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -302,8 +342,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left;">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
-                [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value=""
+                (change)="gravar(id_ref_etiq)" [(ngModel)]="verif_adic[3]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -312,8 +352,8 @@
           </div>
           <div class="checkbox col-md-3 col-sm-6 nopadding" style="float: left; ">
             <label style="font-size: 1.5em">
-              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value="" (change)="gravar(id_ref_etiq)"
-                [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
+              <input [disabled]="!modoedicao || verif_adic.length == 0" type="checkbox" value=""
+                (change)="gravar(id_ref_etiq)" [(ngModel)]="verif_adic[4]" [ngModelOptions]="{standalone: true}">
               <span class="cr">
                 <i class="cr-icon fa fa-check"></i>
               </span>
@@ -324,12 +364,13 @@
         <!--<div class="col-md-3 col-md-offset-3 col-sm-12 nopadding" style="float: left; bottom: 10px; position: absolute; display: inline-block;">
           <button type="button" class="form-control btn ui-button-success" (click)="abrirobsref()" pButton style="height: 60px;" label="Observações Referência"></button>
         </div>-->
-        <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding" style="float: right; text-align: center; /*bottom: 10px;*/ position: absolute; display: inline-block; right: 0;">
-          <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton style="width: 70%; height: 60px;"
-            label="CONCLUIR / SAIR"></button>
-          <button [hidden]="mostrabtadcionadefeitos" type="button" title="Atualizar Lista Defeitos" pButton icon="fa-refresh"
-            style="width: 12%; height: 60px; position: absolute;" class="ui-button-warning" (click)="showMessage()"
-            label=" "></button>
+        <div class="col-md-3 col-md-offset-3  col-sm-12 nopadding"
+          style="float: right; text-align: center; /*bottom: 10px;*/ position: absolute; display: inline-block; right: 0;">
+          <button type="button" class="form-control btn btn-primary" (click)="concluir()" pButton
+            style="width: 70%; height: 60px;" label="CONCLUIR / SAIR"></button>
+          <button [hidden]="mostrabtadcionadefeitos" type="button" title="Atualizar Lista Defeitos" pButton
+            icon="fa-refresh" style="width: 12%; height: 60px; position: absolute;" class="ui-button-warning"
+            (click)="showMessage()" label=" "></button>
           <!--<button type="button" class="form-control btn btn-success ui-button-secondary" (click)="gravar()" pButton style="width: 48%; height: 60px; float: left;"
           label="Gravar"></button>-->
         </div>
@@ -366,20 +407,21 @@
 </div>
 
 <!-- POPUP OBS DEFEITOS-->
-<p-dialog header="Observações do Defeito: {{defeito_desg}}" [(visible)]="displayDialog" modal="modal" [responsive]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog header="Observações do Defeito: {{defeito_desg}}" [(visible)]="displayDialog" modal="modal"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12">
         <label for="vin">Observação</label>
       </div>
-      <textarea pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;" [(ngModel)]="obdsdef"></textarea>
+      <textarea [disabled]="!modoedicao" pInputTextarea autoResize="false" [rows]="5" style="width: 100%; resize: none;"
+        [(ngModel)]="obdsdef"></textarea>
     </div>
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel()"
-        label="Cancelar"></button>
+      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close"
+        (click)="cancel()" label="Cancelar"></button>
       <button type="button" pButton icon="fa-check" (click)="save()" label="Gravar"></button>
     </div>
   </p-footer>
@@ -400,16 +442,17 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close" (click)="cancel_obs()"
-        label="Cancelar"></button>
-      <button [disabled]="!modoedicao" type="button" pButton icon="fa-check" (click)="save_obs()" label="Gravar"></button>
+      <button style="background: #d9534f;" class="ui-button-danger" type="button" pButton icon="fa-close"
+        (click)="cancel_obs()" label="Cancelar"></button>
+      <button [disabled]="!modoedicao" type="button" pButton icon="fa-check" (click)="save_obs()"
+        label="Gravar"></button>
     </div>
   </p-footer>
 </p-dialog>
 
 <!-- POPUP ETIQUETA NÃO ENCONTRADA -->
-<p-dialog header="Etiqueta não encontrada!" [(visible)]="displayDialogetiqueta" modal="modal" width="700" [responsive]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog header="Etiqueta não encontrada!" [(visible)]="displayDialogetiqueta" modal="modal" width="700"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
   <div class="col-md-12 col-md-offset-12" style="height: 100px; float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12" style="text-align: center;">
@@ -452,24 +495,28 @@
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12" style="text-align: center;">
-        <div #divinput class="divinput col-md-12 col-md-offset-12 nopadding" style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
+        <div #divinput class="divinput col-md-12 col-md-offset-12 nopadding"
+          style="float:left; text-align: left; text-align: left; margin: 0 auto; display: table;">
           <label class="control-label " for="name">
             <h6>Nº Etiqueta:</h6>
           </label>
           <div class="icon-addon " style="width: 100%;">
             <input id="inputFocous" [(ngModel)]="num_etiqueta_nova" [ngModelOptions]="{standalone: true}" #inputFocous
-              (keyup.enter)="pesquisaetiqueta(true)" class="form-control" type="number" (ngModelChange)="num_etiqueta_nova=inputFocous.value"
+              (keyup.enter)="pesquisaetiqueta(true)" class="form-control" type="number"
+              (ngModelChange)="num_etiqueta_nova=inputFocous.value"
               style="text-align: center; width:48%; display: inline; margin-left: 10px;" min="0" />
           </div>
           <span class="input-group-btn" style="width: 10%; display: inline;">
-            <button (click)="pesquisaetiqueta(true)" class="btn {{bt_class1}}" type="button" style=" width: 15%; opacity: 1; line-height: 0; height: 41.8px; margin-top: -5px; margin-left: -10px;">
+            <button (click)="pesquisaetiqueta(true)" class="btn {{bt_class1}}" type="button"
+              style=" width: 15%; opacity: 1; line-height: 0; height: 41.8px; margin-top: -5px; margin-left: -10px;">
               <i style="font-size: 27px;" *ngIf="refresh_nova" class="fa fa-refresh"></i>
               <i style="font-size: 20px;" *ngIf="spinner_nova" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
               <span class="sr-only">Loading...</span>
             </button>
           </span>
 
-          <button (click)="limpardados2()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; height: 43.8px; margin-top: -5px; margin-left: 10px;">
+          <button (click)="limpardados2()" class="btn btn-default" type="button"
+            style="opacity: 1; line-height: 0; height: 43.8px; margin-top: -5px; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
         </div>
@@ -491,8 +538,8 @@
   <div class="col-md-12 col-md-offset-12" style="float: left; font-size: 18px;">
     <div class="ui-grid-row">
       <div class="ui-grid-col-12" style="text-align: center;">
-        <p-dataTable [value]="listanovosdefeitos" selectionMode="single" (onRowSelect)="onRowSelect($event)" dataKey="num"
-          scrollable="true" scrollHeight="200px" [rows]="10" [style]="{'font-size':'12px'}">
+        <p-dataTable [value]="listanovosdefeitos" selectionMode="single" (onRowSelect)="onRowSelect($event)"
+          dataKey="num" scrollable="true" scrollHeight="200px" [rows]="10" [style]="{'font-size':'12px'}">
           <p-header>DEFEITOS</p-header>
           <p-column field="CHECK" header="" [style]="{'width':'15%'}">
             <ng-template let-col let-row="rowData" pTemplate="body">
@@ -508,8 +555,10 @@
             </ng-template>
 
           </p-column>
-          <p-column [sortable]="true" [filter]="true" field="QUACOD" header="QUACOD" [sortable]="true" [style]="{'width':'15%'}"></p-column>
-          <p-column [sortable]="true" [filter]="true" field="QUALIB" header="QUALIB" [style]="{'width':'50%'}"></p-column>
+          <p-column [sortable]="true" [filter]="true" field="QUACOD" header="QUACOD" [sortable]="true"
+            [style]="{'width':'15%'}"></p-column>
+          <p-column [sortable]="true" [filter]="true" field="QUALIB" header="QUALIB" [style]="{'width':'50%'}">
+          </p-column>
         </p-dataTable>
       </div>
     </div>
@@ -517,7 +566,8 @@
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
       <button type="button" pButton icon="fa-close" (click)="displaypopupnovosdefeitos = false" label="Fechar"></button>
-      <button type="button" pButton icon="fa-check" class="ui-button-success" (click)="inserirDEFEITOS()" label="Guardar"></button>
+      <button type="button" pButton icon="fa-check" class="ui-button-success" (click)="inserirDEFEITOS()"
+        label="Guardar"></button>
     </div>
   </p-footer>
 </p-dialog>

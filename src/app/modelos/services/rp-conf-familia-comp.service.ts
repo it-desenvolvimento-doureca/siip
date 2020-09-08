@@ -3,6 +3,7 @@ import { Http, Headers, Response } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { webUrl } from "webUrl";
 import { RP_CONF_FAMILIA_COMP } from "app/modelos/entidades/RP_CONF_FAMILIA_COMP";
+import { RP_CONF_FAMILIA_DEF_COMPRADAS } from '../entidades/RP_CONF_FAMILIA_DEF_COMPRADAS';
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class RPCONFFAMILIACOMPService {
 
   create(data: RP_CONF_FAMILIA_COMP) {
     return this.http
-      .post(webUrl.host+'/rest/siip/createRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
+      .post(webUrl.host + '/rest/siip/createRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
@@ -24,7 +25,7 @@ export class RPCONFFAMILIACOMPService {
 
   delete(id) {
     return this.http
-      .delete(webUrl.host+'/rest/siip/deleteRP_CONF_FAMILIA_COMP/' + id + '')
+      .delete(webUrl.host + '/rest/siip/deleteRP_CONF_FAMILIA_COMP/' + id + '')
       .toPromise()
       .then(res => res)
       .catch(this.handleError);
@@ -32,7 +33,7 @@ export class RPCONFFAMILIACOMPService {
 
 
   getAll(): Observable<RP_CONF_FAMILIA_COMP[]> {
-    const url = webUrl.host+'/rest/siip/getRP_CONF_FAMILIA_COMP';
+    const url = webUrl.host + '/rest/siip/getRP_CONF_FAMILIA_COMP';
     return this.http
       .get(url)
       .map(this.extractData)
@@ -40,7 +41,7 @@ export class RPCONFFAMILIACOMPService {
   }
 
   getcodfam(codfam): Observable<RP_CONF_FAMILIA_COMP[]> {
-    const url = webUrl.host+'/rest/siip/getRP_CONF_FAMILIA_COMPcodfam/'+codfam;
+    const url = webUrl.host + '/rest/siip/getRP_CONF_FAMILIA_COMPcodfam/' + codfam;
     return this.http
       .get(url)
       .map(this.extractData)
@@ -49,7 +50,7 @@ export class RPCONFFAMILIACOMPService {
 
   update(data: RP_CONF_FAMILIA_COMP) {
     return this.http
-      .put(webUrl.host+'/rest/siip/updateRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
+      .put(webUrl.host + '/rest/siip/updateRP_CONF_FAMILIA_COMP', JSON.stringify(data), { headers: this.headers })
       .toPromise()
       .then(res => res.json().data)
       .catch(this.handleError);
@@ -59,4 +60,31 @@ export class RPCONFFAMILIACOMPService {
     let body = res.json();
     return body;
   }
+
+
+  getAllcompradas(): Observable<RP_CONF_FAMILIA_DEF_COMPRADAS[]> {
+    const url = webUrl.host + '/rest/siip/getRP_CONF_FAMILIA_DEF_COMPRADAS';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+  createcompradas(data: RP_CONF_FAMILIA_DEF_COMPRADAS) {
+    return this.http
+      .post(webUrl.host + '/rest/siip/createRP_CONF_FAMILIA_DEF_COMPRADAS', JSON.stringify(data), { headers: this.headers })
+      .toPromise()
+      .then(res => res.json().data)
+      .catch(this.handleError);
+  }
+
+
+  deletecompradas(id) {
+    return this.http
+      .delete(webUrl.host + '/rest/siip/deleteRP_CONF_FAMILIA_DEF_COMPRADAS/' + id + '')
+      .toPromise()
+      .then(res => res)
+      .catch(this.handleError);
+  }
+
 }

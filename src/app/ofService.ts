@@ -29,6 +29,14 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    getofpai_filho(ofnum) {
+        const url = webUrl.host + '/rest/demo/getofpai_filho/' + ofnum + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
     getOP(ofanumenr) {
         const url = webUrl.host + '/rest/demo/operacao/' + ofanumenr + '';
         return this.http
@@ -162,6 +170,32 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
+    getEtiquetacaixas(etiqueta) {
+        const url = webUrl.host + '/rest/demo/getEtiquetacaixas/' + etiqueta + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+
+    gama_embalagem(data) {
+        const url = webUrl.host + '/rest/demo/gama_embalagem';
+        return this.http
+            .post(url, JSON.stringify(data), { headers: this.headers })
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    consulta_Impressao(proref) {
+        const url = webUrl.host + '/rest/demo/consulta_Impressao/' + proref + '';
+        return this.http
+            .get(url)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+
     getRef(OFANUMENR) {
         const url = webUrl.host + '/rest/demo/referencias/' + OFANUMENR + '';
         return this.http
@@ -170,9 +204,9 @@ export class ofService {
             .catch((error: any) => Observable.throw('Server error'));
     }
 
-    criaficheiro(id, estado, ficheiros = false, manual) {
+    criaficheiro(id, estado, ficheiros = false, manual, data) {
         const url = webUrl.host + '/rest/siip/ficheiro/' + id + '/' + estado + '/' + ficheiros + '/' + manual;
-        return this.http.get(url, { responseType: ResponseContentType.Blob }).map(
+        return this.http.post(url, JSON.stringify(data), { responseType: ResponseContentType.Blob, headers: this.headers }).map(
             (res) => {
                 if (ficheiros) {
                     return new Blob([res.blob()], { type: 'application/zip' });
@@ -180,8 +214,8 @@ export class ofService {
             });
     }
 
-    criaficheiroManual(data) {
-        const url = webUrl.host + '/rest/siip/ficheiroManual';
+    criaficheiroManual(data, todos) {
+        const url = webUrl.host + '/rest/siip/ficheiroManual/' + todos;
         return this.http.post(url, JSON.stringify(data), { responseType: ResponseContentType.Blob, headers: this.headers }).map(
             (res) => {
 
@@ -192,6 +226,15 @@ export class ofService {
 
     getList(data) {
         const url = webUrl.host + '/rest/siip/getOFS';
+        return this.http
+            .post(url, JSON.stringify(data), { headers: this.headers })
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+
+    getOFSCOMPONENTES(data) {
+        const url = webUrl.host + '/rest/siip/getOFSCOMPONENTES';
         return this.http
             .post(url, JSON.stringify(data), { headers: this.headers })
             .map((res: Response) => res.json())
@@ -237,4 +280,51 @@ export class ofService {
             .map((res: Response) => res.json())
             .catch((error: any) => Observable.throw('Server error'));
     }
+
+
+    imprimir(ficheiro, impressora) {
+        const url = webUrl.host + '/rest/siip/imprimir/' + ficheiro + '/' + impressora;
+        return this.http
+            .get(url)
+            .map(this.extractData1)
+            .catch(this.handleError);
+    }
+
+    private extractData1(res: Response) {
+        return res;
+    }
+
+    private handleError(error: any): Promise<any> {
+        return Promise.reject(error.message || error);
+    }
+
+    getIMPRESORA(ip) {
+        const url = webUrl.host + '/rest/siip/getIMPRESORA/' + ip;
+        return this.http
+            .get(url)
+            .map(this.extractData)
+            .catch((error: any) => Observable.throw('Server error'));
+    }
+
+    private extractData(res: Response) {
+        let body = res.json();
+        return body;
+    }
+
+    downloadPDF(format, filename, id, relatorio): any {
+        const url = webUrl.host + '/rest/siip/get/' + format + '/' + filename + '/' + id + '/' + relatorio;
+        return this.http.get(url, { responseType: ResponseContentType.Blob }).map(
+            (res) => {
+                if (format == "pdf") {
+                    return new Blob([res.blob()], { type: 'application/pdf' });
+                } else if (format == "xlsx") {
+                    return new Blob([res.blob()], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                } else if (format == "docx") {
+                    return new Blob([res.blob()], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                }
+
+            });
+    }
+
+
 }

@@ -21,6 +21,8 @@ import { RPOFOUTRODEFLINService } from "app/modelos/services/rp-of-outrodef-lin.
 import { RP_OF_OUTRODEF_LIN } from "app/modelos/entidades/RP_OF_OUTRODEF_LIN";
 import { RP_OF_LST_DEF } from 'app/modelos/entidades/RP_OF_LST_DEF';
 import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
+import { ST_PEDIDOS } from '../entidades/ST_PEDIDOS';
+import { STPEDIDOSService } from '../services/st-pedidos.service';
 
 @Component({
     selector: 'app-nova-operacao',
@@ -40,7 +42,18 @@ import { RPOFLSTDEFService } from 'app/modelos/services/rp-of-lst-def.service';
     ]
 })
 export class NovaOperacaoComponent implements OnInit {
+    impressao_selected = null;
+    display_alertaerro;
+    mensagem_erro;
     temp_ope_num;
+    PROREF;
+    lista_impressao;
+    sec_num: any;
+    display_sem_referencias: boolean;
+    fileURL: string;
+    msgs: Message[] = [];
+    texto_alerta2: string;
+    display_alerta2: boolean;
     [x: string]: any;
     sec_des: any;
     perfil_utz: any;
@@ -98,10 +111,12 @@ export class NovaOperacaoComponent implements OnInit {
     seccao;
     loadingTable: boolean = false;
     campoofdisabled = false;
+    display_lista;
+    referencia;
 
     @ViewChild('inputFocous') inputFocous: any;
 
-    constructor(private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
+    constructor(private STPEDIDOSService: STPEDIDOSService, private RPOFLSTDEFService: RPOFLSTDEFService, private RPOFOUTRODEFLINService: RPOFOUTRODEFLINService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private RPOPFUNCService: RPOPFUNCService, private RPOFDEFLINService: RPOFDEFLINService, private RPCONFOPService: RPCONFOPService, private router: Router, private prepservice: RPOFPREPLINService, private RPOFOPLINService: RPOFOPLINService, private RPOFOPCABService: RPOFOPCABService, private service: ofService, private op_service: RPCONFOPNPREVService, private RPOFCABService: RPOFCABService) {
         this.operacao = [];
 
     }
@@ -174,7 +189,7 @@ export class NovaOperacaoComponent implements OnInit {
                                         if (response2[x].ZPAVAL != null) {
                                             perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
                                         }
-                                        referencias.push({ GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
+                                        referencias.push({ tipo_PECAorder: "PF", tipo_PECA: response2[x].PROTYPCOD, PROQTEFMT: response2[x].PROQTEFMT, GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
                                         //verifica familia
                                         this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias, response[0].ofanumenr);
                                     }
@@ -201,7 +216,9 @@ export class NovaOperacaoComponent implements OnInit {
                                 error => {
                                     console.log(error)
                                     if (error.status == 0) {
-                                        alert("Conexão com o Servidor Perdida!");
+                                        //alert("Conexão com o Servidor Perdida!");
+                                        this.texto_alerta2 = "Conexão com o Servidor Perdida!";
+                                        this.display_alerta2 = true;
                                     }
                                     this.campoofdisabled = false;
                                 });
@@ -272,24 +289,59 @@ export class NovaOperacaoComponent implements OnInit {
                             if (response.ZPAVAL != null) {
                                 perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
                             }
-                            referencias.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+                            if (!this.referencias.find(item => item.codigo == response.PROREF)) referencias.push({ tipo_PECAorder: (response.PROTYPCOD == "COM") ? "COM" : "COMP", tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
 
                             this.referencias = referencias.slice();
+                            this.referencias.sort(this.compareFunction2);
+                            this.referencias.sort(this.compareFunction);
                         }
                         if (OFANUMENR != null) {
                             this.get_filhosprimeiro(OFANUMENR, referencias);
                         } else {
-                            this.get_filhos(ref, referencias);
+                            // this.get_filhos(ref, referencias);
+                            this.loadingTable = false;
                         }
                     } else {
                         this.loadingTable = false;
                     }
                 },
                 error => { console.log(error); this.loadingTable = false; });
+        } else if (response.PROTYPCOD == "COM") {
+            var perc = null;
+            if (response.ZPAVAL != null) {
+                perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
+            }
+            if (!this.referencias.find(item => item.codigo == response.PROREF)) referencias.push({ tipo_PECAorder: (response.PROTYPCOD == "COM") ? "COM" : "COMP", tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
+
+            this.referencias = referencias.slice();
+            this.referencias.sort(this.compareFunction2);
+            this.referencias.sort(this.compareFunction);
+            this.loadingTable = false;
         } else {
             this.loadingTable = false;
         }
 
+    }
+
+    compareFunction(a, b) {
+        if (a.tipo_PECAorder > b.tipo_PECAorder) {
+            return -1;
+        }
+        if (a.tipo_PECAorder < b.tipo_PECAorder) {
+            return 1;
+        }
+        return 0;
+    }
+
+    compareFunction2(a, b) {
+        if (a.codigo > b.codigo) {
+            return 1;
+        }
+        if (a.codigo < b.codigo) {
+            return -1;
+        }
+        return 0;
     }
 
     //pesquisar componentes
@@ -555,6 +607,7 @@ export class NovaOperacaoComponent implements OnInit {
                 this.RPOFCABService.verifica(this.num_of, this.op_cod, this.op_NUM, this.username).subscribe(
                     response => {
                         var c = Object.keys(response).length;
+                        //console.log(response)
                         //se existir e não for mão de obra
                         if (c > 0 && response[0][1] > 0) {
                             this.pessoa_op_em_curso = "Não é possível iniciar trabalho, utilizador tem um trabalho a decorrer!";
@@ -714,12 +767,12 @@ export class NovaOperacaoComponent implements OnInit {
         rpofop.id_OP_CAB = id_OP_CAB;
         var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-        rpofop.data_INI = new Date();
+        rpofop.data_INI = new Date(this.formatDate(date));
         rpofop.hora_INI = time;
 
-        rpofop.data_INI_M1 = new Date();
+        rpofop.data_INI_M1 = new Date(this.formatDate(date));
         rpofop.hora_INI_M1 = time;
-        rpofop.data_INI_M2 = new Date();
+        rpofop.data_INI_M2 = new Date(this.formatDate(date));
         rpofop.hora_INI_M2 = time;
 
         rpofop.id_UTZ_CRIA = this.username
@@ -744,6 +797,8 @@ export class NovaOperacaoComponent implements OnInit {
             var ref = this.referencias.find(item => item.codigo == ref);
             var rpofoplin = new RP_OF_OP_LIN;
             rpofoplin.id_OP_CAB = id_OP_CAB;
+            rpofoplin.proqtefmt = (ref.PROQTEFMT == "1") ? true : false;
+            rpofoplin.tipo_PECA = ref.tipo_PECA;
             rpofoplin.ref_NUM = ref.codigo;
             rpofoplin.ref_DES = ref.design;
             rpofoplin.ref_IND = ref.INDREF;
@@ -772,7 +827,8 @@ export class NovaOperacaoComponent implements OnInit {
                     rpofoplin.ref_VAR2 = this.referencias[x].var2;
                     rpofoplin.quant_BOAS_TOTAL = 0;
                     rpofoplin.quant_DEF_TOTAL = 0;
-
+                    rpofoplin.proqtefmt = (this.referencias[x].PROQTEFMT == "1") ? true : false;
+                    rpofoplin.tipo_PECA = this.referencias[x].tipo_PECA;
                     rpofoplin.quant_BOAS_TOTAL_M1 = 0;
                     rpofoplin.quant_DEF_TOTAL_M1 = 0;
                     rpofoplin.quant_BOAS_TOTAL_M2 = 0;
@@ -821,11 +877,11 @@ export class NovaOperacaoComponent implements OnInit {
         //var date = new Date();
         var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         prep.id_OP_CAB = id_OP_CAB;
-        prep.data_INI = date;
+        prep.data_INI = new Date(this.formatDate(date));
         prep.hora_INI = time;
-        prep.data_INI_M1 = date;
+        prep.data_INI_M1 = new Date(this.formatDate(date));
         prep.hora_INI_M1 = time;
-        prep.data_INI_M2 = date;
+        prep.data_INI_M2 = new Date(this.formatDate(date));
         prep.hora_INI_M2 = time;
         prep.id_UTZ_CRIA = this.username
         prep.estado = "P";
@@ -923,6 +979,149 @@ export class NovaOperacaoComponent implements OnInit {
 
     lookupRowStyleClass(rowData) {
         return !rowData.comp ? 'disabled-account-row' : '';
+    }
+
+    //formatar a data para yyyy-mm-dd
+    formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    abrirlista(ref, design) {
+        this.impressao_selected = [];
+        this.PROREF = ref;
+        this.referencia = ref + "-" + design;
+        this.lista_impressao = [];
+        this.service.consulta_Impressao(ref).subscribe(result => {
+            var countx = Object.keys(result).length;
+
+            if (countx > 0) {
+                for (var x in result) {
+                    this.lista_impressao.push({
+                        ARMAZEM: result[x].ARMAZEM,
+                        DATA: result[x].DATA,
+                        DESREF: result[x].DESREF,
+                        LOCAL: result[x].LOCAL,
+                        LOTE: result[x].LOTE,
+                        NUMETIQ: result[x].NUMETIQ,
+                        QUANT: result[x].QUANT,
+                        REF: result[x].REF
+                    })
+                }
+            }
+            this.lista_impressao = this.lista_impressao.slice();
+            this.display_lista = true;
+
+        }, error => {
+            console.log(error);
+            this.display_lista = true;
+        });
+    }
+
+    informa_armazem() {
+        if (this.impressao_selected.length == 0) {
+            this.display_alertaerro = true;
+            this.mensagem_erro = "Seleccione um linha!";
+        } else {
+            //console.log(this.impressao_selected)
+            if (this.selected == null || this.selected == 0) {
+
+                this.campo = "Operação";
+
+                this.display_campos_obrigatorios = true;
+            } else {
+
+
+                this.msgs = [];
+                for (var x in this.impressao_selected) {
+                    var linha = new ST_PEDIDOS;
+                    linha.armazem = this.impressao_selected[x].ARMAZEM;
+                    linha.local = this.impressao_selected[x].LOCAL;
+                    linha.data_CRIA = new Date();
+                    linha.utz_CRIA = this.username;
+                    linha.proref = this.impressao_selected[x].REF;
+                    linha.descricao = this.impressao_selected[x].DESREF;
+                    linha.lote = this.impressao_selected[x].LOTE;
+                    linha.etqnum = this.impressao_selected[x].NUMETIQ;
+                    linha.quant = (this.impressao_selected[x].QUANT) * 1;
+
+                    linha.ip_POSTO = this.getCookie("IP_CLIENT");
+                    linha.cod_SECTOR_OF = this.sec_num;
+                    linha.des_SECTOR_OF = this.sec_des;
+                    //console.log(linha)
+                    this.insertPEDIDO(linha);
+                }
+                this.display_lista = false;
+            }
+        }
+    }
+
+
+    imprimir() {
+
+        var filename = new Date().toLocaleString().replace(/\D/g, '');
+        this.service.downloadPDF("pdf", filename, this.PROREF, "consulta_FIFOS").subscribe(
+            (res) => {
+                this.fileURL = URL.createObjectURL(res);
+                //this.fileURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileURL); ´
+
+                this.service.getIMPRESORA(this.getCookie("IP_CLIENT")).subscribe(
+                    (res2) => {
+
+                        var count = Object.keys(res2).length;
+
+                        if (count > 0 && res2[0][3] != "" && res2[0][3] != null) {
+                            this.service.imprimir(filename, res2[0][3]).subscribe(
+                                response => {
+                                    //enviado para impressora
+                                }, error => {
+                                    //console.log(error.status);
+
+                                    console.log(error._body);
+                                });
+
+                        } else {
+                            var iframe;
+                            if (!iframe) {
+                                iframe = document.createElement('iframe');
+                                document.body.appendChild(iframe);
+
+                                iframe.style.display = 'none';
+                                iframe.onload = function () {
+                                    setTimeout(function () {
+                                        iframe.focus();
+                                        iframe.contentWindow.print();
+                                    }, 1);
+                                };
+                            }
+                            iframe.src = this.fileURL;
+                        }
+                    }, error => console.log(error));
+            }
+        );
+    }
+
+    //ver cookies
+    getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
+    insertPEDIDO(linha) {
+        this.STPEDIDOSService.create(linha).subscribe(
+            res => {
+                this.msgs.push({ severity: 'success', summary: 'Info', detail: 'Armazém Informado. Ref.: ' + linha.proref });
+            }, error => {
+                this.msgs.push({ severity: 'error', summary: 'Erro', detail: 'Erro ao Informar Armazém. Ref.: ' + linha.proref });
+            });
     }
 
 }

@@ -13,6 +13,7 @@ import { RPCONFOPNPREVService } from "app/modelos/services/rp-conf-op-nprev.serv
 import { RP_CONF_OP_NPREV } from "app/modelos/entidades/RP_CONF_OP_NPREV";
 import { RPCONFFAMILIACOMPService } from "app/modelos/services/rp-conf-familia-comp.service";
 import { RP_CONF_FAMILIA_COMP } from "app/modelos/entidades/RP_CONF_FAMILIA_COMP";
+import { RP_CONF_FAMILIA_DEF_COMPRADAS } from '../entidades/RP_CONF_FAMILIA_DEF_COMPRADAS';
 
 @Component({
   selector: 'app-gestao-users',
@@ -74,9 +75,19 @@ export class GestaoUsersComponent implements OnInit {
   msgs2: Message[] = [];
   loading: boolean;
   listaofs: any = [];
+  listaofscomps = [];
   selectedOFS: string[] = []
   displayDialogmsg: boolean;
   loadingTable: boolean = false;
+  horainicio2: string;
+  datafim2: any;
+  horafim2: string;
+  datainicio2: any;
+  listadefcomp: any;
+  listallfam2: any[];
+  selectedalldef: any;
+  selectedalldef_name: any;
+  selectedfamdefcomp: any;
 
   constructor(private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private op_service: RPCONFOPNPREVService, private fam_service: RPCONFOPService, private ofservice: ofService, private service: utilizadorService, private conf_service: RPCONFUTZPERFService, private chef_service: RPCONFCHEFSECService, private confirmationService: ConfirmationService) { }
 
@@ -109,6 +120,7 @@ export class GestaoUsersComponent implements OnInit {
             this.brand2 = this.brand2.slice();
             this.preenche_op();
             this.preenche_famcomp();
+            this.preenche_defeitos_compradas();
           },
           error => console.log(error));
       },
@@ -126,6 +138,7 @@ export class GestaoUsersComponent implements OnInit {
     var conf_utiliz = new RP_CONF_UTZ_PERF;
     var conf_op = new RP_CONF_OP_NPREV;
     var fam_comp = new RP_CONF_FAMILIA_COMP;
+    var def_comp = new RP_CONF_FAMILIA_DEF_COMPRADAS;
     switch (list) {
       //Operador
       case "list3":
@@ -200,6 +213,16 @@ export class GestaoUsersComponent implements OnInit {
           });
         }
         break;
+      //Lista familias def compradas
+      case "listadefcomp":
+        if (this.selectedalldef != "") {
+          def_comp.cod_FAMILIA_DEF = this.selectedalldef;
+          def_comp.nome_FAMILIA_DEF = this.selectedalldef_name;
+          this.RPCONFFAMILIACOMPService.createcompradas(def_comp).then(() => {
+            this.preenche_defeitos_compradas();
+          });
+        }
+        break;
     }
   }
 
@@ -255,6 +278,14 @@ export class GestaoUsersComponent implements OnInit {
           });
         }
         break;
+      //Lista familias def compradas
+      case "listadefcomp":
+        if (this.selectedfamdefcomp != "") {
+          this.RPCONFFAMILIACOMPService.deletecompradas(this.selectedfamdefcomp).then(() => {
+            this.preenche_defeitos_compradas();
+          });
+        }
+        break;
     }
   }
 
@@ -287,8 +318,17 @@ export class GestaoUsersComponent implements OnInit {
     this.selectedallfam = event.data.codigofam;
     this.selectedallfam_name = event.data.design;
   }
+
+  onRowSelectalldef(event) {
+    this.selectedalldef = event.data.codigofam;
+    this.selectedalldef_name = event.data.design;
+  }
+
   onRowSelectfamsel(event) {
     this.selectedfamcomp = event.data.id;
+  }
+  onRowSelectdefel(event) {
+    this.selectedfamdefcomp = event.data.id;
   }
 
   //popup para adicionar responsáveis a uma seccão.
@@ -597,7 +637,7 @@ export class GestaoUsersComponent implements OnInit {
 
   }
 
-  //preenche tabelas operações
+  //preenche tabelas FAmilias comp
   preenche_famcomp() {
     this.listallfam = [];
     this.listafam = [];
@@ -632,6 +672,39 @@ export class GestaoUsersComponent implements OnInit {
 
   }
 
+
+  //preenche tabelas defeitos
+  preenche_defeitos_compradas() {
+    this.listallfam2 = [];
+    this.listadefcomp = [];
+    var data = [];
+    var control = false;
+    this.RPCONFFAMILIACOMPService.getAllcompradas().subscribe(
+      response => {
+        for (var x in response) {
+          this.listadefcomp.push({ field: response[x].cod_FAMILIA_DEF.trim() + " - " + response[x].nome_FAMILIA_DEF, id: response[x].cod_FAMILIA_DEF });
+          data.push(response[x].cod_FAMILIA_DEF.trim())
+        }
+        this.listadefcomp = this.listadefcomp.slice();
+        if (this.listadefcomp.length == 0) data = null;
+
+        this.ofservice.getAllOPNOTIN(data).subscribe(
+          response => {
+            for (var x in response) {
+
+              this.listallfam2.push({ field: response[x].OPECOD + " - " + response[x].OPEDES, codigofam: response[x].OPECOD, design: response[x].OPEDES });
+            }
+            this.listallfam2 = this.listallfam2.slice();
+            this.selectedalldef = "";
+            this.selectedfamdefcomp = "";
+            this.selectedalldef_name = "";
+          },
+          error => console.log(error));
+      },
+      error => console.log(error));
+
+  }
+
   atualizaPassword(tab) {
 
     var conf_utiliz = new RP_CONF_UTZ_PERF;
@@ -649,13 +722,15 @@ export class GestaoUsersComponent implements OnInit {
     this.loadingTable = true;
     var data = [{ datainicio: this.formatDate(this.datainicio) + " " + this.horainicio, datafim: this.formatDate(this.datafim) + " " + this.horafim }];
     this.listaofs = [];
+    this.selectedOFS = [];
     this.ofservice.getList(data).subscribe(resu => {
 
       for (var x in resu) {
         this.listaofs.push({
           ID: resu[x].ID, OPERARIO: resu[x].RESCOD + " - " + resu[x].NOME,
-          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0,8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OPECOD,
-          DATAFIM: resu[x].DATAFIM, HORAFIM: resu[x].HORAFIM
+          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0, 8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OP_NUM + '/' + resu[x].OPECOD,
+          DATAFIM: resu[x].DATAFIM, HORAFIM: resu[x].HORAFIM.substring(0, 8),
+          TOTAL: resu[x].BOAS + " / " + resu[x].DEFEITOS, REF: resu[x].REF
         });
       }
       this.listaofs = this.listaofs.slice();
@@ -666,12 +741,37 @@ export class GestaoUsersComponent implements OnInit {
     });
   }
 
-  getFile() {
-    
+  getListComp() {
+    this.loadingTable = true;
+    var data = [{ datainicio: this.formatDate(this.datainicio2) + " " + this.horainicio2, datafim: this.formatDate(this.datafim2) + " " + this.horafim2 }];
+    this.listaofscomps = [];
+    this.selectedOFS = [];
+    this.ofservice.getOFSCOMPONENTES(data).subscribe(resu => {
+
+      for (var x in resu) {
+        this.listaofscomps.push({
+          ID: resu[x].ID, OPERARIO: resu[x].RESCOD + " - " + resu[x].NOME,
+          OFNUM: resu[x].OFNUM, HEUDEB: resu[x].HEUDEB.substring(0, 8), DATDEB: resu[x].DATDEB, OPECOD: resu[x].OPECOD,
+          DATAFIM: resu[x].DATAFIM, HORAFIM: resu[x].HORAFIM.substring(0, 8), COMPONENTE: resu[x].REF + ' - ' + resu[x].REF_DES,
+          ETIQUETA: resu[x].ETIQUETA
+        });
+      }
+      this.listaofscomps = this.listaofscomps.slice();
+      this.loadingTable = false;
+    }, error => {
+      console.log(error);
+      this.loadingTable = false;
+    });
+  }
+
+
+
+  getFile(todos) {
+
     if (this.selectedOFS.length > 0) {
       this.loading = true;
       var data = this.selectedOFS;
-      this.ofservice.criaficheiroManual(data).subscribe(resu => {
+      this.ofservice.criaficheiroManual(data, todos).subscribe(resu => {
         this.loading = false;
         var a = document.createElement('a');
         a.href = URL.createObjectURL(resu);

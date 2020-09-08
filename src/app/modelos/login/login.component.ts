@@ -57,6 +57,8 @@ export class LoginComponent implements OnInit {
   concluir_bt: boolean;
   utilizadores: any[];
   utilizadores_todos: any;
+  texto_alerta2: string;
+  display_alerta2: boolean;
   constructor(private confirmationService: ConfirmationService, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private AppGlobals: AppGlobals, private elementRef: ElementRef, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFOPCABService: RPOFOPCABService, private RPOFPARALINService: RPOFPARALINService, private router: Router, private service: utilizadorService, private service__utz: RPCONFUTZPERFService, private RPOFCABService: RPOFCABService) {
 
   }
@@ -67,7 +69,15 @@ export class LoginComponent implements OnInit {
       this.displayprep = true;
       this.AppGlobals.setlogin_pausa(false);
     } else {
-      localStorage.clear();
+      //localStorage.clear();
+      localStorage.removeItem('time_siip');
+      localStorage.removeItem('id_of_cab');
+      localStorage.removeItem('id_op_cab');
+      localStorage.removeItem('siip_edicao');
+      localStorage.removeItem('user');
+      localStorage.removeItem('access');
+      localStorage.removeItem('sec_num_user');
+      localStorage.removeItem('perfil');
     }
     var versionUpdate = (new Date()).getTime();
     var s = document.createElement("script");
@@ -171,13 +181,18 @@ export class LoginComponent implements OnInit {
             this.edited = false;
             this.name = "";
             this.loading = false;
-            alert("Utilizador não foi encontrado!");
+            //alert("Utilizador não foi encontrado!");
+            this.texto_alerta2 = "<h4>Utilizador não foi encontrado</h4>";
+            this.display_alerta2 = true;
+            this.reset();
           }
         },
         error => {
           console.log(error)
           if (error.status == 0) {
-            alert("Conexão com o Servidor Perdida!");
+            //alert("Conexão com o Servidor Perdida!");
+            this.texto_alerta2 = "Conexão com o Servidor Perdida!";
+            this.display_alerta2 = true;
             this.loading = false;
           }
         }
@@ -221,7 +236,15 @@ export class LoginComponent implements OnInit {
     this.edited = false;
     this.name = "";
     this.operation = "";
-    localStorage.clear();
+    //localStorage.clear();
+    localStorage.removeItem('time_siip');
+    localStorage.removeItem('id_of_cab');
+    localStorage.removeItem('id_op_cab');
+    localStorage.removeItem('siip_edicao');
+    localStorage.removeItem('user');
+    localStorage.removeItem('access');
+    localStorage.removeItem('sec_num_user');
+    localStorage.removeItem('perfil');
   }
 
   //Se o utilizador clicar em sim, vai verificar o tipo de utilizador
@@ -359,14 +382,16 @@ export class LoginComponent implements OnInit {
       error => {
         console.log(error)
         if (error.status == 0) {
-          alert("Conexão com o Servidor Perdida!");
+          //alert("Conexão com o Servidor Perdida!");
+          this.texto_alerta2 = "Conexão com o Servidor Perdida!";
+          this.display_alerta2 = true;
         }
       });
   }
 
   //verificar enventos
   verifica(id, utilizador) {
-    var dados = "{id::" + id + ",utilizador::" + utilizador + "}"
+    var dados = "{id::" + id + ";#;utilizador::" + utilizador + "}"
     var data = [{ MODULO: 4, MOMENTO: "Utilizador Não Existe nos Acessos", PAGINA: "Login", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {
@@ -459,9 +484,13 @@ export class LoginComponent implements OnInit {
       estados.push('T');
       this.RPOPFUNCService.getdataof(id_of, user, estados).subscribe(result => {
 
-
-
         var id_op_cab = result[0][0].id_OP_CAB;
+
+        for (var z in result) {
+          if (result[z][0].estado == 'S') {
+            id_op_cab = result[z][0].id_OP_CAB;
+          }
+        }
 
         //estado rp_of_para_lin
         var rp_of_para_lin = new RP_OF_PARA_LIN();
@@ -471,42 +500,51 @@ export class LoginComponent implements OnInit {
 
           if (count > 0) {
             rp_of_para_lin = result2[0];
+            var data1 = new Date(rp_of_para_lin.data_INI_M2 + ' ' + rp_of_para_lin.hora_INI_M2);
+            var data2 = date;
 
-            rp_of_para_lin.data_FIM = date;
-            rp_of_para_lin.hora_FIM = time;
+            if (data1.getTime() > data2.getTime()) {
+              this.texto_alerta2 = "A data início da pausa é superior à data atual. Data início pausa: <b>"
+                + rp_of_para_lin.data_INI_M2 + " " + rp_of_para_lin.hora_INI_M2 + "</b>";
+              this.display_alerta2 = true;
+            }
+            else {
+              rp_of_para_lin.data_FIM = new Date(this.formatDate(date));
+              rp_of_para_lin.hora_FIM = time;
 
-            rp_of_para_lin.data_FIM_M1 = date;
-            rp_of_para_lin.hora_FIM_M1 = time;
-            rp_of_para_lin.data_FIM_M2 = date;
-            rp_of_para_lin.hora_FIM_M2 = time;
+              rp_of_para_lin.data_FIM_M1 = new Date(this.formatDate(date));
+              rp_of_para_lin.hora_FIM_M1 = time;
+              rp_of_para_lin.data_FIM_M2 = new Date(this.formatDate(date));
+              rp_of_para_lin.hora_FIM_M2 = time;
 
-            rp_of_para_lin.id_UTZ_MODIF = user;
-            rp_of_para_lin.data_HORA_MODIF = date;
-            rp_of_para_lin.estado = "C";
-            this.RPOFPARALINService.update(rp_of_para_lin).then(result3 => {
+              rp_of_para_lin.id_UTZ_MODIF = user;
+              rp_of_para_lin.data_HORA_MODIF = date;
+              rp_of_para_lin.estado = "C";
+              this.RPOFPARALINService.update(rp_of_para_lin).then(result3 => {
 
 
-              if (continua && concluir) {
-                this.concluir2(this.utilizadores_todos[y].user, this.utilizadores_todos[y].nome, parseInt(y) + 1, this.utilizadores_todos.length, !this.operadorPrincipal, data, id_of_cab);
-              }
-              if (continua && !concluir) {
-                this.finalizarprepfin(this.utilizadores_todos[y].user, this.utilizadores_todos[y].nome, data, id_of, (cria) ? "S" : "E");
-              }
-
-              this.RPOFPARALINService.apagapausasbyid_op_cab(id_op_cab).subscribe(result4 => {
-                if (cria) this.criarPAUSAS(id_op_cab, date, time, user, result2[0].tipo_PARAGEM_M1, result2[0].des_PARAGEM_M1);
-              }, error => console.log(error));
-            });
-
-            if (!continua) {
-              for (var x in result) {
-
-                this.estados_pausa_fim(result[x][1], user, nome, date, result2[0].momento_PARAGEM);
-
-                if (result[x][1].id_OF_CAB_ORIGEM == null) {
-                  this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date, result2[0].momento_PARAGEM);
+                if (continua && concluir) {
+                  this.concluir2(this.utilizadores_todos[y].user, this.utilizadores_todos[y].nome, parseInt(y) + 1, this.utilizadores_todos.length, !this.operadorPrincipal, data, id_of_cab);
+                }
+                if (continua && !concluir) {
+                  this.finalizarprepfin(this.utilizadores_todos[y].user, this.utilizadores_todos[y].nome, data, id_of, (cria) ? "S" : "E");
                 }
 
+                this.RPOFPARALINService.apagapausasbyid_op_cab(id_op_cab).subscribe(result4 => {
+                  if (cria) this.criarPAUSAS(id_op_cab, date, time, user, result2[0].tipo_PARAGEM_M1, result2[0].des_PARAGEM_M1);
+                }, error => console.log(error));
+              });
+
+              if (!continua) {
+                for (var x in result) {
+                  if (result[x][0].estado == 'S') {
+                    this.estados_pausa_fim(result[x][1], user, nome, date, result2[0].momento_PARAGEM);
+
+                    if (result[x][1].id_OF_CAB_ORIGEM == null) {
+                      this.estadofuncionario(result[x][2].id_OP_CAB, user, nome, date, result2[0].momento_PARAGEM);
+                    }
+                  }
+                }
               }
             }
           } else {
@@ -530,13 +568,13 @@ export class LoginComponent implements OnInit {
 
     var id_op_cab = id_op_cab;
     var rp_of_para_lin = new RP_OF_PARA_LIN();
-    rp_of_para_lin.data_INI = date;
+    rp_of_para_lin.data_INI = new Date(this.formatDate(date));
     rp_of_para_lin.hora_INI = time;
 
-    rp_of_para_lin.data_INI_M1 = date;
+    rp_of_para_lin.data_INI_M1 = new Date(this.formatDate(date));
     rp_of_para_lin.hora_INI_M1 = time;
 
-    rp_of_para_lin.data_INI_M2 = date;
+    rp_of_para_lin.data_INI_M2 = new Date(this.formatDate(date));
     rp_of_para_lin.hora_INI_M2 = time;
 
     rp_of_para_lin.id_UTZ_CRIA = user;
@@ -683,11 +721,11 @@ export class LoginComponent implements OnInit {
           if (countx > 0) {
             rp_of_prep_lin = result3[0];
             rp_of_prep_lin.estado = "C";
-            rp_of_prep_lin.data_FIM = date;
+            rp_of_prep_lin.data_FIM = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM = time;
-            rp_of_prep_lin.data_FIM_M1 = date;
+            rp_of_prep_lin.data_FIM_M1 = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM_M1 = time;
-            rp_of_prep_lin.data_FIM_M2 = date;
+            rp_of_prep_lin.data_FIM_M2 = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM_M2 = time;
 
             rp_of_prep_lin.data_HORA_MODIF = date;
@@ -910,7 +948,6 @@ export class LoginComponent implements OnInit {
         var timedif5 = 0;
         var soma_pausa = 0;
 
-
         if (count > 0) {
           for (var x in result1) {
             if (result1[x].momento_PARAGEM == "E") {
@@ -989,12 +1026,12 @@ export class LoginComponent implements OnInit {
 
             rp_of_prep_lin = resu[0];
             rp_of_prep_lin.estado = "C";
-            rp_of_prep_lin.data_FIM = date;
+            rp_of_prep_lin.data_FIM = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM = time_fim;
 
-            rp_of_prep_lin.data_FIM_M1 = date;
+            rp_of_prep_lin.data_FIM_M1 = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM_M1 = time_fim;
-            rp_of_prep_lin.data_FIM_M2 = date;
+            rp_of_prep_lin.data_FIM_M2 = new Date(this.formatDate(date));
             rp_of_prep_lin.hora_FIM_M2 = time_fim;
 
             rp_of_prep_lin.data_HORA_MODIF = date;
@@ -1021,12 +1058,12 @@ export class LoginComponent implements OnInit {
           rp_of_op_func.data_HORA_MODIF = date;
           rp_of_op_func.perfil_MODIF = "O";
           rp_of_op_func.estado = "C";
-          rp_of_op_func.data_FIM = date;
+          rp_of_op_func.data_FIM = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM = time_fim;
 
-          rp_of_op_func.data_FIM_M1 = date;
+          rp_of_op_func.data_FIM_M1 = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM_M1 = time_fim;
-          rp_of_op_func.data_FIM_M2 = date;
+          rp_of_op_func.data_FIM_M2 = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM_M2 = time_fim;
 
 
@@ -1043,7 +1080,8 @@ export class LoginComponent implements OnInit {
 
 
   ficheiroteste(id) {
-    this.ofService.criaficheiro(id, "O", false, false).subscribe(resu => {
+    var data = [{ ip_posto: this.getCookie("IP_CLIENT") }];
+    this.ofService.criaficheiro(id, "O", false, false, data).subscribe(resu => {
     }, error => {
       console.log(error)
     });
@@ -1176,12 +1214,12 @@ export class LoginComponent implements OnInit {
 
                   this.RPOFOPCABService.create(rpofop).subscribe(
                     res => {
-
-                      rpofopfunc.id_OP_CAB = res.id_OP_CAB;
-                      rpofopfunc.data_INI = new Date();
-                      rpofopfunc.data_INI_M1 = new Date();
-                      rpofopfunc.data_INI_M2 = new Date();
                       var date = new Date();
+                      rpofopfunc.id_OP_CAB = res.id_OP_CAB;
+                      rpofopfunc.data_INI = new Date(this.formatDate(date));
+                      rpofopfunc.data_INI_M1 = new Date(this.formatDate(date));
+                      rpofopfunc.data_INI_M2 = new Date(this.formatDate(date));
+
                       var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                       rpofopfunc.hora_INI = time;
                       rpofopfunc.hora_INI_M1 = time;
@@ -1196,11 +1234,11 @@ export class LoginComponent implements OnInit {
                           //var date = new Date();
                           var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                           prep.id_OP_CAB = res.id_OP_CAB;
-                          prep.data_INI = date;
+                          prep.data_INI = new Date(this.formatDate(date));
                           prep.hora_INI = time;
-                          prep.data_INI_M1 = date;
+                          prep.data_INI_M1 = new Date(this.formatDate(date));
                           prep.hora_INI_M1 = time;
-                          prep.data_INI_M2 = date;
+                          prep.data_INI_M2 = new Date(this.formatDate(date));
                           prep.hora_INI_M2 = time;
                           prep.id_UTZ_CRIA = user;
                           prep.estado = "P";
@@ -1239,5 +1277,17 @@ export class LoginComponent implements OnInit {
       error => console.log(error));
   }
 
+  //formatar a data para yyyy-mm-dd
+  formatDate(date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
 
 }

@@ -3084,7 +3084,21 @@ html {
 .tabelaref_of thead th {
     font-size: 11pt;
     font-weight: 600 !important;
-    padding: 0px 2px 0px 2px !important
+    padding: 0px 2px 0px 2px !important;
+}
+
+.tabelaref_of tr.ui-state-highlight {
+    border-color: #d9d9d9 !important;
+    color: black !important;
+    font-weight: 600 !important;
+}
+
+.tabelaref_of tr.ui-state-highlight td {
+    background: #dddada4f !important;
+}
+
+.tabelaref_of .ui-chkbox {
+    text-align: -webkit-center;
 }
 
 body .tabelaref_of .ui-datatable .ui-datatable-data tr.ui-datatable-even {
@@ -3436,4 +3450,37 @@ body .ui-button.ui-button-raised {
     -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
     -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+}
+
+.caixas_imcompletas>div {
+    width: 100% !important;
+    left: 0 !important;
+}
+
+.caixas_imcompletas .ui-dialog-content {
+    padding-top: 5px !important;
+}
+
+.confirm_mensagem .ui-dialog {
+    top: 0px !important;
+}
+
+/* latin-ext */
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Lato Light'), local('Lato-Light'), url(../assets/font/S6u9w4BMUTPHh7USSwaPGR_p.woff2) format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Lato Light'), local('Lato-Light'), url(../assets/font/S6u9w4BMUTPHh7USSwiPGQ.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

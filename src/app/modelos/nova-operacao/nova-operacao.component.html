@@ -6,18 +6,22 @@
         <label class="control-label " for="name">Nº da OF (Ordem de Fabrico)</label>
         <div class="input-group">
           <div class="icon-addon " style="width: 100%;">
-            <input [disabled]="campoofdisabled" type="number" (keyup.enter)="pesquisaof()" #inputFocous class="form-control {{input_class}}"
-              [(ngModel)]="num_of" #of (ngModelChange)="num_of=of.value" [ngModelOptions]="{standalone: true}" style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
+            <input [disabled]="campoofdisabled" type="number" (keyup.enter)="pesquisaof()" #inputFocous
+              class="form-control {{input_class}}" [(ngModel)]="num_of" #of (ngModelChange)="num_of=of.value"
+              [ngModelOptions]="{standalone: true}"
+              style="width: 100%; border-top-right-radius: 0px; border-bottom-right-radius: 0px">
           </div>
           <span class="input-group-btn">
-            <button [disabled]="spinner" (click)="pesquisaof()" class="btn {{bt_class}}" type="button" style="line-height: 0;">
+            <button [disabled]="spinner" (click)="pesquisaof()" class="btn {{bt_class}}" type="button"
+              style="line-height: 0;">
               <i *ngIf="refresh" class="fa fa-refresh"></i>
               <i *ngIf="spinner" class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
               <span class="sr-only">Loading...</span>
             </button>
           </span>
 
-          <button (click)="apagardados()" class="btn btn-default" type="button" style="opacity: 1; line-height: 0; margin-left: 10px;">
+          <button (click)="apagardados()" class="btn btn-default" type="button"
+            style="opacity: 1; line-height: 0; margin-left: 10px;">
             <i class="fa fa-eraser"></i>
           </button>
         </div>
@@ -25,27 +29,29 @@
 
       <div class="form-group">
         <label class="control-label requiredField" style="width: 100%; " for="email">Operação</label>
-        <p-dropdown [disabled]="readonly_op" [(ngModel)]="selected" [ngModelOptions]="{standalone: true}" #op
-          (onChange)="carregamaquinas(op.value)" [options]="operacao" [style]="{'width':'80%'}"></p-dropdown>
-        <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number" style="margin-left:10px; float: right; width: 51px;"
-          (click)="togglestates()">
+        <p-dropdown appendTo="body" [disabled]="readonly_op" [(ngModel)]="selected"
+          [ngModelOptions]="{standalone: true}" #op (onChange)="carregamaquinas(op.value)" [options]="operacao"
+          [style]="{'width':'80%'}"></p-dropdown>
+        <button type="button" [disabled]="readonly_op" class="btn btn-success btn-number"
+          style="margin-left:10px; float: right; width: 51px;" (click)="togglestates()">
           <i class="icon-plus"></i>
         </button>
       </div>
       <div class="form-group" *ngIf="op_PREVISTA == '2'">
         <label class="control-label " for="subject">Secção</label>
-        <p-dropdown #valor [options]="seccoes" [(ngModel)]="seccao" [ngModelOptions]="{standalone: true}" (onChange)="carregamaquiOP_NAO_PREVISTA(valor.value)"
-          [style]="{'width':'100%'}"></p-dropdown>
+        <p-dropdown #valor [options]="seccoes" [(ngModel)]="seccao" [ngModelOptions]="{standalone: true}"
+          (onChange)="carregamaquiOP_NAO_PREVISTA(valor.value)" [style]="{'width':'100%'}"></p-dropdown>
       </div>
       <div class="form-group">
         <label class="control-label " for="subject">Máquina</label>
-        <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}" [disabled]="readonly_maq"
-          (onChange)="maquinadados($event)" [style]="{'width':'100%'}"></p-dropdown>
+        <p-dropdown [options]="maquina" [(ngModel)]="selectedmaq" [ngModelOptions]="{standalone: true}"
+          [disabled]="readonly_maq" (onChange)="maquinadados($event)" [style]="{'width':'100%'}"></p-dropdown>
       </div>
 
       <div class="form-group">
         <label class="control-label " for="message">Observações</label>
-        <textarea class="form-control" cols="20" id="message" name="message" rows="4" readonly>{{observacoes}}</textarea>
+        <textarea class="form-control" cols="20" id="message" name="message" rows="4"
+          readonly>{{observacoes}}</textarea>
       </div>
     </form>
   </div>
@@ -54,26 +60,37 @@
   <div class="col-md-7 col-md-offset-7" style="float:left;">
 
 
-    <p-dataTable [loading]="loadingTable" [value]="referencias" [rowStyleClass]="lookupRowStyleClass" [selectionMode]="single"
-      (onRowSelect)="onRowSelect($event)" class="{{color}} tabelaref_of" (onRowUnselect)="onRowUnselect($event)"
-      dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
+    <p-dataTable [loading]="loadingTable" [value]="referencias" [rowStyleClass]="lookupRowStyleClass"
+      [selectionMode]="single" (onRowSelect)="onRowSelect($event)" class="{{color}} tabelaref_of"
+      (onRowUnselect)="onRowUnselect($event)" dataKey="codigo" scrollable="true" scrollHeight="600px" [rows]="10">
       <p-header>REFERÊNCIA(S)</p-header>
       <p-column field="codigo" header="Código" [sortable]="true" [style]="{'width':'15%'}">
         <ng-template let-col let-x="rowData" pTemplate="body">
-          <span [class.pecafinal]="!x['comp']">{{x[col.field]}}</span>
+          <a class="text-primary" style="text-decoration: underline; color: black !important; cursor: pointer;"
+            (click)="abrirlista(x['codigo'],x['design'])"><span
+              [class.pecafinal]="!x['comp']">{{x[col.field]}}</span></a>
         </ng-template>
       </p-column>
       <p-column field="design" header="Designação" [style]="{'width':'50%'}"></p-column>
-      <p-column field="tipo" header="Tipo" [style]="{'width':'5%'}"></p-column>
+      <p-column field="tipo_PECA" header="Tipo" [style]="{'width':'5%'}">
+        <!-- <ng-template let-col let-x="rowData" pTemplate="body">
+          <span *ngIf="x['tipo_PECA'] == 'PF'">PF</span>
+          <span *ngIf="x['tipo_PECA'] == 'COMP'">C</span>
+          <span *ngIf="x['tipo_PECA'] == 'COM'">COMP</span>
+        </ng-template>-->
+      </p-column>
     </p-dataTable>
+    <span>
+      Carregue no código da Referência para consultar as Etiquetas em Stock da Peça
+    </span>
   </div>
   <div class="col-md-12 col-md-offset-12" style="float:left; text-align: center;">
-    <button class="bt-cancelar ui-button-danger ui-button-raised" pButton type="button" routerLink="/home" label="CANCELAR/SAIR"
-      style="float:none;min-width: 17%;"></button>
-    <button class=" bt-cancelar ui-button-success ui-button-raised" pButton type="button" (click)="iniciartrab()" label="INICIAR TRABALHO"
-      style="float:none;min-width: 17%; margin-left: 20px;"></button>
-    <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()" label="SELECIONAR SÓ 1 REFERÊNCIA"
-      style="float:none;"></button>
+    <button class="bt-cancelar ui-button-danger ui-button-raised" pButton type="button" routerLink="/home"
+      label="CANCELAR/SAIR" style="float:none;min-width: 17%;"></button>
+    <button class=" bt-cancelar ui-button-success ui-button-raised" pButton type="button" (click)="iniciartrab()"
+      label="INICIAR TRABALHO" style="float:none;min-width: 17%; margin-left: 20px;"></button>
+    <button class=" bt-cancelar" pButton type="button" [hidden]="displaybtref" (click)="seleciona1ref()"
+      label="SELECIONAR SÓ 1 REFERÊNCIA" style="float:none;"></button>
   </div>
 
   <!-- Lista de operções não previstas -->
@@ -91,7 +108,8 @@
         <p-column field="OPEDES" header="Designação"></p-column>
       </p-dataTable>
       <br>
-      <div [hidden]="displayvermais" class="col-md-12 col-md-offset-12" style="float:left; text-align: center; color:black;">
+      <div [hidden]="displayvermais" class="col-md-12 col-md-offset-12"
+        style="float:left; text-align: center; color:black;">
         <a (click)="carregarmais()" style="cursor: pointer;">
           <h3>
             <u> VER MAIS </u>
@@ -108,8 +126,8 @@
 
 <!-- Popup caso o operador só escolhe-se um referencia (Não vai ser utilizada) -->
 
-<p-dialog header="Operações" [(visible)]="display2" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog header="Operações" [(visible)]="display2" modal="modal" width="600" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       Escolheu a Referência:
@@ -120,16 +138,18 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="criar('P',true)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
-      <button type="button" pButton (click)="criar('E',true)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('P',true)" label="PREPARAÇÃO"
+        style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',true)" label="EXECUÇÃO"
+        style="float: none; width: auto;"></button>
       <button type="button" pButton (click)="cancelar()" label="CANCELAR" style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
 
 <!-- Popup para saber o serviço que o operador pretende para todas as ref's-->
-<p-dialog header="Operações" [(visible)]="display3" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog header="Operações" [(visible)]="display3" modal="modal" width="600" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       Qual o Serviço que vai iniciar?
@@ -137,9 +157,12 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO" style="float: none; width: auto;"></button>
-      <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO" style="float: none; width: auto;"></button>
-      <button class="ui-button-danger" type="button" pButton (click)="cancelarinic()" label="CANCELAR" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('P',false)" label="PREPARAÇÃO"
+        style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="criar('E',false)" label="EXECUÇÃO"
+        style="float: none; width: auto;"></button>
+      <button class="ui-button-danger" type="button" pButton (click)="cancelarinic()" label="CANCELAR"
+        style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
@@ -172,15 +195,16 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="cancelar_displayof()" label="OK" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="cancelar_displayof()" label="OK"
+        style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
 
 
 <!--POPUP- CAmpos Obrigatórios” -->
-<p-dialog [(visible)]="display_campos_obrigatorios" modal="modal" width="600" [responsive]="true" [dismissableMask]="true"
-  [dismissableMask]="true" [draggable]="false">
+<p-dialog [(visible)]="display_campos_obrigatorios" modal="modal" width="600" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
   <div style="text-align:center;">
     <p>
       É necessário preencher o campo: {{campo}}
@@ -188,7 +212,8 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="display_campos_obrigatorios = false" label="OK" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="display_campos_obrigatorios = false" label="OK"
+        style="float: none; width: auto;"></button>
     </div>
   </p-footer>
 </p-dialog>
@@ -204,7 +229,73 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
-      <button type="button" pButton (click)="display_sem_referencias = false" label="OK" style="float: none; width: auto;"></button>
+      <button type="button" pButton (click)="display_sem_referencias = false" label="OK"
+        style="float: none; width: auto;"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+
+<p-dialog [style]='{"left": "0"}' class="mensagemdialog" [(visible)]="display_lista" modal="modal" [responsive]="true"
+  [dismissableMask]="true" [dismissableMask]="true" [draggable]="false" [header]="referencia">
+  <div style="text-align:center;" appendTo="body">
+    <p-dataTable [scrollable]="true" [(selection)]="impressao_selected" scrollHeight="60vh"
+      [rowStyleClass]="lookupRowStyleClass" [value]="lista_impressao" class="tabelaref_of" dataKey="NUMETIQ">
+      <p-column [style]="{'width':'38px'}" selectionMode="multiple"></p-column>
+      <p-column [style]="{'width':'12%'}" field="REF" header="REF"></p-column>
+      <p-column [style]="{'width':'15%'}" field="DESREF" header="DESIGNAÇÃO"></p-column>
+      <p-column [style]="{'width':'96px'}" field="DATA" header="DATA"></p-column>
+      <p-column [style]="{'width':'96px'}" field="NUMETIQ" header="NUM. ETIQUETA"></p-column>
+      <p-column [style]="{'width':'96px'}" field="LOCAL" header="LOCALIZAÇÃO"></p-column>
+      <p-column [style]="{'width':'96px'}" field="QUANT" header="QUANT"></p-column>
+      <p-column [style]="{'width':'96px'}" field="LOTE" header="LOTE"></p-column>
+      <p-column [style]="{'width':'96px'}" field="ARMAZEM" header="ARMAZÉM"></p-column>
+    </p-dataTable>
+
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" style="text-align: center;">
+      <button type="button" pButton (click)="display_lista = false" class="ui-button-danger ui-button-raised"
+        label="FECHAR" style=" height: auto;"></button>
+      <button type="button" pButton (click)="imprimir()" label="IMPRIMIR" style=" height: auto;"></button>
+      <button type="button" pButton (click)="informa_armazem()" label="INF. ARMAZÉM" title="INFORMAR ARMAZÉM"
+        style="width: 214px; height: auto;" class="ui-button-warning"></button>
+    </div>
+  </div>
+</p-dialog>
+
+
+<!--popup alerta-->
+<p-dialog header="Alerta" [closable]="false" [(visible)]="display_alertaerro" class="novoop" modal="modal" width="800"
+  [responsive]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="text-align: center;">
+        <div [innerHTML]="mensagem_erro"></div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="display_alertaerro = false" label="OK"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-growl [(value)]="msgs"></p-growl>
+
+
+<!--popup verificação-->
+<p-dialog header="Verificação" [(visible)]="display_alerta2" class="novoop" modal="modal" width="700"
+  [responsive]="true" [dismissableMask]="true" [dismissableMask]="true" [draggable]="false">
+  <div class="col-md-12 col-md-offset-12" style="float: left;">
+    <div class="ui-grid-row">
+      <div class="form-group" style="text-align: center;">
+        <span [innerHTML]="texto_alerta2" style="font-size: 17px;"></span>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <button style="float: none;" type="button" pButton (click)="display_alerta2 = false" label="OK"></button>
     </div>
   </p-footer>
 </p-dialog>

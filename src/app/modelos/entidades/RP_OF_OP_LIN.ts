@@ -19,4 +19,6 @@ export class RP_OF_OP_LIN {
     quant_DEF_TOTAL_M2: number;
     versao_MODIF: number;
     gescod: string;
+    proqtefmt: boolean;
+    tipo_PECA: string;
 }

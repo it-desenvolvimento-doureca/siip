@@ -141,7 +141,7 @@
     </p-column>
     <p-column field="artigo" header="Artigo" [sortable]="true" [style]="{'width':'12%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div class="divtable2" style="padding: 0px">
+        <div class="divtable" style="padding: 0px">
           <tr style=" font-size: 0.71vw;" *ngFor="let col2 of row[col.field]">
             <td style="white-space: pre;">{{col2}}</td>
           </tr>
@@ -186,7 +186,7 @@
     </p-column>
     <p-column field="perc_obj" header="% Objetivo" [sortable]="true" [style]="{'width':'4%','position':'relative'}">
       <ng-template pTemplate="body" let-col let-row="rowData ">
-        <div [ngClass]="(row[col.field].length > 2)? 'divtable' :'divtable2'" style="padding: 0px">
+        <div [ngClass]="(row['func'].length < 2)? 'divtable' :'divtable2'" style="padding: 0px">
           <tr *ngFor="let col2 of row[col.field]">
             <td>{{col2}}</td>
           </tr>

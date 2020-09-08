@@ -264,6 +264,7 @@ export class ControloComponent implements OnInit {
 
     var cor_of = "green";
     var idof = null;
+    var idfunc = null;
     for (var x in res) {
       idof = res[x][0];
       cor_tempo_prod = "green";
@@ -324,8 +325,8 @@ export class ControloComponent implements OnInit {
 
 
       //utilizadores
-      if (res[x][3] != null) {
-
+      if (res[x][3] != null && idfunc != res[x][3]) {
+        idfunc = res[x][3];
         if (res[x][24] == res[x][9]) {
           var hora1 = new Date(res[x][11] + "," + res[x][12].slice(0, 8))
           var hora2 = new Date();
@@ -352,6 +353,8 @@ export class ControloComponent implements OnInit {
           }
         }
 
+        dtfim2= null;
+        hfim2= null;
 
         if (res[x][13] != null) dtfim2 = this.formatDate(res[x][13]);
         if (res[x][14] != null) hfim2 = res[x][14].slice(0, 8);
@@ -404,7 +407,13 @@ export class ControloComponent implements OnInit {
           cor_of = "red";
         }
 
-        var operacao = res[x][5] + " - " + res[x][6].trim();
+        var operacao = "";
+        if (res[x][28] != null) {
+          operacao = res[x][28] + "/" + res[x][5] + " - " + res[x][6].trim();
+        } else {
+          operacao = "--/" + res[x][5] + " - " + res[x][6].trim();
+        }
+
         var maquina = res[x][7] + ' - ' + res[x][8];
         var num_of = res[x][4];
         var messlidas = res[x][25];
@@ -997,12 +1006,18 @@ export class ControloComponent implements OnInit {
 
     var total_lidas = false;
     if (res[y][3] == res[y][4]) total_lidas = true;
+    var op_num = "";
+    if (res[y][0].op_NUM != null) {
+      op_num = res[y][0].op_NUM.trim() + "/" + res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim();
+    } else {
+      op_num = "--/" + res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim();
+    }
 
     this.dados.push({
       pos: count2,
       id_of_cab: res[y][0].id_OF_CAB,
       of: res[y][0].of_NUM,
-      operacao: res[y][0].op_COD_ORIGEM + " - " + res[y][0].op_DES.trim(),
+      operacao: op_num,
       maquina: res[y][0].maq_NUM + ' - ' + res[y][0].maq_DES,
       func: func,
       id_func: res[y][2].id_UTZ_CRIA,

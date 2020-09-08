@@ -41,6 +41,8 @@ import { RPOFOPETIQUETAService } from 'app/modelos/services/rp-of-op-etiqueta.se
 import { RegistoQuantidades2Component } from './modelos/registo-quantidades2/registo-quantidades2.component';
 import { GEREVENTOService } from 'app/modelos/services/ger-evento.service';
 import { Pagelogin2Component } from './modelos/pagelogin/pagelogin2.component';
+import { STPEDIDOSService } from './modelos/services/st-pedidos.service';
+import { RPCAIXASINCOMPLETASService } from './modelos/services/rp-caixas-incompletas.service';
 
 const routes: Routes = [
   {
@@ -154,7 +156,9 @@ const routes: Routes = [
     RPOFPARALINService,
     RPOFLSTDEFService,
     RPOFOPETIQUETAService,
+    RPCAIXASINCOMPLETASService,
     GEREVENTOService,
+    STPEDIDOSService,
     AppGlobals
   ],
   bootstrap: [AppComponent]

@@ -75,6 +75,14 @@ export class RPOFDEFLINService {
       .catch((error: any) => Observable.throw('Server error'));
   }
 
+  getbyid_op_lindef(id): Observable<RP_OF_DEF_LIN[]> {
+    const url = webUrl.host + '/rest/siip/getRP_OF_OP_ETIQUETAbyid_op_lindef/' + id + '';
+    return this.http
+      .get(url)
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
   delete(id, etiqueta) {
     return this.http
       .delete(webUrl.host + '/rest/siip/deleteRP_OF_DEF_LIN/' + id + '/' + etiqueta)

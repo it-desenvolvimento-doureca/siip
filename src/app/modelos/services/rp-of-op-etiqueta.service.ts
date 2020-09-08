@@ -35,6 +35,14 @@ export class RPOFOPETIQUETAService {
       .catch(this.handleError);
   }
 
+  apagar(id) {
+    return this.http
+      .get(webUrl.host + '/rest/siip/apagarRP_OF_OP_ETIQUETA/' + id + '')
+      .map(this.extractData)
+      .catch((error: any) => Observable.throw('Server error'));
+  }
+
+
   update(data: RP_OF_OP_ETIQUETA) {
     return this.http
       .put(webUrl.host + '/rest/siip/updateRP_OF_OP_ETIQUETA', JSON.stringify(data), { headers: this.headers })

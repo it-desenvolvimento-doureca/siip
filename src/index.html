@@ -21,8 +21,11 @@
 
 </head>
 <a id="go-button">
-      <i class="icon-fullscreen" style="margin:4px 4px 0 0; font-size: 60px; color: black;"></i>
-    </a>
+  <i class="icon-fullscreen" style="margin:4px 4px 0 0; font-size: 60px; color: black;"></i>
+</a>
+<a id="go-button2" style="display: none;">
+  <i class="icon-resize-small" style="margin:4px 4px 0 0; font-size: 46px; color: black;"></i>
+</a>
 
 <body id="element" onselectstart="return false">
   <div class="col-md-12 col-md-offset-12 mainpage" style="float:left; min-height: 80%;padding: 0;">
@@ -46,6 +49,16 @@
     position: fixed;
     z-index: 99999;
   }
+
+  #go-button2 {
+    right: 4px;
+    top: 0;
+    cursor: pointer;
+    float: right;
+    position: fixed;
+    z-index: 99999;
+  }
+
   /* webkit requires explicit width, height = 100% of sceeen */
   /* webkit also takes margin into account in full screen also - so margin should be removed (otherwise black areas will be seen) */
 
@@ -62,9 +75,11 @@
   $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function () {
     if (IsFullScreenCurrently()) {
       $('#go-button').hide();
+      $('#go-button2').show();
     }
     else {
       $('#go-button').show();
+      $('#go-button2').hide();
     }
   });
 
@@ -95,23 +110,78 @@
 
   /* Is currently in full screen or not */
   function IsFullScreenCurrently() {
-    $('#go-button').hide();
+    //$('#go-button').hide();
     return (document.fullscreen || document.webkitIsFullScreen || document.mozFullScreen);
   }
 
   $("#go-button").on('click', function () {
-    if (IsFullScreenCurrently())
+    if (IsFullScreenCurrently()) {
       GoOutFullscreen();
-    else
+      setCookie("fullScreen_auto", false)
+    } else {
       GoInFullscreen($("#element").get(0));
+      setCookie("fullScreen_auto", true)
+    }
   });
+
+  $("#go-button2").on('click', function () {
+
+    GoOutFullscreen();
+    setCookie("fullScreen_auto", false)
+
+  });
+
+  $("html").on('click', function () {
+    if (IsFullScreenCurrently()) {
+      // GoOutFullscreen();
+      //return false;
+    } else {
+
+      var cookie = getCookie("fullScreen_auto");
+
+      if (cookie != "") {
+        if (cookie == "true") GoInFullscreen($("#element").get(0));
+      } else {
+        /*var r = confirm("Ativar Ecrã Inteiro Automaticamente?");
+        if (r == true) {
+          setCookie("fullScreen_auto", true)
+          GoInFullscreen($("#element").get(0));
+        } else {
+          setCookie("fullScreen_auto", false)
+        }*/
+      }
+
+    }
+  });
+
+  function setCookie(cname, cvalue) {
+
+    document.cookie = cname + "=" + cvalue + ";path=/";
+
+  }
+
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
 
 </script>
 
-<script type="text/javascript" language="javascript">  
-  var versionUpdate = (new Date()).getTime();  
-  var script = document.createElement("script");  
-  script.type = "text/javascript";  
-  script.src = "assets/demo.js?v=" + versionUpdate;  
+<script type="text/javascript" language="javascript">
+  var versionUpdate = (new Date()).getTime();
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "assets/demo.js?v=" + versionUpdate;
   document.body.appendChild(script);  
-</script>  
+</script>

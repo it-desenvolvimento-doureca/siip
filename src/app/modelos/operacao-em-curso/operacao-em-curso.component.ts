@@ -22,6 +22,10 @@ import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-b
 import { RPCONFFAMILIACOMPService } from '../services/rp-conf-familia-comp.service';
 import { RP_OF_OP_LIN } from '../entidades/RP_OF_OP_LIN';
 import { RP_OF_OUTRODEF_LIN } from '../entidades/RP_OF_OUTRODEF_LIN';
+import { ST_PEDIDOS } from '../entidades/ST_PEDIDOS';
+import { STPEDIDOSService } from '../services/st-pedidos.service';
+import { RPCAIXASINCOMPLETASService } from '../services/rp-caixas-incompletas.service';
+import { RP_CAIXAS_INCOMPLETAS } from '../entidades/RP_CAIXAS_INCOMPLETAS';
 
 @Component({
   selector: 'app-operacao-em-curso',
@@ -110,8 +114,25 @@ export class OperacaoEmCursoComponent implements OnInit {
   loadingTable: boolean;
   sec_des: any;
   sec_num: any;
+  display_alerta_pausa: boolean;
+  referencia: string;
+  display_lista: boolean;
+  display_caixa: boolean;
+  caixasincoompletas = [];
+  lista_impressao: any[];
+  templinha = 0;
+  mensagem_caixa = "";
+  display_alerta_caixas;
+  PROREF: any;
+  mensagem_erro: string;
+  display_alertaerro: boolean;
+  impressao_selected: any;
+  display_alerta_etiquetas: boolean;
+  mensagem_erro_etiquetas: string;
+  temp_estado: any;
+  temp_perfil: any;
 
-  constructor(private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
+  constructor(private RPCAIXASINCOMPLETASService: RPCAIXASINCOMPLETASService, private STPEDIDOSService: STPEDIDOSService, private RPCONFFAMILIACOMPService: RPCONFFAMILIACOMPService, private service: ofService, private sanitizer: DomSanitizer, private GEREVENTOService: GEREVENTOService, private ofService: ofService, private route: ActivatedRoute, private RPOPFUNCService: RPOPFUNCService, private RPOFPREPLINService: RPOFPREPLINService, private RPOFPARALINService: RPOFPARALINService, private RPOFCABService: RPOFCABService, private RPOFOPLINService: RPOFOPLINService, private confirmationService: ConfirmationService, private router: Router, private RPOFOPCABService: RPOFOPCABService) {
   }
 
   ngOnInit() {
@@ -222,6 +243,8 @@ export class OperacaoEmCursoComponent implements OnInit {
               this.id_op_cab_lista.push({ id: response[x][2].id_OP_CAB, comp: false });
               if (response[x][0].data_FIM != null) {
                 this.concluido = true;
+              } else {
+                this.concluido = false;
               }
               if (this.utilizadores.length > 0) {
                 this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
@@ -236,10 +259,10 @@ export class OperacaoEmCursoComponent implements OnInit {
             }
 
             this.defeitos = [];
-            this.listadefeitos(response[x][2].id_OP_CAB, comp, count);
+            if (count == 0) this.listadefeitos(response[x][2].id_OP_CAB, comp, count);
             count++;
           }
-
+          if (JSON.parse(localStorage.getItem('user'))["username"] == this.utz_edicao && response[x][0].estado == "R") { this.editarGoTo(); }
           this.id_op_cab_lista = this.id_op_cab_lista.slice();
 
           this.verificar_operadores(this.id_of_cab);
@@ -286,7 +309,10 @@ export class OperacaoEmCursoComponent implements OnInit {
         }
 
         this.utilizadores = this.utilizadores.slice();
-        if (this.id_utz_lider != null) this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+        if (this.id_utz_lider != null) {
+          this.utz_lider = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value;
+          this.id_OP_CAB = this.utilizadores.find(item => item.value.id == this.id_utz_lider).value.id_OP_CAB;
+        }
 
       }, error => console.log(error));
   }
@@ -325,12 +351,12 @@ export class OperacaoEmCursoComponent implements OnInit {
 
                   this.RPOFOPCABService.create(rpofop).subscribe(
                     res => {
-
-                      rpofopfunc.id_OP_CAB = res.id_OP_CAB;
-                      rpofopfunc.data_INI = new Date();
-                      rpofopfunc.data_INI_M1 = new Date();
-                      rpofopfunc.data_INI_M2 = new Date();
                       var date = new Date();
+                      rpofopfunc.id_OP_CAB = res.id_OP_CAB;
+                      rpofopfunc.data_INI = new Date(this.formatDate(date));
+                      rpofopfunc.data_INI_M1 = new Date(this.formatDate(date));
+                      rpofopfunc.data_INI_M2 = new Date(this.formatDate(date));
+
                       var time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                       rpofopfunc.hora_INI = time;
                       rpofopfunc.hora_INI_M1 = time;
@@ -382,13 +408,36 @@ export class OperacaoEmCursoComponent implements OnInit {
           if (total == res[x][0].quant_OF) cor = "#2be32b";
           if (total > res[x][0].quant_OF) cor = "rgba(255, 0, 0, 0.68)";
           var tipo = "PF";
-          if (res[x][1].id_OF_CAB_ORIGEM) { tipo = "C"; comp = true; };
-          this.defeitos.push({ tipo: tipo, id: count, ref_num: res[x][0].ref_NUM, cor: cor, ref_des: res[x][0].ref_DES, quant_of: res[x][0].quant_OF, quant_boas: res[x][0].quant_BOAS_TOTAL_M2, quant_def_total: res[x][0].quant_DEF_TOTAL_M2, quant_control: total, comp: comp });
+          if (res[x][1].id_OF_CAB_ORIGEM) { tipo = "COMP"; comp = true; };
+          if (res[x][0].tipo_PECA == "COM") { tipo = "COM"; comp = true; };
+          this.defeitos.push({ tipo_PECA: res[x][0].tipo_PECA, tipo_PECAorder: tipo, tipo: tipo, id: count, ref_num: res[x][0].ref_NUM, cor: cor, ref_des: res[x][0].ref_DES, quant_of: res[x][0].quant_OF, quant_boas: res[x][0].quant_BOAS_TOTAL_M2, quant_def_total: res[x][0].quant_DEF_TOTAL_M2, quant_control: total, comp: comp });
         }
         this.defeitos = this.defeitos.slice();
-        this.ordernar();
+        //this.ordernar();
+        this.defeitos.sort(this.compareFunction2);
+        this.defeitos.sort(this.compareFunction);
       },
       error => console.log(error));
+  }
+
+  compareFunction2(a, b) {
+    if (a.ref_num > b.ref_num) {
+      return 1;
+    }
+    if (a.ref_num < b.ref_num) {
+      return -1;
+    }
+    return 0;
+  }
+
+  compareFunction(a, b) {
+    if (a.tipo_PECAorder > b.tipo_PECAorder) {
+      return -1;
+    }
+    if (a.tipo_PECAorder < b.tipo_PECAorder) {
+      return 1;
+    }
+    return 0;
   }
 
   ordernar() {
@@ -406,7 +455,168 @@ export class OperacaoEmCursoComponent implements OnInit {
   }
 
 
+
   validaconclusao(estado, perfil) {
+    var pfs = [];
+    for (var z in this.defeitos) {
+      if (this.defeitos[z].tipo == "PF") {
+        pfs.push(this.defeitos[z]);
+      }
+    }
+    this.RPOFCABService.verificaetiquetas(this.id_of_cab).subscribe(res => {
+
+      var count = Object.keys(res).length;
+      if (count > 0) {
+      }
+      var mensagem = "";
+      for (var x in res) {
+        if (res[x][2] > res[x][3]) {
+          mensagem += "Etiqueta <b>" + res[x][0] + " ( " + res[x][1] + " )</b> com quantidades inseridas maiores que a quantidade da etiqueta.<br> Corrija para continuar. <br>";
+          break;
+        } else if (res[x][2] == 0) {
+          mensagem += "Etiqueta <b>" + res[x][0] + " ( " + res[x][1] + " )</b> sem quantidades registadas.<br> Corrija para continuar. <br>";
+          break;
+        }
+      }
+
+      if (mensagem == "") {
+
+        this.ofService.getofpai_filho(this.of_num).subscribe(res => {
+
+          for (var p in res) {
+            var comp = null;
+            var pf = null;
+
+            var valor_comp = 0;
+            var valor_pf = 0;
+            comp = this.defeitos.find(item => item.ref_num == res[p].PROREF);
+            pf = this.defeitos.find(item => item.ref_num == res[p].PAI);
+            if (comp && pf) {
+              if (pf.quant_boas != comp.quant_boas) {
+                mensagem = "O nº de Componentes utilizados não corresponde ao nº de Peças Finais boas registadas no trabalho. <br>Corrija para poder continuar.<br>";
+                break;
+              }
+            }
+            /*if (pfs[y].ref_num != this.defeitos[t].ref_num) {
+              if (pfs[y].quant_boas != this.defeitos[t].quant_boas) {
+                mensagem = "O nº de Componentes utilizados não corresponde ao nº de Peças Finais boas registadas no trabalho. <br>Corrija para poder continuar.<br>";
+                break;
+              }
+            }*/
+
+          }
+
+          this.valida_continua(mensagem, estado, perfil, pfs);
+
+        }, error => {
+          this.valida_continua(mensagem, estado, perfil, pfs);
+        });
+      } else {
+        this.valida_continua(mensagem, estado, perfil, pfs);
+      }
+
+
+
+    }, error => {
+      this.numero_caixas(estado, perfil, pfs);
+    });
+
+  }
+
+  valida_continua(mensagem, estado, perfil, pfs) {
+
+    if (mensagem != "") {
+      this.mensagem_erro = mensagem;
+      this.display_alertaerro = true;
+    } else {
+      var confirmation = false;
+      this.RPCAIXASINCOMPLETASService.getbyid_of_cab(this.id_of_cab).subscribe(
+        response => {
+          for (var u in pfs) {
+            var countpfs = 0;
+            for (var f in response) {
+              if (pfs[u].ref_num == response[f].ref_NUM) {
+                countpfs++;
+              }
+
+            }
+            if (countpfs == 0) {
+              confirmation = true;
+              this.confirmationService.confirm({
+                message: "Não definiu nenhuma caixa Incompleta para a referência " + pfs[u].ref_num + ". Deseja finalizar o trabalho?",
+                accept: () => {
+                  this.numero_caixas(estado, perfil, pfs);
+                }
+              });
+
+              break;
+            } else if (pfs[u].quant_boas == 0) {
+              confirmation = true;
+              this.confirmationService.confirm({
+                message: "Foram lidas etiquetas de caixas incompletas da referência " + pfs[u].ref_num
+                  + " mas não foram registadas quantidades de peças boas para essa referência. <br> Deseja concluir o trabalho?",
+                accept: () => {
+                  this.numero_caixas(estado, perfil, pfs);
+                }
+              });
+              break;
+            }
+          }
+
+          if (!confirmation) {
+            this.numero_caixas(estado, perfil, pfs);
+          }
+
+        }, error => console.log(error));
+
+    }
+
+  }
+
+  numero_caixas(estado, perfil, refs) {
+
+    var pf = [];
+    for (var x in refs) {
+      pf.push("'" + refs[x].ref_num + "'");
+    }
+    var data = [{ id_of_cab: this.id_of_cab, proref: pf.toString() }]
+    this.ofService.gama_embalagem(data).subscribe(res => {
+
+      var count = Object.keys(res).length;
+      var message = "";
+      if (count > 0) {
+        for (var y in res) {
+          var qtd_boas = refs.find(item => item.ref_num == res[y].proref).quant_boas;
+          var gama = (res[y].QuantidadeCaixa) * 1;
+          var total_caixas = res[y].total_caixas;
+          var total_pecas = (qtd_boas) * 1 + (total_caixas) * 1;
+          var total_etiquetas = Math.floor(total_pecas / gama);
+          var total_etiquetas1 = (total_pecas / gama) % 1;
+
+          message += "Referência <b>" + res[y].proref + "</b> irá gerar: ";
+          if (total_etiquetas > 0) message += "" + total_etiquetas + " " + ((total_etiquetas > 1) ? "etiquetas" : "etiqueta") + " de " + gama;
+          if (total_etiquetas > 0 && total_etiquetas1 > 0) {
+            message += " e";
+          } else if (total_etiquetas1 <= 0) {
+            message += " peças";
+          }
+          if (total_etiquetas1 > 0) message += " 1 etiqueta de " + Math.ceil(Math.floor((total_etiquetas1 * gama) * 100) / 100) + " peças";
+          message += ".<br>";
+        }
+
+        this.mensagem_erro_etiquetas = message;
+        this.display_alerta_etiquetas = true;
+        this.temp_estado = estado;
+        this.temp_perfil = perfil;
+      } else {
+        this.continuavalidacao(estado, perfil);
+      }
+    }, error => {
+      this.continuavalidacao(estado, perfil);
+    });
+  }
+
+  continuavalidacao(estado, perfil) {
     this.RPOFCABService.getof(this.id_of_cab).subscribe(res => {
       var count = Object.keys(res).length;
 
@@ -422,7 +632,6 @@ export class OperacaoEmCursoComponent implements OnInit {
     }, error => {
       this.createfile(estado, perfil);
     });
-
   }
 
   // ao clicar no botão concluir
@@ -480,126 +689,131 @@ export class OperacaoEmCursoComponent implements OnInit {
 
 
     this.RPOFOPCABService.getbyid(id_op_cab, id_op_cab).subscribe(result => {
+      if (result[0][2].estado == "S") {
+        this.texto_alerta = "Encontra-se em Pausa. Termine primeiro a Pausa!";
+        this.display_alerta_pausa = true;
+      } else {
+        if (result[0][1].estado != 'C' || estado != 'C') {
+          var rp_of_op_cab = new RP_OF_OP_CAB();
+          var rp_of_op_func = new RP_OF_OP_FUNC();
+          rp_of_op_cab = result[0][0];
+          rp_of_op_func = result[0][2];
+          //estado rp_of_cab
+          var rp_of_cab = new RP_OF_CAB();
+          rp_of_cab = result[0][1];
+          rp_of_cab.id_UTZ_MODIF = user;
+          rp_of_cab.nome_UTZ_MODIF = nome;
+          rp_of_cab.data_HORA_MODIF = date;
+          rp_of_cab.estado = estado;
+          if (estado == "M") rp_of_cab.versao_MODIF = (this.versao_modif + 1);
 
-      if (result[0][1].estado != 'C' || estado != 'C') {
-        var rp_of_op_cab = new RP_OF_OP_CAB();
-        var rp_of_op_func = new RP_OF_OP_FUNC();
-        rp_of_op_cab = result[0][0];
-        rp_of_op_func = result[0][2];
-        //estado rp_of_cab
-        var rp_of_cab = new RP_OF_CAB();
-        rp_of_cab = result[0][1];
-        rp_of_cab.id_UTZ_MODIF = user;
-        rp_of_cab.nome_UTZ_MODIF = nome;
-        rp_of_cab.data_HORA_MODIF = date;
-        rp_of_cab.estado = estado;
-        if (estado == "M") rp_of_cab.versao_MODIF = (this.versao_modif + 1);
+          //tempo de Pausa
+          this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {
+            var count = Object.keys(result1).length;
+            var time_pausa = "0:0:0";
+            var time_pausa_prep = "0:0:0";
+            var time_pausa_of = "0:0:0";
+            var timedif3 = 0;
+            var timedif4 = 0;
+            var timedif5 = 0;
+            var soma_pausa = 0;
 
-        //tempo de Pausa
-        this.RPOFPARALINService.getbyallID_OP_CAB(id_op_cab).subscribe(result1 => {
-          var count = Object.keys(result1).length;
-          var time_pausa = "0:0:0";
-          var time_pausa_prep = "0:0:0";
-          var time_pausa_of = "0:0:0";
-          var timedif3 = 0;
-          var timedif4 = 0;
-          var timedif5 = 0;
-          var soma_pausa = 0;
+            if (count > 0) {
+              for (var x in result1) {
+                if (result1[x].momento_PARAGEM_M2 == "E") {
+                  var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
+                  var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
+                  var timedif = this.timediff(hora1.getTime(), hora2.getTime())
+                  var splitted_pausa = timedif.split(":", 3);
+                  total_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+                }
+                if (result1[x].momento_PARAGEM_M2 == "P") {
+                  var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
+                  var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
+                  var timedif1 = this.timediff(hora1.getTime(), hora2.getTime())
+                  var splitted_pausa = timedif1.split(":", 3);
+                  total_pausa_prep += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+                }
 
-          if (count > 0) {
-            for (var x in result1) {
-              if (result1[x].momento_PARAGEM == "E") {
                 var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
                 var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-                var timedif = this.timediff(hora1.getTime(), hora2.getTime())
-                var splitted_pausa = timedif.split(":", 3);
-                total_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-              }
-              if (result1[x].momento_PARAGEM == "P") {
-                var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
-                var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-                var timedif1 = this.timediff(hora1.getTime(), hora2.getTime())
-                var splitted_pausa = timedif1.split(":", 3);
-                total_pausa_prep += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+                var timep = this.timediff(hora1.getTime(), hora2.getTime())
+
+                var splitted_pausa = timep.split(":", 3);
+                soma_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
               }
 
-              var hora1 = new Date(result1[x].data_INI_M2 + " " + result1[x].hora_INI_M2);
-              var hora2 = new Date(result1[x].data_FIM_M2 + " " + result1[x].hora_FIM_M2);
-              var timep = this.timediff(hora1.getTime(), hora2.getTime())
+              time_pausa_of = this.gettime(soma_pausa);
+              time_pausa_prep = this.gettime(total_pausa_prep);
+              time_pausa = this.gettime(total_pausa);
 
-              var splitted_pausa = timep.split(":", 3);
-              soma_pausa += parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+              var splitted_pausa = time_pausa.split(":", 3);
+              timedif4 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+            }
+            var hora1 = new Date(result[0][2].data_INI_M2 + " " + result[0][2].hora_INI_M2);
+            var hora2 = new Date(date);
+
+            if (estado == "M") hora2 = new Date(result[0][2].data_FIM_M2 + " " + result[0][2].hora_FIM_M2);
+            //tempo da total of
+            var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
+
+            if (/*estado == "M" &&*/ this.data_fim_preparacao != null && this.data_ini_preparacao != null /*&& id_op_cab2 == id_op_cab*/) {
+
+              var splitted_pausa = time_pausa_prep.split(":", 3);
+              timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+              //estado rp_of_prep_lin
+              var rp_of_prep_lin = new RP_OF_PREP_LIN();
+              this.RPOFPREPLINService.getbyid2(id_op_cab).subscribe(resu => {
+                var countxresu = Object.keys(resu).length;
+
+                if (countxresu > 0) {
+                  var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
+                  var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
+                  var timedif1 = this.timediff(date1.getTime(), date2.getTime());
+                  var splitted_pausa = timedif1.split(":", 3);
+                  timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
+
+                  var time_prep = timedif3 - timedif5;
+
+                  var tempo_prep = this.gettime(time_prep);
+
+                  rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
+
+                  if (!comp) {
+                    this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
+                      this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                        utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
+                    });
+                  }
+                } else {
+                  this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                    utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
+                }
+              }, error => console.log(error));
+            } else {
+
+              this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
+                utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
             }
 
-            time_pausa_of = this.gettime(soma_pausa);
-            time_pausa_prep = this.gettime(total_pausa_prep);
-            time_pausa = this.gettime(total_pausa);
 
-            var splitted_pausa = time_pausa_of.split(":", 3);
-            timedif4 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-          }
-          var hora1 = new Date(result[0][2].data_INI_M2 + " " + result[0][2].hora_INI_M2);
-          var hora2 = new Date(date);
+          }, error => console.log(error));
 
-          if (estado == "M") hora2 = new Date(result[0][2].data_FIM_M2 + " " + result[0][2].hora_FIM_M2);
-          //tempo da total of
-          var timedif2 = Math.abs(hora2.getTime() - hora1.getTime());
-
-          if (estado == "M" && this.data_fim_preparacao != null && this.data_ini_preparacao != null /*&& id_op_cab2 == id_op_cab*/) {
-
-            var splitted_pausa = time_pausa_prep.split(":", 3);
-            timedif5 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-
-            //estado rp_of_prep_lin
-            var rp_of_prep_lin = new RP_OF_PREP_LIN();
-            this.RPOFPREPLINService.getbyid2(id_op_cab).subscribe(resu => {
-              var countxresu = Object.keys(resu).length;
-
-              if (countxresu > 0) {
-                var date1 = new Date(resu[0].data_INI_M2 + " " + resu[0].hora_INI_M2);
-                var date2 = new Date(resu[0].data_FIM_M2 + " " + resu[0].hora_FIM_M2);
-                var timedif1 = this.timediff(date1.getTime(), date2.getTime());
-                var splitted_pausa = timedif1.split(":", 3);
-                timedif3 = parseInt(splitted_pausa[0]) * 3600000 + parseInt(splitted_pausa[1]) * 60000 + parseInt(splitted_pausa[2]) * 1000;
-
-                var time_prep = timedif3 - timedif5;
-
-                var tempo_prep = this.gettime(time_prep);
-
-                rp_of_op_cab.tempo_PREP_TOTAL_M2 = tempo_prep;
-
-                if (!comp) {
-                  this.RPOFOPCABService.update(rp_of_op_cab).then(res => {
-                    this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-                      utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total);
-                  });
-                }
-              } else {
-                this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-                  utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
-              }
-            }, error => console.log(error));
-          } else {
-
-            this.estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
-              utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total)
-          }
-
-
-        }, error => console.log(error));
-
-      } else {
-        this.display_alerta = true;
+        } else {
+          this.display_alerta = true;
+        }
       }
     }, error => console.log(error));
   }
 
   estados2(result, timedif3, time_pausa_prep, timedif5, id_op_cab, date, hora1, hora2, estado, time_fim, user, nome, perfil,
     utz_count, comp, rp_of_op_cab, rp_of_op_func, rp_of_cab, timedif2, timedif4, time_pausa_of, num_count, total) {
-
+    if (isNaN(timedif4)) timedif4 = 0;
     if (result[0][0].tempo_PREP_TOTAL_M2 != null) {
-      var splitted_prep = result[0][0].tempo_PREP_TOTAL_M2.split(":", 3);
-      timedif3 = parseInt(splitted_prep[0]) * 3600000 + parseInt(splitted_prep[1]) * 60000 + parseInt(splitted_prep[2]) * 1000;
+      //var splitted_prep = result[0][0].tempo_PREP_TOTAL_M2.split(":", 3);
+      //timedif3 = parseInt(splitted_prep[0]) * 3600000 + parseInt(splitted_prep[1]) * 60000 + parseInt(splitted_prep[2]) * 1000;
 
     } else if (result[0][0].tempo_PARA_TOTAL != null) {
 
@@ -636,11 +850,11 @@ export class OperacaoEmCursoComponent implements OnInit {
 
         rp_of_prep_lin = resu[0];
         rp_of_prep_lin.estado = estado;
-        rp_of_prep_lin.data_FIM = date;
+        rp_of_prep_lin.data_FIM = new Date(this.formatDate(date));
         rp_of_prep_lin.hora_FIM = time_fim;
-        rp_of_prep_lin.data_FIM_M1 = date;
+        rp_of_prep_lin.data_FIM_M1 = new Date(this.formatDate(date));
         rp_of_prep_lin.hora_FIM_M1 = time_fim;
-        rp_of_prep_lin.data_FIM_M2 = date;
+        rp_of_prep_lin.data_FIM_M2 = new Date(this.formatDate(date));
         rp_of_prep_lin.hora_FIM_M2 = time_fim;
         rp_of_prep_lin.data_HORA_MODIF = date;
         rp_of_prep_lin.id_UTZ_MODIF = user;
@@ -671,12 +885,12 @@ export class OperacaoEmCursoComponent implements OnInit {
 
         if (estado != "M") {
           rp_of_op_func.estado = estado;
-          rp_of_op_func.data_FIM = date;
+          rp_of_op_func.data_FIM = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM = time_fim;
 
-          rp_of_op_func.data_FIM_M1 = date;
+          rp_of_op_func.data_FIM_M1 = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM_M1 = time_fim;
-          rp_of_op_func.data_FIM_M2 = date;
+          rp_of_op_func.data_FIM_M2 = new Date(this.formatDate(date));
           rp_of_op_func.hora_FIM_M2 = time_fim;
           //rp_of_op_func.estado = "M";
         }
@@ -721,14 +935,13 @@ export class OperacaoEmCursoComponent implements OnInit {
       rp_of_op_func.estado = estado;
 
       if (estado != "M") {
-        rp_of_op_func.data_FIM = date;
+        rp_of_op_func.data_FIM = new Date(this.formatDate(date));
         rp_of_op_func.hora_FIM = time_fim;
-        rp_of_op_func.data_FIM_M1 = date;
+        rp_of_op_func.data_FIM_M1 = new Date(this.formatDate(date));
         rp_of_op_func.hora_FIM_M1 = time_fim;
-        rp_of_op_func.data_FIM_M2 = date;
+        rp_of_op_func.data_FIM_M2 = new Date(this.formatDate(date));
         rp_of_op_func.hora_FIM_M2 = time_fim;
       }
-
 
       if (utz_count) this.RPOFCABService.update(rp_of_cab);
       if (!comp) this.RPOFOPCABService.update(rp_of_op_cab);
@@ -812,7 +1025,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   //verificar enventos
   verifica(of, assunto, mensagem, utilizador) {
-    var dados = "{of::" + of + ",assunto::" + assunto + ",mensagem::" + mensagem + ",utilizador::" + utilizador + "}"
+    var dados = "{of::" + of + ";#;assunto::" + assunto + ";#;mensagem::" + mensagem + ";#;utilizador::" + utilizador + "}"
     var data = [{ MODULO: 4, MOMENTO: "Ao Criar Mensagem", PAGINA: "Execução", ESTADO: true, DADOS: dados }];
 
     this.GEREVENTOService.verficaEventos(data).subscribe(result => {
@@ -827,7 +1040,8 @@ export class OperacaoEmCursoComponent implements OnInit {
       this.displaygerarficheiros = true;
     } else {
       if (this.displaygerarficheiros) { this.progressBarDialog = true; }
-      this.ofService.criaficheiro(this.id_of_cab, estado, ficheiros, original).subscribe(resu => {
+      var data = [{ ip_posto: this.getCookie("IP_CLIENT") }];
+      this.ofService.criaficheiro(this.id_of_cab, estado, ficheiros, original, data).subscribe(resu => {
 
         if (this.displaygerarficheiros) {
           this.progressBarDialog = false;
@@ -934,13 +1148,20 @@ export class OperacaoEmCursoComponent implements OnInit {
 
     if (this.estado_val != "R") {
       this.ofService.atualizarcampos(this.id_of_cab).subscribe(resu => {
-
+        this.estadoedicao();
       }, error => {
-        console.log(error)
+        this.estadoedicao();
+        console.log(error);
       });
+    } else {
+      this.estadoedicao();
     }
 
 
+
+  }
+
+  estadoedicao() {
     if (this.estado_val != "R") {
       this.ofService.atualizaestado(this.id_of_cab, JSON.parse(localStorage.getItem('user'))["username"], "R").subscribe(resu => {
         this.router.navigate(['./operacao-em-curso/edicao'], { queryParams: { id: this.user, v: this.versao_modif } });
@@ -978,14 +1199,26 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.hora_ini_preparacao = event.value.HORA_INI_PREP;
     this.data_fim_preparacao = (event.value.DATA_FIM_PREP) ? this.formatDate(event.value.DATA_FIM_PREP) : "";
     this.hora_fim_preparacao = event.value.HORA_FIM_PREP;
-
+    if (this.id_utz_lider == event.value.id) {
+      this.dataini_utz_lider = new Date(event.value.data_INI + ' ' + event.value.hora_INI);
+      this.datafim_utz_lider = new Date(event.value.data_FIM + ' ' + event.value.hora_FIM);
+    }
+    if (this.data_ini_preparacao == null || this.data_ini_preparacao == "") {
+      this.preparacaonovo = true;
+    } else {
+      this.preparacaonovo = false;
+    }
 
   }
 
 
   atualizartempofunc(campo) {
     localStorage.setItem('siip_edicao', 'true');
-    var utz = this.utilizadores.find(item => item.value.id == this.utz_lider.id).value;
+    var utz = this.utilizadores.find(item => item.value.id_OP_CAB == this.utz_lider.id_OP_CAB).value;
+    if (this.id_utz_lider == utz.id) {
+      this.dataini_utz_lider = new Date(this.data_ini + ' ' + this.hora_ini);
+      this.datafim_utz_lider = new Date(this.data_fim + ' ' + this.hora_fim);
+    }
     switch (campo) {
       case "data_ini":
         utz.data_INI = this.data_ini;
@@ -1262,7 +1495,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
         }
       }
-      if (!this.validPeriod(dataini, datafim, pausas_array_editar, pausas_array_editar[x].pos)) {
+      if (!this.validPeriod(dataini, datafim, pausas_array_editar, pausas_array_editar[x].pos, pausas_array_editar[x].momento)) {
         this.msgs2.push({ severity: 'error', summary: 'Alerta', detail: 'Valide o período das Datas! ' + utznome });
         continuar = false;
         break;
@@ -1271,16 +1504,18 @@ export class OperacaoEmCursoComponent implements OnInit {
     return continuar;
   }
 
-  validPeriod(start, end, datas, pos) {
+  //Valida Pausas
+  validPeriod(start, end, datas, pos, momento) {
+
     var valid = true;
     for (var i = 0; i < datas.length; i++) {
-      if (datas[i].pos != pos) {
+      if (datas[i].pos != pos /*&& datas[i].momento == momento*/) {
         var datei = new Date(datas[i].data_ini + ' ' + datas[i].hora_ini);
         var datef = new Date(datas[i].data_fim + ' ' + datas[i].hora_fim);
-        if (start.getTime() <= datef.getTime() && datei.getTime() <= end.getTime()) {
+        if (start.getTime() < datef.getTime() && datei.getTime() < end.getTime()) {
           valid = false;
           break;
-        } else if (datei.getTime() <= end.getTime() && datei.getTime() >= end.getTime()) {
+        } else if (datei.getTime() < end.getTime() && datei.getTime() > end.getTime()) {
           valid = false;
           break;
         }
@@ -1344,7 +1579,7 @@ export class OperacaoEmCursoComponent implements OnInit {
 
   cria_preparacao(id_OP_CAB) {
     var prep = new RP_OF_PREP_LIN();
-
+    this.id_OP_CAB = id_OP_CAB;
     prep.id_OP_CAB = id_OP_CAB;
 
     prep.data_INI_M2 = new Date(this.data_ini_preparacao);
@@ -1353,10 +1588,10 @@ export class OperacaoEmCursoComponent implements OnInit {
     prep.hora_FIM_M2 = (this.hora_fim_preparacao + ":00").substr(0, 8);
 
 
-    prep.data_INI = new Date(this.data_ini_preparacao);
+    /*prep.data_INI = new Date(this.data_ini_preparacao);
     prep.data_FIM = new Date(this.data_fim_preparacao);
     prep.hora_INI = (this.hora_ini_preparacao + ":00").substr(0, 8);
-    prep.hora_FIM = (this.hora_fim_preparacao + ":00").substr(0, 8);
+    prep.hora_FIM = (this.hora_fim_preparacao + ":00").substr(0, 8);*/
 
     prep.data_HORA_MODIF = new Date();
     prep.id_UTZ_MODIF = JSON.parse(localStorage.getItem('user'))["username"];
@@ -1387,10 +1622,10 @@ export class OperacaoEmCursoComponent implements OnInit {
             rpfunc.data_FIM = user.data_FIM;
             rpfunc.hora_FIM = user.hora_FIM.substr(0, 8);
           } else {
-            rpfunc.data_INI_M1 = rpfunc.data_INI_M2;
+            /*rpfunc.data_INI_M1 = rpfunc.data_INI_M2;
             rpfunc.hora_INI_M1 = rpfunc.hora_INI_M2;
             rpfunc.data_FIM_M1 = rpfunc.data_FIM_M2;
-            rpfunc.hora_FIM_M1 = rpfunc.hora_FIM_M2;
+            rpfunc.hora_FIM_M1 = rpfunc.hora_FIM_M2;*/
           }
           rpfunc.data_INI_M2 = user.data_INI;
           rpfunc.hora_INI_M2 = (user.hora_INI + ":00").substr(0, 8);
@@ -1423,7 +1658,6 @@ export class OperacaoEmCursoComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Tem a Certeza que pretende Eliminar?',
       accept: () => {
-
         this.display_alerta_opnum = true;
         this.texto_alerta = "Aguarde..."
         this.ofService.atualizaropenum(this.id_of_cab).subscribe(resu => {
@@ -1442,10 +1676,10 @@ export class OperacaoEmCursoComponent implements OnInit {
                 if (this.permissao_ficheiroteste) this.btdisabled3 = false;
                 this.texto_alerta = "Valor de Origem para o(s) Componente(s) não foi encontrado!"
               } else {
-                this.anularof();
+                this.continuar_anular();
               }
             } else {
-              this.anularof();
+              this.continuar_anular();
             }
 
           }, error => {
@@ -1462,6 +1696,29 @@ export class OperacaoEmCursoComponent implements OnInit {
     });
   }
 
+  continuar_anular() {
+    this.display_alerta_opnum = false;
+    this.confirmationService.confirm({
+      message: 'Pretende duplicar o registo?',
+      accept: () => {
+        this.display_alerta_opnum = true;
+        this.texto_alerta = "Aguarde..."
+        this.RPOFCABService.duplicarRegistos(this.id_of_cab).subscribe(res => {
+          this.display_alerta_opnum = false;
+          //console.log(res)
+          this.anularof();
+        }, error => {
+          this.display_alerta_opnum = false;
+          //this.anularof();
+          console.log(error);
+        });
+      },
+      reject: () => {
+        this.anularof();
+      }
+    });
+  }
+
   anularof() {
 
     var user = JSON.parse(localStorage.getItem('user'))["username"];
@@ -1469,10 +1726,15 @@ export class OperacaoEmCursoComponent implements OnInit {
     var data = new Date();
 
     var dados = [{ VERSAO_MODIF: (this.versao_modif + 1), ID_OF_CAB: this.id_of_cab, ID_UTZ_MODIF: user, ESTADO: "A", DATA_HORA_MODIF: data, PERFIL_MODIF: 'E', NOME_UTZ_MODIF: nome }];
-    this.display_alerta_opnum = false;
+
     this.RPOFCABService.updateEstados(dados).subscribe(res => {
-      if (this.estado_val == "C" || this.estado_val == "M") this.ficheiroteste('A');
-      window.location.reload();
+      if (this.estado_val == "C" || this.estado_val == "M" || this.estado_val == "R") this.ficheiroteste('A');
+
+      if (this.estado_val == "R") {
+        this.editar();
+      } else {
+        window.location.reload();
+      }
     });
   }
 
@@ -1720,7 +1982,7 @@ export class OperacaoEmCursoComponent implements OnInit {
                 if (response2[x].ZPAVAL != null) {
                   perc = parseFloat(String(response2[x].ZPAVAL).replace(",", "."));
                 }
-                referencias.push({ GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
+                referencias.push({ tipo_PECAorder: "PF", tipo_PECA: response2[x].PROTYPCOD, PROQTEFMT: response2[x].PROQTEFMT, GESCOD: response2[x].GESCOD, perc_obj: perc, codigo: response2[x].PROREF, design: response2[x].PRODES1 + " " + response2[x].PRODES2, var1: response2[x].VA1REF, var2: response2[x].VA2REF, INDREF: response2[x].INDREF, OFBQTEINI: parseFloat(response2[x].OFBQTEINI).toFixed(0), INDNUMENR: response2[x].INDNUMENR, tipo: "PF", comp: false });
                 //verifica familia
                 this.veirificafam(response2[x].PRDFAMCOD, response2[x].PROREF, null, referencias, response[0].ofanumenr);
               }
@@ -1753,7 +2015,7 @@ export class OperacaoEmCursoComponent implements OnInit {
               if (response.ZPAVAL != null) {
                 perc = parseFloat(String(response.ZPAVAL).replace(",", "."));
               }
-              referencias.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+              referencias.push({ tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
 
               if (this.defeitos.find(item => item.ref_num == response.PROREF)) {
                 //se existir não faz anda
@@ -1761,13 +2023,15 @@ export class OperacaoEmCursoComponent implements OnInit {
               } else {
                 //se não existir insere
                 this.defeitos.push({
+                  tipo_PECA: response.PROTYPCOD, tipo_PECAorder: (response.PROTYPCOD == "COM") ? "COM" : "COMP",
                   tipo: "C", ref_num: response.PROREF, cor: "rgba(255, 255, 0, 0.78)", ref_des: response.PRODES1 + " " + response.PRODES2
                   , quant_of: parseInt(this.defeitos[0].quant_of), quant_boas: 0, quant_def_total: 0, quant_control: 0, comp: true
                 });
                 this.defeitos = this.defeitos.slice();
-
+                this.defeitos.sort(this.compareFunction2);
+                this.defeitos.sort(this.compareFunction);
                 var refcomp = [];
-                refcomp.push({ GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+                refcomp.push({ tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: perc, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
 
                 this.criatabelacomp(this.id_of_cab, this.estado_val, refcomp);
               }
@@ -1775,13 +2039,37 @@ export class OperacaoEmCursoComponent implements OnInit {
             if (OFANUMENR != null) {
               this.get_filhosprimeiro(OFANUMENR, referencias);
             } else {
-              this.get_filhos(ref, referencias);
+              //this.get_filhos(ref, referencias);
+              this.loadingTable = false;
             }
           } else {
             this.loadingTable = false;
           }
         },
         error => { console.log(error); this.loadingTable = false; });
+    } else if (response.PROTYPCOD == "COM") {
+      referencias.push({ tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: 0, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
+      if (this.defeitos.find(item => item.ref_num == response.PROREF)) {
+        //se existir não faz anda
+
+      } else {
+        //se não existir insere
+        this.defeitos.push({
+          tipo_PECA: response.PROTYPCOD, tipo_PECAorder: (response.PROTYPCOD == "COM") ? "COM" : "COMP",
+          tipo: "C", ref_num: response.PROREF, cor: "rgba(255, 255, 0, 0.78)", ref_des: response.PRODES1 + " " + response.PRODES2
+          , quant_of: parseInt(this.defeitos[0].quant_of), quant_boas: 0, quant_def_total: 0, quant_control: 0, comp: true
+        });
+        this.defeitos = this.defeitos.slice();
+        this.defeitos.sort(this.compareFunction2);
+        this.defeitos.sort(this.compareFunction);
+        var refcomp = [];
+        refcomp.push({ tipo_PECA: response.PROTYPCOD, PROQTEFMT: response.PROQTEFMT, GESCOD: response.GESCOD, perc_obj: 0, codigo: response.PROREF, design: response.PRODES1 + " " + response.PRODES2, var1: null, var2: null, INDREF: null, OFBQTEINI: null, INDNUMENR: null, tipo: "COMP", comp: true });
+
+        this.criatabelacomp(this.id_of_cab, this.estado_val, refcomp);
+      }
+
+      this.loadingTable = false;
     } else {
       this.loadingTable = false;
     }
@@ -1883,6 +2171,8 @@ export class OperacaoEmCursoComponent implements OnInit {
   criatabelaRPOFOPLIN(id_OP_CAB, comp, refcomp) {
     var ref = refcomp[0];
     var rpofoplin = new RP_OF_OP_LIN;
+    rpofoplin.proqtefmt = (ref.PROQTEFMT == "1") ? true : false;
+    rpofoplin.tipo_PECA = ref.tipo_PECA;
     rpofoplin.id_OP_CAB = id_OP_CAB;
     rpofoplin.ref_NUM = ref.codigo;
     rpofoplin.ref_DES = ref.design;
@@ -1909,5 +2199,305 @@ export class OperacaoEmCursoComponent implements OnInit {
       error => console.log(error));
   }
 
+  abrirlista(ref, design) {
+    this.impressao_selected = [];
+    this.PROREF = ref;
+    this.referencia = ref + "-" + design;
+    this.lista_impressao = [];
+    this.ofService.consulta_Impressao(ref).subscribe(result => {
+      var countx = Object.keys(result).length;
 
+      if (countx > 0) {
+        for (var x in result) {
+          this.lista_impressao.push({
+            ARMAZEM: result[x].ARMAZEM,
+            DATA: result[x].DATA,
+            DESREF: result[x].DESREF,
+            LOCAL: result[x].LOCAL,
+            LOTE: result[x].LOTE,
+            NUMETIQ: result[x].NUMETIQ,
+            QUANT: result[x].QUANT,
+            REF: result[x].REF
+          })
+        }
+      }
+      this.lista_impressao = this.lista_impressao.slice();
+      this.display_lista = true;
+
+    }, error => {
+      console.log(error);
+      this.display_lista = true;
+    });
+  }
+
+  pesquisalote(lote, index) {
+    if (lote != "" && lote != null) {
+      this.caixasincoompletas[index].disabled = true;
+      lote = lote + "";
+      if (lote.substr(0, 1).toUpperCase() == "S") lote = lote.substring(1);
+      var etiqueta = "0000000000" + lote;
+      if (this.caixasincoompletas.find(item => item.id != this.caixasincoompletas[index].id && item.numero == etiqueta.substring(etiqueta.length - 10))) {
+        this.mensagem_caixa = "Etiqueta já foi inserida!";
+        this.apagarlinhacaixa(index);
+        this.display_alerta_caixas = true;
+        this.caixasincoompletas[index].disabled = false;
+      } else {
+        this.service.getEtiquetacaixas(etiqueta.substring(etiqueta.length - 10)).subscribe(
+          response => {
+            var count = Object.keys(response).length;
+            if (count > 0) {
+              var ref = response[0].PROREF;
+              if (ref == null) ref = response[0].PROREFCOMP;
+
+              if (!this.defeitos.find(item => item.ref_num == ref)) {
+                this.mensagem_caixa = "Etiqueta não pertence a nenhuma Referência!";
+                this.display_alerta_caixas = true;
+                this.caixasincoompletas[index].disabled = false;
+                this.apagarlinhacaixa(index)
+              } else if (this.defeitos.find(item => item.ref_num == ref && item.tipo != "PF")) {
+                this.mensagem_caixa = "Etiquetas só para a Referência Principal!";
+                this.display_alerta_caixas = true;
+                this.caixasincoompletas[index].disabled = false;
+                this.apagarlinhacaixa(index)
+              } else {
+                this.caixasincoompletas[index].produto = response[0].PROREF;
+                this.caixasincoompletas[index].qtd = response[0].ETQEMBQTE;
+                this.caixasincoompletas[index].numero = etiqueta.substring(etiqueta.length - 10);
+                this.verificaqtd(response[0].PROREF, index);
+              }
+            } else {
+              this.mensagem_caixa = "Etiqueta não foi encontrada!";
+              this.display_alerta_caixas = true;
+              this.caixasincoompletas[index].disabled = false;
+            }
+
+          }, error => {
+            this.caixasincoompletas[index].disabled = false;
+            console.log(error);
+          });
+      }
+    }
+  }
+
+  verificaqtd(proref, index) {
+    var array_count = [];
+    var arrayref_count = [];
+    /*for (var y in this.defeitos) {
+      arrayref_count[this.defeitos[y].ref_num] = 0;
+
+      for (var t in this.caixasincoompletas) {
+        if (this.caixasincoompletas[t].produto == this.defeitos[y].ref_num) arrayref_count[this.defeitos[y].ref_num]++;
+        if (arrayref_count[this.defeitos[y].ref_num] == 5) array_count.push("Máximo de Etiquetas de caixas incompletas da Referência " + this.defeitos[y].ref_num + " atingido")
+
+      }
+    }*/
+
+    arrayref_count[proref] = 0;
+
+    for (var t in this.caixasincoompletas) {
+      if (arrayref_count[proref] == 5) array_count.push("Máximo de Etiquetas de caixas incompletas da Referência " + proref + " atingido");
+      if (this.caixasincoompletas[t].produto == proref) arrayref_count[proref]++;
+    }
+
+
+    if (array_count.length > 0) {
+      this.display_alerta_caixas = true;
+      this.mensagem_caixa = array_count.toString().replace(",", "<br>");
+      this.apagarlinhacaixa(index)
+    } else {
+      this.caixa_linha();
+    }
+  }
+
+  adicionarcaixas() {
+
+    this.caixasincoompletas = [];
+    /*array_count.push("Máximo de Etiquetas de caixas incompletas da Referência " + this.defeitos[y].ref_num + " atingido")
+    array_count.push("Máximo de Etiquetas de caixas incompletas da Referência " + this.defeitos[y].ref_num + " atingido")*/
+
+    this.RPCAIXASINCOMPLETASService.getbyid_of_cab(this.id_of_cab).subscribe(
+      response => {
+        for (var x in response) {
+          this.caixasincoompletas.push({
+            id_CAIXA_INCOMPLETA: response[x].id_CAIXA_INCOMPLETA, id: "idd" + response[x].id_CAIXA_INCOMPLETA, numero: response[x].etqnum, produto: response[x].ref_NUM, qtd: response[x].quant_ETIQUETA,
+            unidade: response[x].unidade, disabled: true
+          });
+        }
+        if (!this.modoedicao) {
+          this.caixa_linha();
+        } else {
+          this.display_caixa = true;
+
+        }
+      }, error => {
+        if (!this.modoedicao) {
+          this.caixa_linha();
+        } else {
+          this.display_caixa = true;
+
+        }
+        console.log(error);
+      });
+
+  }
+
+  caixa_linha() {
+    this.templinha++;
+    this.caixasincoompletas.push({
+      id: "id" + this.templinha, numero: "", produto: "", qtd: "", unidade: "", disabled: false, descricao: "", id_CAIXA_INCOMPLETA: null
+    });
+    this.display_caixa = true;
+    setTimeout(() => {
+      this.inputfocus("id" + this.templinha);
+    }, 30);
+  }
+
+
+  guardarcaixasincompletas() {
+
+    if (this.caixasincoompletas.length > 0) {
+      for (var x in this.caixasincoompletas) {
+        if (this.caixasincoompletas[x].id_CAIXA_INCOMPLETA == null && this.caixasincoompletas[x].numero != "" && this.caixasincoompletas[x].numero != null) {
+          var caixa = new RP_CAIXAS_INCOMPLETAS;
+          caixa.id_OF_CAB = this.id_of_cab;
+          caixa.utz_CRIA = this.user;
+          caixa.data_CRIA = new Date;
+          caixa.etqnum = this.caixasincoompletas[x].numero;
+          caixa.unidade = this.caixasincoompletas[x].unidade;
+          caixa.quant_ETIQUETA = this.caixasincoompletas[x].qtd * 1;
+          caixa.ref_NUM = this.caixasincoompletas[x].produto;
+          this.insertcaixa(caixa);
+        }
+      }
+      this.display_caixa = false;
+    } else {
+      this.display_caixa = false;
+    }
+
+  }
+
+  insertcaixa(caixa) {
+    this.RPCAIXASINCOMPLETASService.create(caixa).subscribe(
+      res => {
+      }, error => {
+      });
+  }
+
+  inputfocus(id) {
+    if (id == null) id = this.caixasincoompletas[this.caixasincoompletas.length - 1].id;
+    let inputField: HTMLElement = <HTMLElement>document.querySelectorAll('#tabelacaixas>tbody>tr>td #' + id + '')[0];
+    inputField && inputField.focus();
+  }
+
+  addlinhacaixa() {
+    this.caixasincoompletas = [];
+  }
+
+  apagarlinhacaixa(index) {
+    if (this.caixasincoompletas[index].id_CAIXA_INCOMPLETA != null) {
+      this.RPCAIXASINCOMPLETASService.delete(this.caixasincoompletas[index].id_CAIXA_INCOMPLETA).then(
+        res => {
+          this.caixasincoompletas.splice(index, 1)
+        }, error => {
+        });
+    } else {
+      this.caixasincoompletas.splice(index, 1);
+    }
+
+    if (this.caixasincoompletas.length == 0) {
+      this.caixa_linha();
+    } else if (!this.caixasincoompletas.find(item => item.disabled == false)) {
+      this.caixa_linha();
+    }
+  }
+
+  informa_armazem() {
+    if (this.impressao_selected.length == 0) {
+      this.display_alertaerro = true;
+      this.mensagem_erro = "Seleccione uma linha!";
+    } else {
+      //console.log(this.impressao_selected)
+      this.msgs = [];
+      for (var x in this.impressao_selected) {
+        var linha = new ST_PEDIDOS;
+        linha.armazem = this.impressao_selected[x].ARMAZEM;
+        linha.local = this.impressao_selected[x].LOCAL;
+        linha.data_CRIA = new Date();
+        linha.utz_CRIA = this.user;
+        linha.proref = this.impressao_selected[x].REF;
+        linha.descricao = this.impressao_selected[x].DESREF;
+        linha.lote = this.impressao_selected[x].LOTE;
+        linha.etqnum = this.impressao_selected[x].NUMETIQ;
+        linha.quant = (this.impressao_selected[x].QUANT) * 1;
+
+        linha.ip_POSTO = this.getCookie("IP_CLIENT");
+        linha.cod_SECTOR_OF = this.sec_num;
+        linha.des_SECTOR_OF = this.sec_des;
+        //console.log(linha)
+
+        this.insertPEDIDO(linha);
+      }
+      this.display_lista = false;
+    }
+  }
+
+  insertPEDIDO(linha) {
+    this.STPEDIDOSService.create(linha).subscribe(
+      res => {
+        this.msgs.push({ severity: 'success', summary: 'Info', detail: 'Armazém Informado. Ref.: ' + linha.proref });
+      }, error => {
+        this.msgs.push({ severity: 'error', summary: 'Erro', detail: 'Erro ao Informar Armazém. Ref.: ' + linha.proref });
+      });
+  }
+
+  imprimir() {
+
+    var filename = new Date().toLocaleString().replace(/\D/g, '');
+    this.ofService.downloadPDF("pdf", filename, this.PROREF, "consulta_FIFOS").subscribe(
+      (res) => {
+        this.fileURL = URL.createObjectURL(res);
+        //this.fileURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileURL); ´
+
+        this.ofService.getIMPRESORA(this.getCookie("IP_CLIENT")).subscribe(
+          (res2) => {
+
+            var count = Object.keys(res2).length;
+
+            if (count > 0 && res2[0][3] != "" && res2[0][3] != null) {
+              this.ofService.imprimir(filename, res2[0][3]).subscribe(
+                response => {
+                  //enviado para impressora
+                }, error => {
+                  //console.log(error.status);
+
+                  console.log(error._body);
+                });
+
+            } else {
+              var iframe;
+              if (!iframe) {
+                iframe = document.createElement('iframe');
+                document.body.appendChild(iframe);
+
+                iframe.style.display = 'none';
+                iframe.onload = function () {
+                  setTimeout(function () {
+                    iframe.focus();
+                    iframe.contentWindow.print();
+                  }, 1);
+                };
+              }
+              iframe.src = this.fileURL;
+            }
+          }, error => console.log(error));
+      }
+    );
+  }
+
+  //ver cookies
+  getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+  }
 }
