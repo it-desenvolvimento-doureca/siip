@@ -37,6 +37,7 @@ export class OperacaoEmCursoComponent implements OnInit {
   maq_numcod: any;
   displaypreparacao;
   permissao_ficheiroteste: any;
+  permissao_atualizar_ref = false;
   pausas_array = [];
   displaypausas: boolean = false;
   displayalter: boolean;
@@ -141,6 +142,7 @@ export class OperacaoEmCursoComponent implements OnInit {
     var access = JSON.parse(localStorage.getItem('access'));
     this.permissao_editar = access.find(item => item === "E");
     this.permissao_ficheiroteste = access.find(item => item === "A");
+    this.permissao_atualizar_ref = access.find(item => item === "E");
     //verifica se tem o id_of_cab
     if (localStorage.getItem('id_of_cab')) {
 
